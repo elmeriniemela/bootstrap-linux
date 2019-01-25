@@ -66,13 +66,14 @@ def install_pip36():
 
 def install_apps():
     run([
-        'apt-get -y update',
-        'apt-get -y upgrade',
-        'apt-get install -y vim',
-        'apt-get install -y git',
+        'sudo apt-get -y update',
+        'sudo apt-get -y upgrade',
+        'sudo apt-get install -y vim',
+        'sudo apt-get install -y git',
+        'sudo apt-get install snapd'
         'sudo snap install slack --classic',
-        'apt-get install -y vim',
-        'apt-get install -y chromium-browser',
+        'sudo apt-get install -y vim',
+        'sudo apt-get install -y chromium-browser',
 
         # VSCode
         'sudo apt-get -y install software-properties-common apt-transport-https wget',
