@@ -8,7 +8,6 @@ def path(path):
         formatted = path
     return formatted
 
-
 def run(commands):
     for command in commands:
         if command.startswith('cd'):
@@ -30,9 +29,6 @@ def install_togl(deb_dir='/home/elmeri/Downloads'):
         'sudo dpkg -i libgstreamer*.deb',
         'sudo dpkg -i toggldesktop*.deb',
     ])
-
-
-
 
 def install_python(version='3.7.2'):
     run([
@@ -88,7 +84,6 @@ def install_apps():
 def add_ssh(filename):
     import pyperclip
     run([
-        'sudo apt install xclip',
         'ssh-keygen -t rsa -N "" -f ~/.ssh/{}'.format(filename),
     ])
     with open(os.path.join(os.path.expanduser('~'), '.ssh', 'config'), 'a') as f:
@@ -96,7 +91,6 @@ def add_ssh(filename):
     with open(path('~/.ssh/{}.pub'.format(filename))) as f:
         pyperclip.copy(f.read())
 
-add_ssh('github_private')
 
 def install_odoo_dependencies():
     # Odoo dependencies
@@ -143,4 +137,32 @@ def install_odoo(branch='12.0', python='python3.7'):
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(odoo_folder, odoo_path),
     ])
 
+
+
+def functions(local_items):
+    excluded = [
+        'functions',
+        'path',
+        'run',
+    ]
+    FUNCTION_MAP = {}
+    for key, value in local_items:
+        if key not in excluded and callable(value) and value.__module__ == __name__:
+            FUNCTION_MAP.update({key:value})
+    return FUNCTION_MAP
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
+    FUNCTION_MAP = functions(locals().items())
+
+    parser.add_argument('command', choices=FUNCTION_MAP.keys())
+    parser.add_argument('args', metavar='arg', type=str, nargs='*',
+                    help='args for the function')
+
+    args = parser.parse_args()
+
+
+    func = FUNCTION_MAP[args.command]
+    func(*args.args)
 
