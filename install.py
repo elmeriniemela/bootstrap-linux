@@ -21,6 +21,28 @@ def run(commands):
                 raise e
             print(output.stdout)
 
+
+def tmc_cli():
+    run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
+
+def install_onedrive():
+    import git
+    run([
+        'sudo apt-get install -y libcurl4-openssl-dev',
+        'sudo apt-get install -y libsqlite3-dev',
+        'sudo snap install --classic dmd && sudo snap install --classic dub',
+    ])
+    repo = git.Git(path('~/'))
+    repo.clone('https://github.com/skilion/onedrive.git')
+    run([
+        'cd ~/onedrive',
+        'make',
+        'sudo make install',
+        'systemctl --user enable onedrive',
+        'systemctl --user start onedrive',
+    ])
+
+
 def install_togl(deb_dir='/home/elmeri/Downloads'):
     run([
         'cd {}'.format(deb_dir),
@@ -118,6 +140,13 @@ def install_odoo(branch='12.0', python='python3.7'):
             'sudo apt install virtualenv -y',
             'cd ~/.venv',
             'virtualenv -p {} {}'.format(python, odoo_folder),
+        ])
+
+    if branch == '10.0':
+        run([
+           'sudo apt-get install nodejs',
+           'sudo apt-get install npm',
+           'sudo npm install -g less',
         ])
 
     folders = os.listdir(path('~/Sites'))
