@@ -15,7 +15,7 @@ def run(commands):
             os.chdir(path(folder))
         else:
             try:
-                output = subprocess.run(command, shell=True, capture_output=True, check=True, text=True)
+                output = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, encoding='utf-8')
             except subprocess.CalledProcessError as e:
                 print(e.stdout)
                 raise e
@@ -152,7 +152,7 @@ def odoo(branch='12.0', python='python3.7'):
     print(branch, python)
     return
     import git
-    odoo_folder = 'odoo{}'.format(branch[:2])
+    odoo_folder = 'odoo{}'.format(int(branch))
     odoo_path = path('~/Sites/' + odoo_folder)
     if not os.path.isdir(path('~/.venv')):
         run(['mkdir ~/.venv'])
@@ -193,7 +193,6 @@ def odoo(branch='12.0', python='python3.7'):
 
 
 def functions_map(local_items):
-    import inspect
     excluded = [
         'functions_map',
         'path',
@@ -231,16 +230,16 @@ def functions():
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
-    FUNCTION_MAP = functions_map(locals().items())
 
-    parser.add_argument('command', help="Install function that to run (use 'functions' to find function signatures)")
+    parser.add_argument('function', help="Install function to run (use 'functions' to list function signatures)")
 
     parser.add_argument('args', metavar='arg', type=str, nargs='*',
-                    help='args for the function')
+                    help='argument for the function')
 
 
     args = parser.parse_args()
 
-    func = FUNCTION_MAP[args.command]
+    FUNCTION_MAP = functions_map(locals().items())
+    func = FUNCTION_MAP[args.function]
     func(*args.args)
 
