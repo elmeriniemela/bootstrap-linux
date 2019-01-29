@@ -23,9 +23,13 @@ def run(commands):
 
 
 def tmc_cli():
+    '''Installs TMC CLI
+    '''
     run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
 
-def install_onedrive():
+def onedrive():
+    '''Installs OneDrive cli
+    '''
     import git
     run([
         'sudo apt-get install -y libcurl4-openssl-dev',
@@ -43,7 +47,9 @@ def install_onedrive():
     ])
 
 
-def install_togl(deb_dir='/home/elmeri/Downloads'):
+def togl(deb_dir='/home/elmeri/Downloads'):
+    '''Installs toggl
+    '''
     run([
         'cd {}'.format(deb_dir),
         'wget http://fr.archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base0.10/libgstreamer-plugins-base0.10-0_0.10.36-1_amd64.deb',
@@ -52,7 +58,9 @@ def install_togl(deb_dir='/home/elmeri/Downloads'):
         'sudo dpkg -i toggldesktop*.deb',
     ])
 
-def install_python(version='3.7.2'):
+def python(version='3.7.2'):
+    '''Installs specified python version
+    '''
     run([
         'sudo apt-get install -y build-essential',
         'sudo apt-get install -y checkinstall',
@@ -82,11 +90,15 @@ def install_python(version='3.7.2'):
         'sudo make altinstall',
     ])
 
-def install_pip36():
-    # Pip for python 3.6
+def pip36():
+    '''Installs pip3.6 since ubuntu 18.06 python 3 doesn't have pip
+    '''
     run(['curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6'])
 
-def install_apps():
+def apps():
+    '''Installs all useful apps 
+    i.e git, vim, slack, chromium, vscode etc..
+    '''
     run([
         'sudo apt-get -y update',
         'sudo apt-get -y upgrade',
@@ -105,6 +117,10 @@ def install_apps():
     ])
 
 def add_ssh(filename):
+    '''Creates ssh private and public key pair,
+    adds it to ~/.ssh/config,
+    and copies the public key to clipboard
+    '''
     import pyperclip
     run([
         'ssh-keygen -t rsa -N "" -f ~/.ssh/{}'.format(filename),
@@ -115,7 +131,10 @@ def add_ssh(filename):
         pyperclip.copy(f.read())
 
 
-def install_odoo_dependencies():
+def odoo_dependencies():
+    '''Installs odoo dependencies
+    Should be ran only once per system
+    '''
     # Odoo dependencies
     run([
         'sudo apt-get install postgresql -y',
@@ -127,7 +146,11 @@ def install_odoo_dependencies():
         'sudo apt-get install libldap2-dev -y',
     ])
 
-def install_odoo(branch='12.0', python='python3.7'):
+def odoo(branch='12.0', python='python3.7'):
+    '''Installs odoo
+    '''
+    print(branch, python)
+    return
     import git
     odoo_folder = 'odoo{}'.format(branch[:2])
     odoo_path = path('~/Sites/' + odoo_folder)
@@ -169,9 +192,10 @@ def install_odoo(branch='12.0', python='python3.7'):
 
 
 
-def functions(local_items):
+def functions_map(local_items):
+    import inspect
     excluded = [
-        'functions',
+        'functions_map',
         'path',
         'run',
     ]
@@ -179,19 +203,43 @@ def functions(local_items):
     for key, value in local_items:
         if key not in excluded and callable(value) and value.__module__ == __name__:
             FUNCTION_MAP.update({key:value})
+    
     return FUNCTION_MAP
+
+LOCALS = locals()
+def functions():
+    '''Lists the available functions
+    '''
+    import inspect
+    excluded = [
+        'functions_map',
+        'path',
+        'run',
+        'functions'
+    ]
+    for key, value in LOCALS.items():
+        if key not in excluded and callable(value) and value.__module__ == __name__:
+            sign = inspect.signature(value)
+            params = []
+            for string_name, parameter in sign.parameters.items():
+                params.append(str(parameter))
+            print("def {}({}):".format(value.__name__, ', '.join(params)))
+            print("    {}".format(value.__doc__))
+
+    
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
-    FUNCTION_MAP = functions(locals().items())
+    FUNCTION_MAP = functions_map(locals().items())
 
-    parser.add_argument('command', choices=FUNCTION_MAP.keys())
+    parser.add_argument('command', help="Install function that to run (use 'functions' to find function signatures)")
+
     parser.add_argument('args', metavar='arg', type=str, nargs='*',
                     help='args for the function')
 
-    args = parser.parse_args()
 
+    args = parser.parse_args()
 
     func = FUNCTION_MAP[args.command]
     func(*args.args)
