@@ -9,3 +9,11 @@ alias odoo="python odoo-bin --conf .odoorc"
 
 export VISUAL=vim
 export EDITOR="$VISUAL"
+export FLASK_ENV=development 
+
+
+stty -ixon
+
+if [ -d "/opt/FlameGraph" ] ; then
+    PATH="$PATH:/opt/FlameGraph"
+fi

@@ -1,5 +1,6 @@
 import subprocess, os
 current_dir = os.path.dirname(os.path.realpath(__file__))
+home_dir = os.path.expanduser('~')
 
 def path(path):
     if path.startswith('~/'):
@@ -8,18 +9,20 @@ def path(path):
         formatted = path
     return formatted
 
-def run(commands):
+def run(commands, **kwargs):
     for command in commands:
         if command.startswith('cd'):
             folder = command[3:]
             os.chdir(path(folder))
         else:
-            try:
-                output = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, encoding='utf-8')
-            except subprocess.CalledProcessError as e:
-                print(e.stdout)
-                raise e
-            print(output.stdout)
+            default_kwargs = {
+                'shell': True, 
+                'stderr': subprocess.PIPE,
+                'check': True, 
+                'encoding': 'utf-8'
+            }
+            default_kwargs.update(kwargs)
+            output = subprocess.run(command, **default_kwargs)
 
 
 def tmc_cli():
@@ -36,7 +39,7 @@ def onedrive():
         'sudo apt-get install -y libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
     ])
-    repo = git.Git(path('~/'))
+    repo = git.Git(path('/opt'))
     repo.clone('https://github.com/skilion/onedrive.git')
     run([
         'cd ~/onedrive',
@@ -47,16 +50,28 @@ def onedrive():
     ])
 
 
-def togl(deb_dir='/home/elmeri/Downloads'):
+def toggl():
     '''Installs toggl
-    '''
+    '''  
+    import git
     run([
-        'cd {}'.format(deb_dir),
+        'cd /tmp',
         'wget http://fr.archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base0.10/libgstreamer-plugins-base0.10-0_0.10.36-1_amd64.deb',
         'wget http://fr.archive.ubuntu.com/ubuntu/pool/universe/g/gstreamer0.10/libgstreamer0.10-0_0.10.36-1.5ubuntu1_amd64.deb',
         'sudo dpkg -i libgstreamer*.deb',
+        'cd ~/Downloads',
         'sudo dpkg -i toggldesktop*.deb',
     ])
+    # if not os.path.exists('/opt/toggldesktop'):
+    #     repo = git.Git(path('/opt'))
+    #     repo.clone('https://github.com/toggl/toggldesktop.git')
+    # run([
+    #     'cd /opt/toggldesktop',
+    #     'make deps',
+    #     'make',
+
+    # ])
+
 
 def python(version='3.7.2'):
     '''Installs specified python version
@@ -90,6 +105,21 @@ def python(version='3.7.2'):
         'sudo make altinstall',
     ])
 
+def pyflame():
+    import git
+    run([
+        'sudo apt-get install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
+    ])
+    repo = git.Git('/opt')
+    repo.clone('https://github.com/uber/pyflame.git')
+    run([
+        'cd /opt',
+        'sudo ./autogen.sh',
+        'sudo ./configure',
+        'sudo make',
+        'sudo make install'
+    ])
+    
 def pip36():
     '''Installs pip3.6 since ubuntu 18.06 python 3 doesn't have pip
     '''
@@ -100,14 +130,19 @@ def apps():
     i.e git, vim, slack, chromium, vscode etc..
     '''
     run([
+        'cd /tmp',
+        'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
+        'sudo dpkg -i google-chrome-stable_current_amd64.deb',
         'sudo apt-get -y update',
         'sudo apt-get -y upgrade',
         'sudo apt-get install -y vim',
         'sudo apt-get install -y git',
         'sudo apt-get install snapd'
         'sudo snap install slack --classic',
+        'sudo snap install mailspring',
         'sudo apt-get install -y vim',
-        'sudo apt-get install -y chromium-browser',
+        'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
+        'sudo dpkg -i google-chrome-stable_current_amd64.deb',
 
         # VSCode
         'sudo apt-get -y install software-properties-common apt-transport-https wget',
@@ -149,8 +184,6 @@ def odoo_dependencies():
 def odoo(branch='12.0', python='python3.7'):
     '''Installs odoo
     '''
-    print(branch, python)
-    return
     import git
     odoo_folder = 'odoo{}'.format(int(branch))
     odoo_path = path('~/Sites/' + odoo_folder)
@@ -225,7 +258,14 @@ def functions():
             print("def {}({}):".format(value.__name__, ', '.join(params)))
             print("    {}".format(value.__doc__))
 
-    
+def symlink_bash_aliases():
+    '''Symling .bash_aliases from this directory
+    to ~/.bash_aliases
+    '''
+    src = os.path.join(current_dir, ".bash_aliases")
+    dst = os.path.join(home_dir, ".bash_aliases")
+    os.symlink(src, dst)
+
 
 if __name__ == '__main__':
     import argparse
