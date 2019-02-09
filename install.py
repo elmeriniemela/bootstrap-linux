@@ -1,6 +1,8 @@
-import subprocess, os
+import subprocess
+import os
 current_dir = os.path.dirname(os.path.realpath(__file__))
 home_dir = os.path.expanduser('~')
+
 
 def path(path):
     if path.startswith('~/'):
@@ -9,6 +11,7 @@ def path(path):
         formatted = path
     return formatted
 
+
 def run(commands, **kwargs):
     for command in commands:
         if command.startswith('cd'):
@@ -16,9 +19,9 @@ def run(commands, **kwargs):
             os.chdir(path(folder))
         else:
             default_kwargs = {
-                'shell': True, 
+                'shell': True,
                 'stderr': subprocess.PIPE,
-                'check': True, 
+                'check': True,
                 'encoding': 'utf-8'
             }
             default_kwargs.update(kwargs)
@@ -29,6 +32,7 @@ def tmc_cli():
     '''Installs TMC CLI
     '''
     run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
+
 
 def onedrive():
     '''Installs OneDrive cli
@@ -52,7 +56,7 @@ def onedrive():
 
 def toggl():
     '''Installs toggl
-    '''  
+    '''
     import git
     run([
         'cd /tmp',
@@ -92,18 +96,20 @@ def python(version='3.7.2'):
         'sudo apt-get install -y libffi-dev',
         'sudo apt-get install -y python3-dev',
         'sudo apt-get install -y python3-setuptools',
-        # for python 2 
+        # for python 2
         'sudo apt-get install -y python-dev',
         'sudo apt-get install -y python-setuptools',
         'sudo apt-get install -y wget',
         'mkdir /tmp/Python{}'.format(version),
         'cd /tmp/Python{}'.format(version),
-        'wget https://www.python.org/ftp/python/{}/Python-{}.tar.xz'.format(version, version),
+        'wget https://www.python.org/ftp/python/{}/Python-{}.tar.xz'.format(
+            version, version),
         'tar xvf Python-{}.tar.xz'.format(version),
         'cd /tmp/Python{}/Python-{}'.format(version, version),
         './configure',
         'sudo make altinstall',
     ])
+
 
 def pyflame():
     import git
@@ -119,11 +125,13 @@ def pyflame():
         'sudo make',
         'sudo make install'
     ])
-    
+
+
 def pip36():
     '''Installs pip3.6 since ubuntu 18.06 python 3 doesn't have pip
     '''
     run(['curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6'])
+
 
 def apps():
     '''Installs all useful apps 
@@ -150,6 +158,7 @@ def apps():
         'sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"',
         'sudo apt-get -y install code',
     ])
+
 
 def add_ssh(filename):
     '''Creates ssh private and public key pair,
@@ -181,6 +190,7 @@ def odoo_dependencies():
         'sudo apt-get install libldap2-dev -y',
     ])
 
+
 def odoo(branch='12.0', python='python3.7'):
     '''Installs odoo
     '''
@@ -200,9 +210,9 @@ def odoo(branch='12.0', python='python3.7'):
 
     if branch == '10.0':
         run([
-           'sudo apt-get install nodejs',
-           'sudo apt-get install npm',
-           'sudo npm install -g less',
+            'sudo apt-get install nodejs',
+            'sudo apt-get install npm',
+            'sudo npm install -g less',
         ])
 
     folders = os.listdir(path('~/Sites'))
@@ -217,12 +227,13 @@ def odoo(branch='12.0', python='python3.7'):
             break
     else:
         repo = git.Git('.')
-        repo.clone('https://github.com/odoo/odoo.git', odoo_path, branch=branch)
+        repo.clone('https://github.com/odoo/odoo.git',
+                   odoo_path, branch=branch)
     run([
         'cp {}/.odoorc {}/'.format(current_dir, odoo_path),
-        '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(odoo_folder, odoo_path),
+        '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
+            odoo_folder, odoo_path),
     ])
-
 
 
 def functions_map(local_items):
@@ -234,11 +245,14 @@ def functions_map(local_items):
     FUNCTION_MAP = {}
     for key, value in local_items:
         if key not in excluded and callable(value) and value.__module__ == __name__:
-            FUNCTION_MAP.update({key:value})
-    
+            FUNCTION_MAP.update({key: value})
+
     return FUNCTION_MAP
 
+
 LOCALS = locals()
+
+
 def functions():
     '''Lists the available functions
     '''
@@ -258,6 +272,7 @@ def functions():
             print("def {}({}):".format(value.__name__, ', '.join(params)))
             print("    {}".format(value.__doc__))
 
+
 def symlink_bash_aliases():
     '''Symling .bash_aliases from this directory
     to ~/.bash_aliases
@@ -271,15 +286,14 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
-    parser.add_argument('function', help="Install function to run (use 'functions' to list function signatures)")
+    parser.add_argument(
+        'function', help="Install function to run (use 'functions' to list function signatures)")
 
     parser.add_argument('args', metavar='arg', type=str, nargs='*',
-                    help='argument for the function')
-
+                        help='argument for the function')
 
     args = parser.parse_args()
 
     FUNCTION_MAP = functions_map(locals().items())
     func = FUNCTION_MAP[args.function]
     func(*args.args)
-
