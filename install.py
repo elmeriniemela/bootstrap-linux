@@ -62,19 +62,10 @@ def toggl():
         'cd /tmp',
         'wget http://fr.archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base0.10/libgstreamer-plugins-base0.10-0_0.10.36-1_amd64.deb',
         'wget http://fr.archive.ubuntu.com/ubuntu/pool/universe/g/gstreamer0.10/libgstreamer0.10-0_0.10.36-1.5ubuntu1_amd64.deb',
+        'wget -O toggldesktop.deb "https://toggl.com/api/v8/installer?app=td&channel=stable&platform=deb64"'
         'sudo dpkg -i libgstreamer*.deb',
-        'cd ~/Downloads',
-        'sudo dpkg -i toggldesktop*.deb',
+        'sudo dpkg -i toggldesktop.deb',
     ])
-    # if not os.path.exists('/opt/toggldesktop'):
-    #     repo = git.Git(path('/opt'))
-    #     repo.clone('https://github.com/toggl/toggldesktop.git')
-    # run([
-    #     'cd /opt/toggldesktop',
-    #     'make deps',
-    #     'make',
-
-    # ])
 
 
 def python(version='3.7.2'):
