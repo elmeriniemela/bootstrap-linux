@@ -277,9 +277,21 @@ def symlink_bash_aliases():
     '''Symling .bash_aliases from this directory
     to ~/.bash_aliases
     '''
-    src = os.path.join(current_dir, ".bash_aliases")
-    dst = os.path.join(home_dir, ".bash_aliases")
-    os.symlink(src, dst)
+    try:
+        os.symlink(
+            src=os.path.join(current_dir, ".bash_aliases"), 
+            dst=os.path.join(home_dir, ".bash_aliases")
+        )
+    except Exception as error:
+        print(error)
+
+    try:
+        os.symlink(
+            src=os.path.join(current_dir, ".notes"), 
+            dst=os.path.join(home_dir, ".notes")
+        )
+    except Exception as error:
+        print(error)
 
 
 if __name__ == '__main__':
