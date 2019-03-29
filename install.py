@@ -186,7 +186,7 @@ def odoo(branch='12.0', python='python3.7'):
     '''Installs odoo
     '''
     import git
-    odoo_folder = 'odoo{}'.format(int(branch))
+    odoo_folder = 'odoo{}'.format(branch[:-2])
     odoo_path = path('~/Sites/' + odoo_folder)
     if not os.path.isdir(path('~/.venv')):
         run(['mkdir ~/.venv'])

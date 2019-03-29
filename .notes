@@ -1,4 +1,4 @@
-git config --global credential.helper 'cache --timeout=600'
+git config --global credential.helper 'cache --timeout=1200'
 git commit --amend --author="Elmeri Niemelä <elmeri.niemela@sprintit.fi>"
 git add .; git reset .gitmodules
 echo "IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
@@ -6,3 +6,7 @@ git submodule add -b 10.0 https://bitbucket.org/sprintit/finvoice.git
 sudo pyflame -s 10 -r 0.01 -p 8588 | flamegraph.pl > myprofile.svg
 javac -encoding ISO-8859-1 -cp 'src/main/java/:src/main/resources' src/main/java/org/verohallinto/apitamoclient/ApitamoClientCli.java
 python odoo-bin -d db_10 -u sprintit_download_bank_statements --test-enable --stop-after-init
+git reset --hard origin/<branch>
+git checkout HEAD -- my-file.txt
+find . -iname __manifest__.py -exec rename 's/__manifest__.py/__openerp__.py/' '{}' \; 
+chown -R odoo: /opt/odoo/addons
