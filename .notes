@@ -10,3 +10,6 @@ git reset --hard origin/<branch>
 git checkout HEAD -- my-file.txt
 find . -iname __manifest__.py -exec rename 's/__manifest__.py/__openerp__.py/' '{}' \; 
 chown -R odoo: /opt/odoo/addons
+DELETE FROM ir_ui_view WHERE arch_db LIKE '%is_company_account%' AND model='res.partner.bank';
+git submodule foreach git checkout 12.0; git submodule foreach git pull
+find -type l -delete

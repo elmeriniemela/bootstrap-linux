@@ -1,7 +1,15 @@
-alias activate8=". /home/elmeri/.venv/odoo8/bin/activate;cd /home/elmeri/Sites/odoo8"
-alias activate10=". /home/elmeri/.venv/odoo10/bin/activate;cd /home/elmeri/Sites/odoo10"
-alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;cd /home/elmeri/Sites/odoo12"
-alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;cd /home/elmeri/Sites/odoo11"
+alias activate8=". /home/elmeri/.venv/odoo8/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo8'"
+alias activate10=". /home/elmeri/.venv/odoo10/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo10'"
+alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo12'"
+alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo11'"
+
+odoo() {
+    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc
+}
+
+odoo8() {
+    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc
+}
 
 alias notes="cat ~/.notes"
 add_note() {
@@ -26,8 +34,7 @@ alias codebase=". /home/elmeri/Code/PERSONAL/python/thecodebase/thecodebase/venv
 
 alias cls="tput reset"
 
-alias odoo="python odoo-bin --conf .odoorc"
-alias odoo8="python odoo.py --conf .odoorc"
+
 
 
 export VISUAL=vim
