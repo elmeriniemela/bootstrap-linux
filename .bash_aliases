@@ -4,16 +4,17 @@ alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/hom
 alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo11'"
 
 odoo() {
-    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc
+    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc $*
 }
 
 odoo8() {
-    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc
+    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc $*
 }
 
-alias notes="cat ~/.notes"
+alias notes="curl https://www.thecodebase.site/notes"
 add_note() {
-    echo "$1" >> ~/.notes
+    data=$(printf 'note=%s' "$1")
+    curl -u "eyJ1aWQiOjF9.cR4a2IvdoxTn5c8wJ0x9ppmycNM":unused -X POST --data-urlencode "$data" https://www.thecodebase.site/add_note/
 }
 
 rm_submodule() {
