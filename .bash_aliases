@@ -125,7 +125,7 @@ https_origin() {
     echo "  '$NEW_URL'"
     echo ""
 
-    CHANGE_CMD="git remote set-url $REMOTE $NEW_URL"
+    CHANGE_CMD="git remote set-url origin $NEW_URL"
     echo "$CHANGE_CMD"
     `$CHANGE_CMD`
 
