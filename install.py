@@ -136,16 +136,18 @@ def apps():
         'sudo apt-get -y upgrade',
         'sudo apt-get install -y vim',
         'sudo apt-get install -y git',
-        'sudo apt-get install snapd'
+        'sudo apt-get install snapd',
         'sudo snap install slack --classic',
         'sudo snap install mailspring',
         'sudo apt-get install -y vim',
+        'sudo apt install -y virtualenv',
+        'sudo apt-get install -y arandr',
         'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
         'sudo dpkg -i google-chrome-stable_current_amd64.deb',
 
         # VSCode
         'sudo apt-get -y install software-properties-common apt-transport-https wget',
-        'wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -',
+        'wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -',
         'sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"',
         'sudo apt-get -y install code',
     ])
@@ -182,7 +184,7 @@ def odoo_dependencies():
     ])
 
 
-def odoo(branch='12.0', python='python3.7'):
+def odoo(branch='12.0', python='python3.6'):
     '''Installs odoo
     '''
     import git
