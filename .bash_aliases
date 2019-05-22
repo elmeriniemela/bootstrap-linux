@@ -14,7 +14,8 @@ odoo8() {
 alias notes="curl https://www.thecodebase.site/notes"
 add_note() {
     data=$(printf 'note=%s' "$1")
-    curl -u "eyJ1aWQiOjF9.cR4a2IvdoxTn5c8wJ0x9ppmycNM":unused -X POST --data-urlencode "$data" https://www.thecodebase.site/add_note/
+    TOKEN="eyJ1aWQiOjEsInRpbWUiOiIyMDE5LTA1LTAyIDE0OjQ5OjI0LjE2MDMxMCJ9.ehnllVNGn2App8Hz8WiuKkohqFs"
+    curl -u "$TOKEN":unused -X POST --data-urlencode "$data" https://www.thecodebase.site/add_note/
 }
 
 rm_submodule() {
@@ -41,7 +42,7 @@ alias cls="tput reset"
 export VISUAL=vim
 export EDITOR="$VISUAL"
 export FLASK_ENV=development 
-
+export ANSIBLE_DEBUG=0
 
 stty -ixon
 
@@ -130,5 +131,13 @@ https_origin() {
     `$CHANGE_CMD`
 
     echo "Success"
+
+}
+
+alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
+alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
+
+add_ssh() {
+    /usr/local/bin/python3.7 /home/elmeri/Code/PERSONAL/python/linux_install/install.py add_ssh $*
 }
 

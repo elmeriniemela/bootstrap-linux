@@ -275,6 +275,7 @@ def symlink_bash_aliases():
             src=os.path.join(current_dir, ".bash_aliases"), 
             dst=os.path.join(home_dir, ".bash_aliases")
         )
+        
     except Exception as error:
         print(error)
 
@@ -285,10 +286,14 @@ def symlink_bash_aliases():
         )
     except Exception as error:
         print(error)
+    run([
+        'source {}'.format(path('~/.bash_aliases'))
+    ])
 
 
 if __name__ == '__main__':
     import argparse
+    functions()
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
     parser.add_argument(
