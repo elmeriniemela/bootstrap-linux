@@ -13,3 +13,4 @@ chown -R odoo: /opt/odoo/addons
 DELETE FROM ir_ui_view WHERE arch_db LIKE '%is_company_account%' AND model='res.partner.bank';
 git submodule foreach git checkout 12.0; git submodule foreach git pull
 find -type l -delete
+odoo -d db_12 -u sprintit_expense_payment_orders --i18n-overwrite

@@ -12,6 +12,7 @@ odoo8() {
 }
 
 alias notes="curl https://www.thecodebase.site/notes"
+alias notes="cat ~/.notes"
 add_note() {
     data=$(printf 'note=%s' "$1")
     TOKEN="eyJ1aWQiOjEsInRpbWUiOiIyMDE5LTA1LTAyIDE0OjQ5OjI0LjE2MDMxMCJ9.ehnllVNGn2App8Hz8WiuKkohqFs"

@@ -183,6 +183,13 @@ def odoo_dependencies():
         'sudo apt-get install libldap2-dev -y',
     ])
 
+def pinta():
+    '''Installs pinta image editor
+    '''
+    run([
+        'sudo apt-get install pinta -y',
+    ])
+
 
 def odoo(branch='12.0', python='python3.6'):
     '''Installs odoo
@@ -201,11 +208,11 @@ def odoo(branch='12.0', python='python3.6'):
             'virtualenv -p {} {}'.format(python, odoo_folder),
         ])
 
-    if branch == '10.0':
+    if float(branch) < 12.0:
         run([
-            'sudo apt-get install nodejs',
-            'sudo apt-get install npm',
-            'sudo npm install -g less',
+            'sudo apt-get install nodejs -y',
+            'sudo apt-get install npm -y',
+            'sudo npm install -g less -y',
         ])
 
     folders = os.listdir(path('~/Sites'))
