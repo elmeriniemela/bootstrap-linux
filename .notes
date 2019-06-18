@@ -14,3 +14,7 @@ DELETE FROM ir_ui_view WHERE arch_db LIKE '%is_company_account%' AND model='res.
 git submodule foreach git checkout 12.0; git submodule foreach git pull
 find -type l -delete
 odoo -d db_12 -u sprintit_expense_payment_orders --i18n-overwrite
+ls | python -c "import sys;print(sys.stdin.read().split('\n')[:-1])"
+diff <(ls -1a /opt/odoo/ansible_test/) <(ls -1a /opt/odoo/addons/sprintit/)
+find . -name "*.pyc" -exec rm -f {} \;
+gcc -g -Wall -std=c99 -o test source.c

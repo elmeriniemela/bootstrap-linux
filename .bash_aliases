@@ -11,6 +11,8 @@ odoo8() {
     python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc $*
 }
 
+alias create_module="/home/elmeri/Code/addons12/odoo_manager/venv/bin/python /home/elmeri/Code/addons12/odoo_manager/odoo_manager/manager.py"
+
 alias notes="curl https://www.thecodebase.site/notes"
 alias notes="cat ~/.notes"
 add_note() {
@@ -19,6 +21,9 @@ add_note() {
     curl -u "$TOKEN":unused -X POST --data-urlencode "$data" https://www.thecodebase.site/add_note/
 }
 
+add_note() {
+    echo """$1""" >> ~/.notes
+}
 rm_submodule() {
     git submodule deinit -f -- "$1"
     rm -rf ".git/modules/a/$1"
@@ -51,94 +56,31 @@ if [ -d "/opt/FlameGraph" ] ; then
     PATH="$PATH:/opt/FlameGraph"
 fi
 
+current_dir() {
+    SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+        DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    done
+    DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+}
+
 
 ssh_origin() {
-    REPO_URL=`git remote -v | grep -m1 '^origin' | sed -Ene's#.*(https://[^[:space:]]*).*#\1#p'`
-    if [ -z "$REPO_URL" ]; then
-    echo "-- ERROR:  Could not identify Repo url."
-    echo "   It is possible this repo is already using SSH instead of HTTPS."
-    exit
-    fi
-    HOST=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\1#p'`
-    USER=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\2#p'`
-    REPO=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\3#p'`
-    if [ -z "$USER" ]; then
-    echo "-- ERROR:  Could not identify User."
-    exit
-    fi
-
-    if [ -z "$REPO" ]; then
-    echo "-- ERROR:  Could not identify Repo."
-    exit
-    fi
-
-    if [ -z "$HOST" ]; then
-    echo "-- ERROR:  Could not identify Host."
-    exit
-    fi
-
-    NEW_URL="git@$HOST:$USER/$REPO.git"
-    echo "Changing repo url from "
-    echo "  '$REPO_URL'"
-    echo "      to "
-    echo "  '$NEW_URL'"
-    echo ""
-
-    CHANGE_CMD="git remote set-url origin $NEW_URL"
-    `$CHANGE_CMD`
-
-    echo "Success"
+    current_dir
+    bash $DIR/ssh_origin.sh
 }
 
 https_origin() {
-    REPO_URL=`git remote -v | grep -m1 '^origin' | sed -Ene's#.*(git@[^[:space:]]*).*#\1#p'`
-    if [ -z "$REPO_URL" ]; then
-    echo "-- ERROR:  Could not identify Repo url."
-    echo "   It is possible this repo is already using SSH instead of HTTPS."
-    exit
-    fi
-    HOST=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\1#p'`
-    USER=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\2#p'`
-    REPO=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\3#p'`
-
-    echo $REPO_URL
-    echo $HOST
-    echo $USER
-    echo $REPO
-    if [ -z "$USER" ]; then
-    echo "-- ERROR:  Could not identify User."
-    exit
-    fi
-
-    if [ -z "$REPO" ]; then
-    echo "-- ERROR:  Could not identify Repo."
-    exit
-    fi
-
-    if [ -z "$HOST" ]; then
-    echo "-- ERROR:  Could not identify Host."
-    exit
-    fi
-
-    NEW_URL="https://$HOST/$USER/$REPO.git"
-    echo "Changing repo url from "
-    echo "  '$REPO_URL'"
-    echo "      to "
-    echo "  '$NEW_URL'"
-    echo ""
-
-    CHANGE_CMD="git remote set-url origin $NEW_URL"
-    echo "$CHANGE_CMD"
-    `$CHANGE_CMD`
-
-    echo "Success"
-
+    current_dir
+    bash $DIR/https_origin.sh
 }
 
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
 add_ssh() {
-    /usr/local/bin/python3.7 /home/elmeri/Code/PERSONAL/python/linux_install/install.py add_ssh $*
+    /usr/bin/python3.6 /home/elmeri/Code/PERSONAL/python/linux_install/install.py add_ssh $*
 }
 

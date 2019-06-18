@@ -46,7 +46,7 @@ def onedrive():
     repo = git.Git(path('/opt'))
     repo.clone('https://github.com/skilion/onedrive.git')
     run([
-        'cd ~/onedrive',
+        'cd /opt/onedrive',
         'make',
         'sudo make install',
         'systemctl --user enable onedrive',
@@ -153,7 +153,7 @@ def apps():
     ])
 
 
-def add_ssh(filename):
+def add_ssh(filename, host=None):
     '''Creates ssh private and public key pair,
     adds it to ~/.ssh/config,
     and copies the public key to clipboard
@@ -163,7 +163,10 @@ def add_ssh(filename):
         'ssh-keygen -t rsa -N "" -f ~/.ssh/{}'.format(filename),
     ])
     with open(os.path.join(os.path.expanduser('~'), '.ssh', 'config'), 'a') as f:
-        f.write('IdentityFile ~/.ssh/{}\n'.format(filename))
+        data = 'IdentityFile ~/.ssh/{}\n'.format(filename)
+        if host:
+            data = "Host {}\n    ".format(host) + data
+        f.write(data)
     with open(path('~/.ssh/{}.pub'.format(filename))) as f:
         pyperclip.copy(f.read())
 
@@ -211,8 +214,18 @@ def odoo(branch='12.0', python='python3.6'):
     if float(branch) < 12.0:
         run([
             'sudo apt-get install nodejs -y',
+            'sudo apt-get install libssl1.0-dev -y',
+            'sudo apt-get install nodejs-dev -y',
+            'sudo apt-get install node-gyp -y',
             'sudo apt-get install npm -y',
             'sudo npm install -g less -y',
+        ])
+
+    if float(branch) <= 10.0:
+        run([
+            'sudo apt-get install python-dev -y',
+            'sudo apt-get install libjpeg-dev -y',
+            'sudo apt-get install libjpeg8-dev -y',
         ])
 
     folders = os.listdir(path('~/Sites'))

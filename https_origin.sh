@@ -11,10 +11,6 @@ HOST=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\1#p'`
 USER=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\2#p'`
 REPO=`echo $REPO_URL | sed -Ene's#git@([^:]*):([^/]*)/(.*).git#\3#p'`
 
-echo $REPO_URL
-echo $HOST
-echo $USER
-echo $REPO
 if [ -z "$USER" ]; then
   echo "-- ERROR:  Could not identify User."
   exit
@@ -37,7 +33,7 @@ echo "      to "
 echo "  '$NEW_URL'"
 echo ""
 
-CHANGE_CMD="git remote set-url $REMOTE $NEW_URL"
+CHANGE_CMD="git remote set-url origin $NEW_URL"
 echo "$CHANGE_CMD"
 `$CHANGE_CMD`
 
