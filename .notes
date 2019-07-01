@@ -18,3 +18,7 @@ ls | python -c "import sys;print(sys.stdin.read().split('\n')[:-1])"
 diff <(ls -1a /opt/odoo/ansible_test/) <(ls -1a /opt/odoo/addons/sprintit/)
 find . -name "*.pyc" -exec rm -f {} \;
 gcc -g -Wall -std=c99 -o test source.c
+bash <(curl -s https://raw.githubusercontent.com/thecodebasesite/linux_install/master/https_origin.sh)
+sudo dd bs=4M if=ubuntu-18.04.2-live-server-amd64.iso of=/dev/sdb status=progress
+git -c user.email="niemela.elmeri@gmail.com" -c user.name="Elmeri Niemelä" commit -m "Inital Commit"
+set tabstop=4 shiftwidth=4 expandtab

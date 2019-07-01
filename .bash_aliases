@@ -38,7 +38,7 @@ hard_reset_submodules() {
     git submodule update --init --recursive
 }
 
-alias codebase=". /home/elmeri/Code/PERSONAL/python/thecodebase/thecodebase/venv/bin/activate;cd /home/elmeri/Code/PERSONAL/python/thecodebase;flask run"
+alias codebase=". /home/elmeri/.venv/flask/bin/activate;cd /home/elmeri/Code/PERSONAL/python/thecodebase;flask run"
 
 alias cls="tput reset"
 
@@ -75,6 +75,11 @@ ssh_origin() {
 https_origin() {
     current_dir
     bash $DIR/https_origin.sh
+}
+
+npm-upgrade() {
+    current_dir
+    bash $DIR/npm-upgrade.sh
 }
 
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
