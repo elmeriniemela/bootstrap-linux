@@ -172,7 +172,7 @@ def add_ssh(filename, host=None):
     '''
     import pyperclip
     run([
-        'ssh-keygen -t rsa -N "" -f ~/.ssh/{}'.format(filename),
+        'ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/{}'.format(filename),
     ])
     with open(os.path.join(os.path.expanduser('~'), '.ssh', 'config'), 'a') as f:
         data = 'IdentityFile ~/.ssh/{}\n'.format(filename)
@@ -324,8 +324,10 @@ def symlink_bash_aliases():
 
 
 if __name__ == '__main__':
+    import sys
     import argparse
-    functions()
+    if len(sys.argv) == 1:
+        functions()
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
     parser.add_argument(
