@@ -68,6 +68,16 @@ def toggl():
     ])
 
 
+def performance():
+    '''Ubuntu performance related fixes
+    '''
+    run([
+        'sudo apt-get install cpufrequtils -y',
+        '''echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils''',
+        'sudo apt-get install indicator-cpufreq -y',
+    ])
+
+
 def python(version='3.7.2'):
     '''Installs specified python version
     '''
@@ -103,6 +113,8 @@ def python(version='3.7.2'):
 
 
 def pyflame():
+    '''Install pyflame
+    '''
     import git
     run([
         'sudo apt-get install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
