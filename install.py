@@ -188,16 +188,16 @@ def odoo(branch='12.0', python='python3.6'):
     from distutils.dir_util import copy_tree
     import git
     version = branch[:-2]
-    odoo_folder = 'odoo{}'.format(version)
-    odoo_path = path('~/Code/work/odoo/{}/{}'.format(version, odoo_folder))
+    venv_name = 'odoo{}'.format(version)
+    odoo_path = path('~/Code/work/odoo/{}/odoo'.format(version))
     os.makedirs(path('~/.venv'), exist_ok=True)
     os.makedirs(odoo_path, exist_ok=True)
 
-    if not os.path.isdir(path('~/.venv/' + odoo_folder)):
+    if not os.path.isdir(path('~/.venv/' + venv_name)):
         run([
             'sudo apt install virtualenv -y',
             'cd ~/.venv',
-            'virtualenv -p {} {}'.format(python, odoo_folder),
+            'virtualenv -p {} {}'.format(python, venv_name),
         ])
 
     if float(branch) < 12.0:
@@ -234,7 +234,7 @@ def odoo(branch='12.0', python='python3.6'):
     run([
         'cp {}/.odoorc {}/'.format(current_dir, odoo_path),
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
-            odoo_folder, odoo_path),
+            venv_name, odoo_path),
     ])
 
 
