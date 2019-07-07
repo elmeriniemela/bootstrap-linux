@@ -39,8 +39,8 @@ def onedrive():
     '''
     import git
     run([
-        'sudo apt-get install -y libcurl4-openssl-dev',
-        'sudo apt-get install -y libsqlite3-dev',
+        'sudo apt install -y libcurl4-openssl-dev',
+        'sudo apt install -y libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
     ])
     repo = git.Git(path('/opt'))
@@ -54,27 +54,13 @@ def onedrive():
     ])
 
 
-def toggl():
-    '''Installs toggl
-    '''
-    import git
-    run([
-        'cd /tmp',
-        'wget http://fr.archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base0.10/libgstreamer-plugins-base0.10-0_0.10.36-1_amd64.deb',
-        'wget http://fr.archive.ubuntu.com/ubuntu/pool/universe/g/gstreamer0.10/libgstreamer0.10-0_0.10.36-1.5ubuntu1_amd64.deb',
-        'wget -O toggldesktop.deb "https://toggl.com/api/v8/installer?app=td&channel=stable&platform=deb64"'
-        'sudo dpkg -i libgstreamer*.deb',
-        'sudo dpkg -i toggldesktop.deb',
-    ])
-
-
 def performance():
     '''Ubuntu performance related fixes
     '''
     run([
-        'sudo apt-get install cpufrequtils -y',
+        'sudo apt install cpufrequtils -y',
         '''echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils''',
-        'sudo apt-get install indicator-cpufreq -y',
+        'sudo apt install indicator-cpufreq -y',
     ])
 
 
@@ -82,25 +68,25 @@ def python(version='3.7.2'):
     '''Installs specified python version
     '''
     run([
-        'sudo apt-get install -y build-essential',
-        'sudo apt-get install -y checkinstall',
-        'sudo apt-get install -y libreadline-gplv2-dev',
-        'sudo apt-get install -y libncursesw5-dev',
-        'sudo apt-get install -y libssl-dev',
-        'sudo apt-get install -y libsqlite3-dev',
-        'sudo apt-get install -y tk-dev',
-        'sudo apt-get install -y libgdbm-dev',
-        'sudo apt-get install -y libc6-dev',
-        'sudo apt-get install -y libbz2-dev',
-        'sudo apt-get install -y zlib1g-dev',
-        'sudo apt-get install -y openssl',
-        'sudo apt-get install -y libffi-dev',
-        'sudo apt-get install -y python3-dev',
-        'sudo apt-get install -y python3-setuptools',
+        'sudo apt install -y build-essential',
+        'sudo apt install -y checkinstall',
+        'sudo apt install -y libreadline-gplv2-dev',
+        'sudo apt install -y libncursesw5-dev',
+        'sudo apt install -y libssl-dev',
+        'sudo apt install -y libsqlite3-dev',
+        'sudo apt install -y tk-dev',
+        'sudo apt install -y libgdbm-dev',
+        'sudo apt install -y libc6-dev',
+        'sudo apt install -y libbz2-dev',
+        'sudo apt install -y zlib1g-dev',
+        'sudo apt install -y openssl',
+        'sudo apt install -y libffi-dev',
+        'sudo apt install -y python3-dev',
+        'sudo apt install -y python3-setuptools',
         # for python 2
-        'sudo apt-get install -y python-dev',
-        'sudo apt-get install -y python-setuptools',
-        'sudo apt-get install -y wget',
+        'sudo apt install -y python-dev',
+        'sudo apt install -y python-setuptools',
+        'sudo apt install -y wget',
         'mkdir /tmp/Python{}'.format(version),
         'cd /tmp/Python{}'.format(version),
         'wget https://www.python.org/ftp/python/{}/Python-{}.tar.xz'.format(
@@ -117,7 +103,7 @@ def pyflame():
     '''
     import git
     run([
-        'sudo apt-get install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
+        'sudo apt install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
     ])
     repo = git.Git('/opt')
     repo.clone('https://github.com/uber/pyflame.git')
@@ -130,11 +116,6 @@ def pyflame():
     ])
 
 
-def pip36():
-    '''Installs pip3.6 since ubuntu 18.06 python 3 doesn't have pip
-    '''
-    run(['curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6'])
-
 
 def apps():
     '''Installs all useful apps 
@@ -144,24 +125,18 @@ def apps():
         'cd /tmp',
         'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
         'sudo dpkg -i google-chrome-stable_current_amd64.deb',
-        'sudo apt-get -y update',
-        'sudo apt-get -y upgrade',
-        'sudo apt-get install -y vim',
-        'sudo apt-get install -y git',
-        'sudo apt-get install snapd',
-        'sudo snap install slack --classic',
-        'sudo snap install mailspring',
-        'sudo apt-get install -y vim',
+        
+        'sudo apt -y update',
+        'sudo apt -y upgrade',
+        'sudo apt install -y vim',
+        'sudo apt install pinta -y',
         'sudo apt install -y virtualenv',
-        'sudo apt-get install -y arandr',
-        'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
-        'sudo dpkg -i google-chrome-stable_current_amd64.deb',
-
-        # VSCode
-        'sudo apt-get -y install software-properties-common apt-transport-https wget',
-        'wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -',
-        'sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"',
-        'sudo apt-get -y install code',
+        'sudo apt install -y arandr',
+        
+        'sudo apt install snapd',
+        'sudo snap install slack --classic',
+        'sudo snap install code --classic',
+        'sudo snap install mailspring',
     ])
 
 
@@ -189,20 +164,20 @@ def odoo_dependencies():
     '''
     # Odoo dependencies
     run([
-        'sudo apt-get install postgresql -y',
+        'sudo apt install postgresql -y',
         'sudo su - postgres -c "createuser -s $USER"',
-        'sudo apt-get install libxml2-dev -y',
-        'sudo apt-get install libxslt-dev -y',
-        'sudo apt-get install libevent-dev -y',
-        'sudo apt-get install libsasl2-dev -y',
-        'sudo apt-get install libldap2-dev -y',
+        'sudo apt install libxml2-dev -y',
+        'sudo apt install libxslt-dev -y',
+        'sudo apt install libevent-dev -y',
+        'sudo apt install libsasl2-dev -y',
+        'sudo apt install libldap2-dev -y',
     ])
 
-def pinta():
-    '''Installs pinta image editor
+def autorandr():
+    '''Autorandr for automatic screen postioning
     '''
     run([
-        'sudo apt-get install pinta -y',
+        
     ])
 
 
@@ -210,12 +185,12 @@ def odoo(branch='12.0', python='python3.6'):
     '''Installs odoo
     '''
     import git
-    odoo_folder = 'odoo{}'.format(branch[:-2])
-    odoo_path = path('~/Sites/' + odoo_folder)
-    if not os.path.isdir(path('~/.venv')):
-        run(['mkdir ~/.venv'])
-    if not os.path.isdir(path('~/Sites')):
-        run(['mkdir ~/Sites'])
+    version = branch[:-2]
+    odoo_folder = 'odoo{}'.format(version)
+    odoo_path = path('~/Code/work/odoo/{}/{}'.format(version, odoo_folder))
+    os.makedirs(path('~/.venv'), exist_ok=True)
+    os.makedirs(odoo_path, exist_ok=True)
+
     if not os.path.isdir(path('~/.venv/' + odoo_folder)):
         run([
             'sudo apt install virtualenv -y',
@@ -225,31 +200,31 @@ def odoo(branch='12.0', python='python3.6'):
 
     if float(branch) < 12.0:
         run([
-            'sudo apt-get install nodejs -y',
-            'sudo apt-get install libssl1.0-dev -y',
-            'sudo apt-get install nodejs-dev -y',
-            'sudo apt-get install node-gyp -y',
-            'sudo apt-get install npm -y',
+            'sudo apt install nodejs -y',
+            'sudo apt install libssl1.0-dev -y',
+            'sudo apt install nodejs-dev -y',
+            'sudo apt install node-gyp -y',
+            'sudo apt install npm -y',
             'sudo npm install -g less -y',
         ])
 
     if float(branch) <= 10.0:
         run([
-            'sudo apt-get install python-dev -y',
-            'sudo apt-get install libjpeg-dev -y',
-            'sudo apt-get install libjpeg8-dev -y',
+            'sudo apt install python-dev -y',
+            'sudo apt install libjpeg-dev -y',
+            'sudo apt install libjpeg8-dev -y',
         ])
 
-    folders = os.listdir(path('~/Sites'))
-    for folder in folders:
-        if 'odoo' in folder:
-            run([
-                'cp -r {} {}'.format(path('~/Sites/'+folder), odoo_path)
-            ])
-            repo = git.Git(odoo_path)
-            repo.reset('--hard')
-            repo.checkout(branch)
-            break
+    # folders = os.listdir(path('~/Sites'))
+    # for folder in folders:
+    #     if 'odoo' in folder:
+    #         run([
+    #             'cp -r {} {}'.format(path('~/Sites/'+folder), odoo_path)
+    #         ])
+    #         repo = git.Git(odoo_path)
+    #         repo.reset('--hard')
+    #         repo.checkout(branch)
+    #         break
     else:
         repo = git.Git('.')
         repo.clone('https://github.com/odoo/odoo.git',
@@ -298,7 +273,7 @@ def functions():
             print("    {}".format(value.__doc__))
 
 
-def symlink_bash_aliases():
+def bash():
     '''Symling .bash_aliases from this directory
     to ~/.bash_aliases
     '''
