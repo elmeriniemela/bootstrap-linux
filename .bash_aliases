@@ -1,7 +1,7 @@
-alias activate8=". /home/elmeri/.venv/odoo8/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo8'"
-alias activate10=". /home/elmeri/.venv/odoo10/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo10'"
-alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo12'"
-alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/home/elmeri/Sites/odoo11'"
+alias activate8=". /home/elmeri/.venv/odoo8/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/8/odoo8'"
+alias activate10=". /home/elmeri/.venv/odoo10/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/10/odoo10'"
+alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/11/odoo11'"
+alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/12/odoo12'"
 
 odoo() {
     python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc $*

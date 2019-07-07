@@ -184,6 +184,8 @@ def autorandr():
 def odoo(branch='12.0', python='python3.6'):
     '''Installs odoo
     '''
+    import glob
+    from distutils.dir_util import copy_tree
     import git
     version = branch[:-2]
     odoo_folder = 'odoo{}'.format(version)
@@ -215,16 +217,16 @@ def odoo(branch='12.0', python='python3.6'):
             'sudo apt install libjpeg8-dev -y',
         ])
 
-    # folders = os.listdir(path('~/Sites'))
-    # for folder in folders:
-    #     if 'odoo' in folder:
-    #         run([
-    #             'cp -r {} {}'.format(path('~/Sites/'+folder), odoo_path)
-    #         ])
-    #         repo = git.Git(odoo_path)
-    #         repo.reset('--hard')
-    #         repo.checkout(branch)
-    #         break
+    folders = glob.glob(path('~/Code/work/odoo/*/*'))
+    for full_path in folders:
+        name = os.path.basename(full_path)
+        if 'odoo' in name and os.path.isdir(full_path):
+            print("Found existing odoo installation at", full_path)
+            copy_tree(full_path, odoo_path)
+            repo = git.Git(odoo_path)
+            repo.reset('--hard')
+            repo.checkout(branch)
+            break
     else:
         repo = git.Git('.')
         repo.clone('https://github.com/odoo/odoo.git',
