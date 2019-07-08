@@ -159,8 +159,8 @@ def add_ssh(filename, host=None):
         pyperclip.copy(f.read())
 
 
-def odoo_dependencies():
-    '''Installs odoo dependencies
+def psql():
+    '''Installs odoo dependencies, like postgres and some pkgs
     Should be ran only once per system
     '''
     # Odoo dependencies
@@ -226,7 +226,7 @@ def odoo(branch='12.0', python='python3.6'):
         repo.clone('https://github.com/odoo/odoo.git',
                    odoo_path, branch=branch)
     run([
-        'cp {}/.odoorc {}/'.format(current_dir, odoo_path),
+        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
             venv_name, odoo_path),
     ])

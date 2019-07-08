@@ -1,7 +1,0 @@
-[options]
-;addons_path = /home/elmeri/Sites/odoo12/odoo/addons,/home/elmeri/Sites/odoo12/addons,/home/elmeri/addons12
-;db_name = db_12
-;log_level = debug
-;limit_memory_hard = 10000000000
-;workers = 4
-;proxy_mode = True

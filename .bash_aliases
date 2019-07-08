@@ -4,11 +4,11 @@ alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/hom
 alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/12/odoo'"
 
 odoo() {
-    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc $*
+    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc.conf $*
 }
 
 odoo8() {
-    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc $*
+    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
 }
 
 alias create_module="/home/elmeri/Code/addons12/odoo_manager/venv/bin/python /home/elmeri/Code/addons12/odoo_manager/odoo_manager/manager.py"
