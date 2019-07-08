@@ -132,6 +132,7 @@ def apps():
         'sudo apt install pinta -y',
         'sudo apt install -y virtualenv',
         'sudo apt install -y arandr',
+        'sudo apt install -y autorandr',
         
         'sudo apt install snapd',
         'sudo snap install slack --classic',
@@ -171,13 +172,6 @@ def odoo_dependencies():
         'sudo apt install libevent-dev -y',
         'sudo apt install libsasl2-dev -y',
         'sudo apt install libldap2-dev -y',
-    ])
-
-def autorandr():
-    '''Autorandr for automatic screen postioning
-    '''
-    run([
-        
     ])
 
 
