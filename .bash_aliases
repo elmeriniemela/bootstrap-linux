@@ -1,7 +1,7 @@
-alias activate8=". /home/elmeri/.venv/odoo8/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/8/odoo'"
-alias activate10=". /home/elmeri/.venv/odoo10/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/10/odoo'"
-alias activate11=". /home/elmeri/.venv/odoo11/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/11/odoo'"
-alias activate12=". /home/elmeri/.venv/odoo12/bin/activate;export ODOO_DIR='/home/elmeri/Code/work/odoo/12/odoo'"
+alias activate8=". ~/.venv/odoo8/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/8/odoo'"
+alias activate10=". ~/.venv/odoo10/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/10/odoo'"
+alias activate11=". ~/.venv/odoo11/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/11/odoo'"
+alias activate12=". ~/.venv/odoo12/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/12/odoo'"
 
 odoo() {
     python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc.conf $*
@@ -11,7 +11,7 @@ odoo8() {
     python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
 }
 
-alias create_module="/home/elmeri/Code/addons12/odoo_manager/venv/bin/python /home/elmeri/Code/addons12/odoo_manager/odoo_manager/manager.py"
+alias create_module="~/Code/addons12/odoo_manager/venv/bin/python ~/Code/addons12/odoo_manager/odoo_manager/manager.py"
 
 alias notes="curl https://www.thecodebase.site/notes"
 alias notes="cat ~/.notes"
@@ -38,7 +38,7 @@ hard_reset_submodules() {
     git submodule update --init --recursive
 }
 
-alias codebase=". /home/elmeri/.venv/flask/bin/activate;cd /home/elmeri/Code/PERSONAL/python/thecodebase;flask run"
+alias codebase=". ~/.venv/flask/bin/activate;cd ~/Code/personal/python/thecodebase;flask run"
 
 alias cls="tput reset"
 
@@ -86,6 +86,6 @@ alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
 add_ssh() {
-    /usr/bin/python3.6 /home/elmeri/Code/PERSONAL/python/linux_install/install.py add_ssh $*
+    /usr/bin/python3.6 ~/Code/personal/python/linux_install/install.py add_ssh $*
 }
 

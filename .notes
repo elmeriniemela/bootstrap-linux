@@ -24,3 +24,4 @@ git -c user.email="niemela.elmeri@gmail.com" -c user.name="Elmeri Niemelä" comm
 set tabstop=4 shiftwidth=4 expandtab
 df <--lists all devises
 :w !sudo tee %   <-- saving file as root
+valgrind --leak-check=full --track-origins=yes ./test
