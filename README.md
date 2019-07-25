@@ -2,4 +2,4 @@
 
 I Reinstall my system regularly, so having apps and bash scripts in version control is very useful.
 
-![alt text](linux_install.png)
+![alt text](https://raw.githubusercontent.com/thecodebasesite/linux_install/master/linux_install.png)
