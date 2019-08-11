@@ -1,7 +1,11 @@
-alias activate8=". ~/.venv/odoo8/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/8/odoo'"
-alias activate10=". ~/.venv/odoo10/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/10/odoo'"
-alias activate11=". ~/.venv/odoo11/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/11/odoo'"
-alias activate12=". ~/.venv/odoo12/bin/activate;export ODOO_DIR=$HOME'/Code/work/odoo/12/odoo'"
+alias activate8="activate odoo8; ODOO_DIR=$HOME'/Code/work/odoo/8/odoo'"
+alias activate10="activate odoo10;export ODOO_DIR=$HOME'/Code/work/odoo/10/odoo'"
+alias activate11="activate odoo11;export ODOO_DIR=$HOME'/Code/work/odoo/11/odoo'"
+alias activate12="activate odoo12;export ODOO_DIR=$HOME'/Code/work/odoo/12/odoo'"
+
+activate() {
+    . ~/.venv/$1/bin/activate
+}
 
 odoo() {
     python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc.conf $*
@@ -11,7 +15,17 @@ odoo8() {
     python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
 }
 
-alias create_module="~/Code/addons12/odoo_manager/venv/bin/python ~/Code/addons12/odoo_manager/odoo_manager/manager.py"
+
+clean_migrations () {
+    find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
+    find . -path "*/migrations/*.pyc"  -delete
+    dropdb thecodebase
+    createdb thecodebase
+    python manage.py makemigrations && python manage.py migrate
+}
+
+
+alias create_module="/home/elmeri/.venv/odoo_manager/bin/python3.6 /home/elmeri/Code/work/odoo/odoo_manager/odoo_manager/manager.py"
 
 alias notes="curl https://www.thecodebase.site/notes"
 alias notes="cat ~/.notes"
@@ -24,6 +38,7 @@ add_note() {
 add_note() {
     echo """$1""" >> ~/.notes
 }
+
 rm_submodule() {
     git submodule deinit -f -- "$1"
     rm -rf ".git/modules/a/$1"
@@ -38,7 +53,6 @@ hard_reset_submodules() {
     git submodule update --init --recursive
 }
 
-alias codebase=". ~/.venv/flask/bin/activate;cd ~/Code/personal/python/thecodebase;flask run"
 
 alias cls="tput reset"
 

@@ -25,3 +25,4 @@ set tabstop=4 shiftwidth=4 expandtab
 df <--lists all devises
 :w !sudo tee %   <-- saving file as root
 valgrind --leak-check=full --track-origins=yes ./test
+watch -n 1 free -h

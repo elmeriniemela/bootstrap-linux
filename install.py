@@ -61,6 +61,7 @@ def performance():
         'sudo apt install cpufrequtils -y',
         '''echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils''',
         'sudo apt install indicator-cpufreq -y',
+        'sudo apt install htop',
     ])
 
 
@@ -133,6 +134,8 @@ def apps():
         'sudo apt install -y virtualenv',
         'sudo apt install -y arandr',
         'sudo apt install -y autorandr',
+
+        # 'sudo apt install -y libreoffice',
         
         'sudo apt install snapd',
         'sudo snap install slack --classic',
