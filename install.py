@@ -117,7 +117,6 @@ def pyflame():
     ])
 
 
-
 def apps():
     '''Installs all useful apps 
     i.e git, vim, slack, chromium, vscode etc..
@@ -126,7 +125,7 @@ def apps():
         'cd /tmp',
         'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
         'sudo dpkg -i google-chrome-stable_current_amd64.deb',
-        
+
         'sudo apt -y update',
         'sudo apt -y upgrade',
         'sudo apt install -y vim',
@@ -136,7 +135,7 @@ def apps():
         'sudo apt install -y autorandr',
 
         # 'sudo apt install -y libreoffice',
-        
+
         'sudo apt install snapd',
         'sudo snap install slack --classic',
         'sudo snap install code --classic',
@@ -217,8 +216,9 @@ def odoo(branch='12.0', python='python3.6'):
     folders = glob.glob(path('~/Code/work/odoo/*/*'))
     for full_path in folders:
         name = os.path.basename(full_path)
-        if 'odoo' in name and os.path.isdir(full_path):
+        if name == 'odoo':
             print("Found existing odoo installation at", full_path)
+            print("Copying the installation is faster than cloning")
             copy_tree(full_path, odoo_path)
             repo = git.Git(odoo_path)
             repo.reset('--hard')
@@ -278,22 +278,23 @@ def bash():
     '''
     try:
         os.symlink(
-            src=os.path.join(current_dir, ".bash_aliases"), 
+            src=os.path.join(current_dir, ".bash_aliases"),
             dst=os.path.join(home_dir, ".bash_aliases")
         )
-        
+
     except Exception as error:
         print(error)
 
     try:
         os.symlink(
-            src=os.path.join(current_dir, ".notes"), 
+            src=os.path.join(current_dir, ".notes"),
             dst=os.path.join(home_dir, ".notes")
         )
     except Exception as error:
         print(error)
     run([
-        'source {}'.format(path('~/.bash_aliases'))
+        # TODO: Fix this
+        # 'bash {}'.format(path('~/.bash_aliases'))
     ])
 
 
