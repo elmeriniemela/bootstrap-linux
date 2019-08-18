@@ -134,7 +134,7 @@ def apps():
         'sudo apt install -y arandr',
         'sudo apt install -y autorandr',
 
-        # 'sudo apt install -y libreoffice',
+        'sudo apt install -y libreoffice',
 
         'sudo apt install snapd',
         'sudo snap install slack --classic',
