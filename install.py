@@ -1,10 +1,14 @@
+#!/usr/bin/python3
+
 import subprocess
 import os
+import sys
+
 current_dir = os.path.dirname(os.path.realpath(__file__))
 home_dir = os.path.expanduser('~')
 
 
-def path(path):
+def _path(path):
     if path.startswith('~/'):
         formatted = os.path.join(os.path.expanduser('~'), path[2:])
     else:
@@ -12,11 +16,11 @@ def path(path):
     return formatted
 
 
-def run(commands, **kwargs):
+def _run(commands, **kwargs):
     for command in commands:
         if command.startswith('cd'):
             folder = command[3:]
-            os.chdir(path(folder))
+            os.chdir(_path(folder))
         else:
             default_kwargs = {
                 'shell': True,
@@ -31,21 +35,21 @@ def run(commands, **kwargs):
 def tmc_cli():
     '''Installs TMC CLI
     '''
-    run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
+    _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
 
 
 def onedrive():
     '''Installs OneDrive cli
     '''
     import git
-    run([
+    _run([
         'sudo apt install -y libcurl4-openssl-dev',
         'sudo apt install -y libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
     ])
-    repo = git.Git(path('/opt'))
+    repo = git.Git(_path('/opt'))
     repo.clone('https://github.com/skilion/onedrive.git')
-    run([
+    _run([
         'cd /opt/onedrive',
         'make',
         'sudo make install',
@@ -57,7 +61,7 @@ def onedrive():
 def performance():
     '''Ubuntu performance related fixes
     '''
-    run([
+    _run([
         'sudo apt install cpufrequtils -y',
         '''echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils''',
         'sudo apt install indicator-cpufreq -y',
@@ -68,7 +72,7 @@ def performance():
 def python(version='3.7.2'):
     '''Installs specified python version
     '''
-    run([
+    _run([
         'sudo apt install -y build-essential',
         'sudo apt install -y checkinstall',
         'sudo apt install -y libreadline-gplv2-dev',
@@ -103,13 +107,14 @@ def pyflame():
     '''Install pyflame
     '''
     import git
-    run([
+    _run([
         'sudo apt install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
     ])
-    repo = git.Git('/opt')
+    INSTALL_PATH = _path('~/.local/lib')
+    repo = git.Git(INSTALL_PATH)
     repo.clone('https://github.com/uber/pyflame.git')
-    run([
-        'cd /opt',
+    _run([
+        'cd ' + INSTALL_PATH + '/pyflame',
         'sudo ./autogen.sh',
         'sudo ./configure',
         'sudo make',
@@ -121,7 +126,7 @@ def apps():
     '''Installs all useful apps 
     i.e git, vim, slack, chromium, vscode etc..
     '''
-    run([
+    _run([
         'cd /tmp',
         'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
         'sudo dpkg -i google-chrome-stable_current_amd64.deb',
@@ -143,21 +148,16 @@ def apps():
     ])
 
 
-def add_ssh(filename, host=None):
+def add_ssh(filename):
     '''Creates ssh private and public key pair,
     adds it to ~/.ssh/config,
     and copies the public key to clipboard
     '''
     import pyperclip
-    run([
+    _run([
         'ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/{}'.format(filename),
     ])
-    with open(os.path.join(os.path.expanduser('~'), '.ssh', 'config'), 'a') as f:
-        data = 'IdentityFile ~/.ssh/{}\n'.format(filename)
-        if host:
-            data = "Host {}\n    ".format(host) + data
-        f.write(data)
-    with open(path('~/.ssh/{}.pub'.format(filename))) as f:
+    with open(_path('~/.ssh/{}.pub'.format(filename))) as f:
         pyperclip.copy(f.read())
 
 
@@ -166,7 +166,7 @@ def psql():
     Should be ran only once per system
     '''
     # Odoo dependencies
-    run([
+    _run([
         'sudo apt install postgresql -y',
         'sudo su - postgres -c "createuser -s $USER"',
         'sudo apt install libxml2-dev -y',
@@ -176,28 +176,32 @@ def psql():
         'sudo apt install libldap2-dev -y',
     ])
 
+def _get_odoo_path(version='12'):
+    return _path('~/Code/work/odoo/{}/odoo'.format(version))
 
-def odoo(branch='12.0', python='python3.6'):
-    '''Installs odoo
+def odoo_venv(version='12', python='python3.6'):
+    '''Creates odoo venv
     '''
-    import glob
-    from distutils.dir_util import copy_tree
-    import git
-    version = branch[:-2]
+    os.makedirs(_path('~/.venv'), exist_ok=True)
     venv_name = 'odoo{}'.format(version)
-    odoo_path = path('~/Code/work/odoo/{}/odoo'.format(version))
-    os.makedirs(path('~/.venv'), exist_ok=True)
-    os.makedirs(odoo_path, exist_ok=True)
+    odoo_path = _get_odoo_path(version)
 
-    if not os.path.isdir(path('~/.venv/' + venv_name)):
-        run([
+    if not os.path.isdir(_path('~/.venv/' + venv_name)):
+        _run([
             'sudo apt install virtualenv -y',
             'cd ~/.venv',
             'virtualenv -p {} {}'.format(python, venv_name),
         ])
+    _run([
+        '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
+            venv_name, odoo_path),
+    ])
 
+def odoo_deps(branch='12.0'):
+    '''Installs odoo deps
+    '''
     if float(branch) < 12.0:
-        run([
+        _run([
             'sudo apt install nodejs -y',
             'sudo apt install libssl1.0-dev -y',
             'sudo apt install nodejs-dev -y',
@@ -207,13 +211,25 @@ def odoo(branch='12.0', python='python3.6'):
         ])
 
     if float(branch) <= 10.0:
-        run([
+        _run([
             'sudo apt install python-dev -y',
             'sudo apt install libjpeg-dev -y',
             'sudo apt install libjpeg8-dev -y',
         ])
 
-    folders = glob.glob(path('~/Code/work/odoo/*/*'))
+def odoo(branch='12.0', python='python3.6'):
+    '''Installs odoo
+    '''
+    import glob
+    from distutils.dir_util import copy_tree
+    import git
+    version = branch[:-2]
+    odoo_path = _get_odoo_path(version)
+    os.makedirs(odoo_path, exist_ok=True)
+
+    odoo_deps(branch)    
+
+    folders = glob.glob(_path('~/Code/work/odoo/*/*'))
     for full_path in folders:
         name = os.path.basename(full_path)
         if name == 'odoo':
@@ -228,48 +244,32 @@ def odoo(branch='12.0', python='python3.6'):
         repo = git.Git('.')
         repo.clone('https://github.com/odoo/odoo.git',
                    odoo_path, branch=branch)
-    run([
-        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
-        '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
-            venv_name, odoo_path),
+    _run([
+        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path), 
     ])
+    odoo_venv(version, python)
 
 
-def functions_map(local_items):
-    excluded = [
-        'functions_map',
-        'path',
-        'run',
-    ]
-    FUNCTION_MAP = {}
-    for key, value in local_items:
-        if key not in excluded and callable(value) and value.__module__ == __name__:
-            FUNCTION_MAP.update({key: value})
 
-    return FUNCTION_MAP
+def _filter_locals(locals_dict):
+    return {k: v for k, v in locals_dict.items() if \
+        callable(v) \
+        and v.__module__ == __name__ \
+        and not k.startswith('_')
+    }
 
 
-LOCALS = locals()
-
-
-def functions():
+def _print_functions(locals_dict):
     '''Lists the available functions
     '''
     import inspect
-    excluded = [
-        'functions_map',
-        'path',
-        'run',
-        'functions'
-    ]
-    for key, value in LOCALS.items():
-        if key not in excluded and callable(value) and value.__module__ == __name__:
-            sign = inspect.signature(value)
-            params = []
-            for string_name, parameter in sign.parameters.items():
-                params.append(str(parameter))
-            print("def {}({}):".format(value.__name__, ', '.join(params)))
-            print("    {}".format(value.__doc__))
+    for key, value in locals_dict.items():
+        sign = inspect.signature(value)
+        params = []
+        for string_name, parameter in sign.parameters.items():
+            params.append(str(parameter))
+        print("def {}({}):".format(value.__name__, ', '.join(params)))
+        print("    {}".format(value.__doc__))
 
 
 def bash():
@@ -292,27 +292,31 @@ def bash():
         )
     except Exception as error:
         print(error)
-    run([
+    _run([
         # TODO: Fix this
-        # 'bash {}'.format(path('~/.bash_aliases'))
+        # 'bash {}'.format(_path('~/.bash_aliases'))
     ])
 
 
 if __name__ == '__main__':
-    import sys
+    if sys.version_info[0] < 3:
+        print("Only supported in python 3")
+        exit()
     import argparse
-    if len(sys.argv) == 1:
-        functions()
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
     parser.add_argument(
-        'function', help="Install function to run (use 'functions' to list function signatures)")
+        'function', help="Install function to run (use 0 params to list function signatures)")
 
     parser.add_argument('args', metavar='arg', type=str, nargs='*',
                         help='argument for the function')
 
     args = parser.parse_args()
 
-    FUNCTION_MAP = functions_map(locals().items())
-    func = FUNCTION_MAP[args.function]
-    func(*args.args)
+    local_functions = _filter_locals(locals())
+
+    if len(sys.argv) == 1:
+        _print_functions(local_functions)
+    else:
+        func = local_functions[args.function]
+        func(*args.args)

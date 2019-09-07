@@ -17,11 +17,12 @@ odoo8() {
 
 
 clean_migrations () {
-    find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
+    # find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
     find . -path "*/migrations/*.pyc"  -delete
     dropdb thecodebase
     createdb thecodebase
-    python manage.py makemigrations && python manage.py migrate
+    python manage.py makemigrations
+    python manage.py migrate
 }
 
 
