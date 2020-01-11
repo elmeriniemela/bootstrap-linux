@@ -155,7 +155,7 @@ def add_ssh(filename):
     '''
     import pyperclip
     _run([
-        'ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/{}'.format(filename),
+        'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{}'.format(filename),
     ])
     with open(_path('~/.ssh/{}.pub'.format(filename))) as f:
         pyperclip.copy(f.read())
@@ -227,7 +227,7 @@ def odoo(branch='12.0', python='python3.6'):
     odoo_path = _get_odoo_path(version)
     os.makedirs(odoo_path, exist_ok=True)
 
-    odoo_deps(branch)    
+    odoo_deps(branch)
 
     folders = glob.glob(_path('~/Code/work/odoo/*/*'))
     for full_path in folders:
@@ -245,7 +245,7 @@ def odoo(branch='12.0', python='python3.6'):
         repo.clone('https://github.com/odoo/odoo.git',
                    odoo_path, branch=branch)
     _run([
-        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path), 
+        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
     ])
     odoo_venv(version, python)
 
@@ -292,17 +292,20 @@ def bash():
         )
     except Exception as error:
         print(error)
-    _run([
-        # TODO: Fix this
-        # 'bash {}'.format(_path('~/.bash_aliases'))
-    ])
 
 
 if __name__ == '__main__':
     if sys.version_info[0] < 3:
         print("Only supported in python 3")
         exit()
+
     import argparse
+
+    local_functions = _filter_locals(locals())
+    
+    if len(sys.argv) == 1:
+        _print_functions(local_functions)
+        
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
     parser.add_argument(
@@ -313,10 +316,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    local_functions = _filter_locals(locals())
 
-    if len(sys.argv) == 1:
-        _print_functions(local_functions)
-    else:
-        func = local_functions[args.function]
-        func(*args.args)
+    func = local_functions[args.function]
+    func(*args.args)

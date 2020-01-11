@@ -1,18 +1,63 @@
-alias activate8="activate odoo8; ODOO_DIR=$HOME'/Code/work/odoo/8/odoo'"
-alias activate10="activate odoo10;export ODOO_DIR=$HOME'/Code/work/odoo/10/odoo'"
-alias activate11="activate odoo11;export ODOO_DIR=$HOME'/Code/work/odoo/11/odoo'"
-alias activate12="activate odoo12;export ODOO_DIR=$HOME'/Code/work/odoo/12/odoo'"
 
 activate() {
+    if [[ $1 == odoo* ]];
+    then
+        # ${1:4} removes 'odoo' from odoo12 leaving just the number
+        export ODOO_DIR=$HOME"/Code/work/odoo/${1:4}/odoo"
+    fi
     . ~/.venv/$1/bin/activate
 }
 
+_venv_completer () {
+    # https://askubuntu.com/questions/707610/bash-completion-for-custom-command-to-complete-static-directory-tree
+    local cur
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    k=0
+    i="~/.venv" # the directory from where to start
+    for j in $( compgen -f "$i/$cur" ); do # loop trough the possible completions
+        [ -d "$j" ] && j="${j}/" || j="${j} " # if its a dir add a shlash, else a space
+        COMPREPLY[k++]=${j#$i/} # remove the directory prefix from the array
+    done
+    return 0
+}
+
+complete -o nospace -F _venv_completer activate
+
+
+ssh_clipboard(){
+    cat ~/.ssh/$1 | xclip -selection clipboard
+}
+
+
+_ssh_clipboard_completer () {
+    # https://askubuntu.com/questions/707610/bash-completion-for-custom-command-to-complete-static-directory-tree
+    local cur
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    k=0
+    i="~/.ssh" # the directory from where to start
+    for j in $( compgen -f "$i/$cur" ); do # loop trough the possible completions
+        [ -d "$j" ] && j="${j}/" || j="${j} " # if its a dir add a shlash, else a space
+        COMPREPLY[k++]=${j#$i/} # remove the directory prefix from the array
+    done
+    return 0
+}
+
+complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
+
+
 odoo() {
-    python $ODOO_DIR/odoo-bin --conf $ODOO_DIR/.odoorc.conf $*
+    python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf 
 }
 
 odoo8() {
     python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
+}
+
+venv() {
+    virtualenv ~/.venv/$1 ${@:2}
+
 }
 
 
@@ -100,7 +145,7 @@ npm-upgrade() {
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
-add_ssh() {
-    /usr/bin/python3.6 ~/Code/personal/python/linux_install/install.py add_ssh $*
+linux_install() {
+    /usr/bin/python3.6 ~/Code/personal/python/linux_install/install.py $*
 }
 

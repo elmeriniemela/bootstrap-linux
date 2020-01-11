@@ -27,3 +27,11 @@ df <--lists all devises
 valgrind --leak-check=full --track-origins=yes ./test
 watch -n 1 free -h
 git diff --name-only | grep migrations | xargs git checkout
+find /etc/nginx/sites-enabled/ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/thecodebase\.site-/wildcard\.thecodebase\.site-/g'
+find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i '/@api.multi/d'
+git submodule foreach 'npm install || :'
+git reset --soft HEAD^
+createdb tarfi
+pg_restore -d tarfi tarfi_2019-09-05_13-05-50.dump
+< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32;echo;
+rsync -avz --progress --stats /media/elmeri/T5-SSD/bachelor/ /home/elmeri/Code/personal/python/bachelor
