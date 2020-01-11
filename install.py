@@ -47,7 +47,7 @@ def onedrive():
         'sudo apt install -y libcurl4-openssl-dev',
         'sudo apt install -y libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
-        f'cd {_path('/opt')}'
+        f'cd {_path("/opt")}'
         f'git clone https://github.com/skilion/onedrive.git'
         'cd /opt/onedrive',
         'make',
@@ -62,50 +62,11 @@ def performance():
     '''
     _run([
         'sudo apt install cpufrequtils -y',
-        '''echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils''',
+        '''grep -qxF 'GOVERNOR="performance"' /etc/default/cpufrequtils || echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils  ''',
         'sudo apt install indicator-cpufreq -y',
         'sudo apt install htop',
     ])
 
-
-def python(version='3.7.2'):
-    '''Installs specified python version
-    '''
-    _run([
-        'sudo apt install -y build-essential',
-        'sudo apt install -y checkinstall',
-        'sudo apt install -y libreadline-gplv2-dev',
-        'sudo apt install -y libncursesw5-dev',
-        'sudo apt install -y libssl-dev',
-        'sudo apt install -y libsqlite3-dev',
-        'sudo apt install -y tk-dev',
-        'sudo apt install -y libgdbm-dev',
-        'sudo apt install -y libc6-dev',
-        'sudo apt install -y libbz2-dev',
-        'sudo apt install -y zlib1g-dev',
-        'sudo apt install -y openssl',
-        'sudo apt install -y libffi-dev',
-        'sudo apt install -y python3-dev',
-        'sudo apt install -y python3-setuptools',
-        # for python 2
-        'sudo apt install -y python-dev',
-        'sudo apt install -y python-setuptools',
-        'sudo apt install -y wget',
-        'mkdir /tmp/Python{}'.format(version),
-        'cd /tmp/Python{}'.format(version),
-        'wget https://www.python.org/ftp/python/{}/Python-{}.tar.xz'.format(
-            version, version),
-        'tar xvf Python-{}.tar.xz'.format(version),
-        'cd /tmp/Python{}/Python-{}'.format(version, version),
-        './configure',
-        'sudo make altinstall',
-    ])
-
-
-def git_status():
-    '''git status
-    '''
-    _run(['git status'])
 
 def pyflame():
     '''Install pyflame
@@ -122,23 +83,6 @@ def pyflame():
     ])
 
 
-def chrome():
-    '''Installs chrome
-    '''
-    _run([
-        'cd /tmp',
-        'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
-        'sudo dpkg -i google-chrome-stable_current_amd64.deb',
-    ])
-
-def python_base():
-    '''Installs pip3 and virtualenv
-    '''
-    _run([
-        'sudo apt install -y python3-pip',
-        'pip3 install virtualenv',
-    ])
-
 def apps():
     '''Installs all useful apps 
     i.e git, vim, slack, thunderbird, vscode etc..
@@ -152,6 +96,8 @@ def apps():
         'sudo apt install -y autorandr',
         'sudo apt install -y thunderbird'
         'sudo apt install -y libreoffice',
+        'sudo apt install -y python3-pip',
+        'pip3 install virtualenv',
 
         'sudo apt install snapd',
         'sudo snap install slack --classic',
@@ -172,30 +118,15 @@ def add_ssh(filename):
         pyperclip.copy(f.read())
 
 
-def psql():
-    '''Installs odoo dependencies, like postgres and some pkgs
-    Should be ran only once per system
-    '''
-    # Odoo dependencies
-    _run([
-        'sudo apt install postgresql -y',
-        'sudo su - postgres -c "createuser -s $USER"',
-        'sudo apt install libxml2-dev -y',
-        'sudo apt install libxslt-dev -y',
-        'sudo apt install libevent-dev -y',
-        'sudo apt install libsasl2-dev -y',
-        'sudo apt install libldap2-dev -y',
-    ])
+def _get_odoo_path(branch='13.0', repo='odoo'):
+    return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
 
-def _get_odoo_path(version='13'):
-    return _path('~/Code/work/odoo/{}/odoo'.format(version))
-
-def odoo_venv(version='13', python='python3.6'):
+def _odoo_venv(branch='13.0', python='python3.6'):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
-    venv_name = 'odoo{}'.format(version)
-    odoo_path = _get_odoo_path(version)
+    venv_name = 'odoo{}'.format(branch[:-2])
+    odoo_path = _get_odoo_path(branch)
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
         _run([
@@ -207,7 +138,7 @@ def odoo_venv(version='13', python='python3.6'):
             venv_name, odoo_path),
     ])
 
-def odoo_deps(branch='12.0'):
+def _odoo_deps(branch='12.0'):
     '''Installs odoo deps
     '''
     if float(branch) < 12.0:
@@ -226,43 +157,65 @@ def odoo_deps(branch='12.0'):
             'sudo apt install libjpeg-dev -y',
             'sudo apt install libjpeg8-dev -y',
         ])
+    _run([
+        'sudo apt install libxml2-dev -y',
+        'sudo apt install libxslt-dev -y',
+        'sudo apt install libevent-dev -y',
+        'sudo apt install libsasl2-dev -y',
+        'sudo apt install libldap2-dev -y',
+
+        'sudo apt install postgresql -y',
+    ])
+    try:
+        _run([
+            'sudo su - postgres -c "createuser -s $USER"',
+        ])
+    except:
+        pass
+
 
 def odoo(branch='13.0', python='python3.6'):
-    '''Installs odoo
+    '''Installs odoo, enterprise and all the dependencies
     '''
+    
+    _odoo_deps(branch)
+    odoo_path = _get_odoo_path(branch, repo='odoo')
+    
+    _get_odoo_source(repo='odoo', branch=branch)
+    _get_odoo_source(repo='enterprise', branch=branch)
+
+    _run([
+        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
+    ])
+    _odoo_venv(branch, python)
+
+
+def _get_odoo_source(repo='odoo', branch='13.0'):
     import glob
     from distutils.dir_util import copy_tree
-    version = branch[:-2]
-    odoo_path = _get_odoo_path(version)
+    odoo_path = _get_odoo_path(branch, repo=repo)
     odoo_base_path = os.path.dirname(odoo_path)
     os.makedirs(odoo_base_path, exist_ok=True)
-
-    odoo_deps(branch)
-
     folders = [path for path in glob.glob(_path('~/Code/work/odoo/*/*')) if os.path.isdir(path)]
-    print("Checking folders for existing odoo installations:\n", '\n'.join(folders))
+    print("Checking folders for existing odoo installations:\n", ' \n'.join(folders))
     for full_path in folders:
         name = os.path.basename(full_path)
-        if name == 'odoo':
-            print("Found existing odoo installation at", full_path)
-            print("Copying the installation is faster than cloning")
+        if name == repo:
+            print(f"Found existing '{repo}' installation at {full_path}")
+            print("Copying the installation is faster than cloning..")
             copy_tree(full_path, odoo_path)
             _run([
                 f'cd {odoo_path}',
                 f'/usr/bin/git reset --hard',
                 f'/usr/bin/git checkout {branch}',
+                f'/usr/bin/git pull',
             ])
             break
     else:
         _run([
             f'cd {odoo_base_path}',
-            f'/usr/bin/git clone https://github.com/odoo/odoo.git {odoo_path} -b {branch}',
+            f'/usr/bin/git clone https://github.com/odoo/{repo}.git {odoo_path} -b {branch}',
         ])
-
-    _run([
-        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
-    ])
-    odoo_venv(version, python)
 
 
 
