@@ -18,13 +18,15 @@ def _path(path):
 
 def _run(commands, **kwargs):
     for command in commands:
+        print("Running command: ", command)
         if command.startswith('cd'):
             folder = command[3:]
             os.chdir(_path(folder))
         else:
             default_kwargs = {
                 'shell': True,
-                'stderr': subprocess.PIPE,
+                'stdout': sys.stdout,
+                'stderr': sys.stderr,
                 'check': True,
                 'encoding': 'utf-8'
             }
@@ -41,15 +43,12 @@ def tmc_cli():
 def onedrive():
     '''Installs OneDrive cli
     '''
-    import git
     _run([
         'sudo apt install -y libcurl4-openssl-dev',
         'sudo apt install -y libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
-    ])
-    repo = git.Git(_path('/opt'))
-    repo.clone('https://github.com/skilion/onedrive.git')
-    _run([
+        f'cd {_path('/opt')}'
+        f'git clone https://github.com/skilion/onedrive.git'
         'cd /opt/onedrive',
         'make',
         'sudo make install',
@@ -103,18 +102,19 @@ def python(version='3.7.2'):
     ])
 
 
+def git_status():
+    '''git status
+    '''
+    _run(['git status'])
+
 def pyflame():
     '''Install pyflame
     '''
-    import git
+    INSTALL_PATH = _path('~/.local/lib')
     _run([
         'sudo apt install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
-    ])
-    INSTALL_PATH = _path('~/.local/lib')
-    repo = git.Git(INSTALL_PATH)
-    repo.clone('https://github.com/uber/pyflame.git')
-    _run([
-        'cd ' + INSTALL_PATH + '/pyflame',
+        f'git clone https://github.com/uber/pyflame.git {INSTALL_PATH}',
+        f'cd {INSTALL_PATH}/pyflame',
         'sudo ./autogen.sh',
         'sudo ./configure',
         'sudo make',
@@ -122,30 +122,41 @@ def pyflame():
     ])
 
 
-def apps():
-    '''Installs all useful apps 
-    i.e git, vim, slack, chromium, vscode etc..
+def chrome():
+    '''Installs chrome
     '''
     _run([
         'cd /tmp',
         'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
         'sudo dpkg -i google-chrome-stable_current_amd64.deb',
+    ])
 
+def python_base():
+    '''Installs pip3 and virtualenv
+    '''
+    _run([
+        'sudo apt install -y python3-pip',
+        'pip3 install virtualenv',
+    ])
+
+def apps():
+    '''Installs all useful apps 
+    i.e git, vim, slack, thunderbird, vscode etc..
+    '''
+    _run([
         'sudo apt -y update',
         'sudo apt -y upgrade',
         'sudo apt install -y vim',
         'sudo apt install pinta -y',
-        'sudo apt install -y virtualenv',
         'sudo apt install -y arandr',
         'sudo apt install -y autorandr',
-
+        'sudo apt install -y thunderbird'
         'sudo apt install -y libreoffice',
 
         'sudo apt install snapd',
         'sudo snap install slack --classic',
         'sudo snap install code --classic',
-        'sudo snap install mailspring',
-    ])
+        ])
 
 
 def add_ssh(filename):
@@ -176,10 +187,10 @@ def psql():
         'sudo apt install libldap2-dev -y',
     ])
 
-def _get_odoo_path(version='12'):
+def _get_odoo_path(version='13'):
     return _path('~/Code/work/odoo/{}/odoo'.format(version))
 
-def odoo_venv(version='12', python='python3.6'):
+def odoo_venv(version='13', python='python3.6'):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -188,9 +199,8 @@ def odoo_venv(version='12', python='python3.6'):
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
         _run([
-            'sudo apt install virtualenv -y',
             'cd ~/.venv',
-            'virtualenv -p {} {}'.format(python, venv_name),
+            'python3 -m virtualenv -p {} {}'.format(python, venv_name),
         ])
     _run([
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
@@ -217,33 +227,38 @@ def odoo_deps(branch='12.0'):
             'sudo apt install libjpeg8-dev -y',
         ])
 
-def odoo(branch='12.0', python='python3.6'):
+def odoo(branch='13.0', python='python3.6'):
     '''Installs odoo
     '''
     import glob
     from distutils.dir_util import copy_tree
-    import git
     version = branch[:-2]
     odoo_path = _get_odoo_path(version)
-    os.makedirs(odoo_path, exist_ok=True)
+    odoo_base_path = os.path.dirname(odoo_path)
+    os.makedirs(odoo_base_path, exist_ok=True)
 
     odoo_deps(branch)
 
-    folders = glob.glob(_path('~/Code/work/odoo/*/*'))
+    folders = [path for path in glob.glob(_path('~/Code/work/odoo/*/*')) if os.path.isdir(path)]
+    print("Checking folders for existing odoo installations:\n", '\n'.join(folders))
     for full_path in folders:
         name = os.path.basename(full_path)
         if name == 'odoo':
             print("Found existing odoo installation at", full_path)
             print("Copying the installation is faster than cloning")
             copy_tree(full_path, odoo_path)
-            repo = git.Git(odoo_path)
-            repo.reset('--hard')
-            repo.checkout(branch)
+            _run([
+                f'cd {odoo_path}',
+                f'/usr/bin/git reset --hard',
+                f'/usr/bin/git checkout {branch}',
+            ])
             break
     else:
-        repo = git.Git('.')
-        repo.clone('https://github.com/odoo/odoo.git',
-                   odoo_path, branch=branch)
+        _run([
+            f'cd {odoo_base_path}',
+            f'/usr/bin/git clone https://github.com/odoo/odoo.git {odoo_path} -b {branch}',
+        ])
+
     _run([
         'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
     ])
@@ -273,8 +288,8 @@ def _print_functions(locals_dict):
 
 
 def bash():
-    '''Symling .bash_aliases from this directory
-    to ~/.bash_aliases
+    '''Symling .bash_aliases and .notes from this directory
+    to ~/
     '''
     try:
         os.symlink(

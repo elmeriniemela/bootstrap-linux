@@ -56,8 +56,7 @@ odoo8() {
 }
 
 venv() {
-    virtualenv ~/.venv/$1 ${@:2}
-
+    python3 -m virtualenv ~/.venv/$1 ${@:2}
 }
 
 
