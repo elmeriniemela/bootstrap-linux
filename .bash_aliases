@@ -48,11 +48,13 @@ complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
 
 
 odoo() {
-    python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf 
-}
-
-odoo8() {
-    python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
+    version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
+    if (( version < 10  ));
+    then 
+        python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
+    else
+        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf 
+    fi;
 }
 
 venv() {

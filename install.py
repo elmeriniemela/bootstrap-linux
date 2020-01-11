@@ -8,6 +8,17 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 home_dir = os.path.expanduser('~')
 
 
+
+class lazyfunction:
+    def __init__(self, func, *args, **kwargs):
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self):
+        return self.func(*self.args, **self.kwargs)
+
+
 def _path(path):
     if path.startswith('~/'):
         formatted = os.path.join(os.path.expanduser('~'), path[2:])
@@ -16,7 +27,7 @@ def _path(path):
     return formatted
 
 
-def _run(commands, **kwargs):
+def _run(commands, dependencies=None, **kwargs):
     for command in commands:
         print("Running command: ", command)
         if command.startswith('cd'):
@@ -31,7 +42,19 @@ def _run(commands, **kwargs):
                 'encoding': 'utf-8'
             }
             default_kwargs.update(kwargs)
-            output = subprocess.run(command, **default_kwargs)
+            try:
+                subprocess.run(command, **default_kwargs)
+            except subprocess.CalledProcessError as error:
+                if dependencies:
+                    if callable(dependencies):
+                        dependencies()
+                    elif isinstance(dependencies, list):
+                        _run(dependencies, **kwargs)
+                    else:
+                        raise TypeError(f'Expected a list or a function for dependencies, got {type(dependencies)!r}')
+                    _run([command], **kwargs)
+                else:
+                    raise
 
 
 def tmc_cli():
@@ -99,7 +122,7 @@ def apps():
         'sudo apt install -y python3-pip',
         'pip3 install virtualenv',
 
-        'sudo apt install snapd',
+        'sudo apt install -y snapd',
         'sudo snap install slack --classic',
         'sudo snap install code --classic',
         ])
@@ -110,12 +133,14 @@ def add_ssh(filename):
     adds it to ~/.ssh/config,
     and copies the public key to clipboard
     '''
-    import pyperclip
-    _run([
-        'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{}'.format(filename),
-    ])
-    with open(_path('~/.ssh/{}.pub'.format(filename))) as f:
-        pyperclip.copy(f.read())
+    _run(
+        [
+            f'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
+            f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
+        ],
+        dependencies=['sudo apt install -y xclip']
+    )
+    
 
 
 def _get_odoo_path(branch='13.0', repo='odoo'):
@@ -136,7 +161,7 @@ def _odoo_venv(branch='13.0', python='python3.6'):
     _run([
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
             venv_name, odoo_path),
-    ])
+    ], dependencies=lazyfunction(_odoo_deps, branch=branch))
 
 def _odoo_deps(branch='12.0'):
     '''Installs odoo deps
@@ -177,16 +202,23 @@ def _odoo_deps(branch='12.0'):
 def odoo(branch='13.0', python='python3.6'):
     '''Installs odoo, enterprise and all the dependencies
     '''
-    
-    _odoo_deps(branch)
+    if float(branch) <= 10.0:
+        assert python == 'python2.7'
+
     odoo_path = _get_odoo_path(branch, repo='odoo')
     
     _get_odoo_source(repo='odoo', branch=branch)
-    _get_odoo_source(repo='enterprise', branch=branch)
+    if float(branch) >= 9.0:
+        _get_odoo_source(repo='enterprise', branch=branch)
 
-    _run([
-        'cp {}/.odoorc.conf {}/'.format(current_dir, odoo_path),
-    ])
+
+    with open(f'{current_dir}/.odoorc.conf') as f_read:
+        data = f_read.read()
+
+    with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
+        f_write.write(
+            data.format(odoo_version=branch[:-2])
+        )
     _odoo_venv(branch, python)
 
 
@@ -196,6 +228,22 @@ def _get_odoo_source(repo='odoo', branch='13.0'):
     odoo_path = _get_odoo_path(branch, repo=repo)
     odoo_base_path = os.path.dirname(odoo_path)
     os.makedirs(odoo_base_path, exist_ok=True)
+
+    cleaning_args = [
+        f'cd {odoo_path}',
+        f'/usr/bin/git reset --hard',
+        f'/usr/bin/git clean -xfdf',
+        f'/usr/bin/git checkout {branch}',
+        f'/usr/bin/git pull',
+    ]
+    if os.path.isdir(odoo_path):
+        try:
+            _run(cleaning_args)
+            print(f"Latest pull done.. exiting now")
+            return
+        except:
+            pass
+
     folders = [path for path in glob.glob(_path('~/Code/work/odoo/*/*')) if os.path.isdir(path)]
     print("Checking folders for existing odoo installations:\n", ' \n'.join(folders))
     for full_path in folders:
@@ -204,12 +252,7 @@ def _get_odoo_source(repo='odoo', branch='13.0'):
             print(f"Found existing '{repo}' installation at {full_path}")
             print("Copying the installation is faster than cloning..")
             copy_tree(full_path, odoo_path)
-            _run([
-                f'cd {odoo_path}',
-                f'/usr/bin/git reset --hard',
-                f'/usr/bin/git checkout {branch}',
-                f'/usr/bin/git pull',
-            ])
+            _run(cleaning_args)
             break
     else:
         _run([
@@ -242,7 +285,7 @@ def _print_functions(locals_dict):
 
 def bash():
     '''Symling .bash_aliases and .notes from this directory
-    to ~/
+    to '~/' and change wallpapers 
     '''
     try:
         os.symlink(
@@ -260,6 +303,11 @@ def bash():
         )
     except Exception as error:
         print(error)
+
+    _run([
+        f'gsettings set org.gnome.desktop.background picture-uri file://{current_dir}/home.jpg',
+        f'gsettings set org.gnome.desktop.screensaver picture-uri file://{current_dir}/lock.jpg'
+    ])
 
 
 if __name__ == '__main__':
