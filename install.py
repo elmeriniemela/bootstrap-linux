@@ -119,6 +119,7 @@ def apps():
         'sudo apt install -y autorandr',
         'sudo apt install -y thunderbird'
         'sudo apt install -y libreoffice',
+        'sudo apt install -y flameshot',
         'sudo apt install -y python3-pip',
         'pip3 install virtualenv',
 
