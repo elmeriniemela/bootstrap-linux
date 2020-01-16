@@ -51,7 +51,7 @@ odoo() {
     version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
     if (( version < 10  ));
     then 
-        python $ODOO_DIR/odoo.py --conf $ODOO_DIR/.odoorc.conf $*
+        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
     else
         python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf 
     fi;
@@ -83,7 +83,7 @@ add_note() {
 }
 
 add_note() {
-    echo """$1""" >> ~/.notes
+    echo """$*""" >> ~/.notes
 }
 
 rm_submodule() {
