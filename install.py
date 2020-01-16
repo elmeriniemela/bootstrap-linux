@@ -6,8 +6,9 @@ import sys
 from contextlib import contextmanager
 
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-home_dir = os.path.expanduser('~')
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+FILES_DIR = os.path.join(CURRENT_DIR, 'files')
+HOME_DIR = os.path.expanduser('~')
 
 @contextmanager
 def _quittable():
@@ -221,7 +222,7 @@ def odoo(branch='13.0', python='python3.6'):
         _get_odoo_source(repo='enterprise', branch=branch)
 
 
-    with open(f'{current_dir}/.odoorc.conf') as f_read:
+    with open(f'{FILES_DIR}/.odoorc.conf') as f_read:
         data = f_read.read()
 
     with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
@@ -298,15 +299,13 @@ def bash():
     to '~/' and change wallpapers 
     '''
     def symlink_home(fname):
-        dest = os.path.join(home_dir, fname)
+        dest = os.path.join(HOME_DIR, fname)
         if os.path.islink(dest):
             os.remove(dest)
-        print(f'Symlink: ~/{fname} -> {dest}')
+        src = os.path.join(FILES_DIR, fname)
+        print(f'Symlink: ~/{fname} -> {src}')
         try:
-            os.symlink(
-                src=os.path.join(current_dir, fname),
-                dst=dest
-            )
+            os.symlink(src=src, dst=dest)
         except Exception as error:
             print(error)
 
@@ -314,8 +313,8 @@ def bash():
     symlink_home('.bash_aliases')
 
     _run([
-        f'gsettings set org.gnome.desktop.background picture-uri file://{current_dir}/home.jpg',
-        f'gsettings set org.gnome.desktop.screensaver picture-uri file://{current_dir}/lock.jpg'
+        f'gsettings set org.gnome.desktop.background picture-uri file://{FILES_DIR}/home.jpg',
+        f'gsettings set org.gnome.desktop.screensaver picture-uri file://{FILES_DIR}/lock.jpg'
     ])
 
 
