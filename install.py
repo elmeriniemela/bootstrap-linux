@@ -297,22 +297,21 @@ def bash():
     '''Symling .bash_aliases and .notes from this directory
     to '~/' and change wallpapers 
     '''
-    try:
-        os.symlink(
-            src=os.path.join(current_dir, ".bash_aliases"),
-            dst=os.path.join(home_dir, ".bash_aliases")
-        )
+    def symlink_home(fname):
+        dest = os.path.join(home_dir, fname)
+        if os.path.islink(dest):
+            os.remove(dest)
+        print(f'Symlink: ~/{fname} -> {dest}')
+        try:
+            os.symlink(
+                src=os.path.join(current_dir, fname),
+                dst=dest
+            )
+        except Exception as error:
+            print(error)
 
-    except Exception as error:
-        print(error)
-
-    try:
-        os.symlink(
-            src=os.path.join(current_dir, ".notes"),
-            dst=os.path.join(home_dir, ".notes")
-        )
-    except Exception as error:
-        print(error)
+    symlink_home('.notes')
+    symlink_home('.bash_aliases')
 
     _run([
         f'gsettings set org.gnome.desktop.background picture-uri file://{current_dir}/home.jpg',
