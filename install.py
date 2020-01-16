@@ -16,7 +16,7 @@ def _quittable():
         yield
     except (EOFError, KeyboardInterrupt):
         print("Bye")
-        quit()
+
 
 class _lazyfunction:
     def __init__(self, func, *args, **kwargs):
