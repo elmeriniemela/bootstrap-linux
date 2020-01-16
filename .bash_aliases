@@ -118,13 +118,16 @@ if [ -d "/opt/FlameGraph" ] ; then
 fi
 
 current_dir() {
-    SOURCE="${BASH_SOURCE[0]}"
-    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    if [ -z "$DIR" ]
+    then
+        SOURCE="${BASH_SOURCE[0]}"
+        while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+            DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+            SOURCE="$(readlink "$SOURCE")"
+            [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+        done
         DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-        SOURCE="$(readlink "$SOURCE")"
-        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-    done
-    DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+    fi
 }
 
 
@@ -146,7 +149,14 @@ npm-upgrade() {
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
-linux_install() {
-    /usr/bin/python3.6 ~/Code/personal/python/linux_install/install.py $*
+ubuntu-install-scripts() {
+    current_dir
+    python3 $DIR/install.py $*
 }
 
+_ubuntu_install_scripts_completions()
+{
+    COMPREPLY=($(ubuntu-install-scripts _bash_complete $COMP_CWORD ${COMP_WORDS[COMP_CWORD]} | tr -d '[],'))
+}
+
+complete -F _ubuntu_install_scripts_completions ubuntu-install-scripts

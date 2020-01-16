@@ -3,13 +3,21 @@
 import subprocess
 import os
 import sys
+from contextlib import contextmanager
+
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 home_dir = os.path.expanduser('~')
 
+@contextmanager
+def _quittable():
+    try:
+        yield
+    except (EOFError, KeyboardInterrupt):
+        print("Bye")
+        quit()
 
-
-class lazyfunction:
+class _lazyfunction:
     def __init__(self, func, *args, **kwargs):
         self.func = func
         self.args = args
@@ -162,7 +170,7 @@ def _odoo_venv(branch='13.0', python='python3.6'):
     _run([
         '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
             venv_name, odoo_path),
-    ], dependencies=lazyfunction(_odoo_deps, branch=branch))
+    ], dependencies=_lazyfunction(_odoo_deps, branch=branch))
 
 def _odoo_deps(branch='12.0'):
     '''Installs odoo deps
@@ -267,7 +275,8 @@ def _filter_locals(locals_dict):
     return {k: v for k, v in locals_dict.items() if \
         callable(v) \
         and v.__module__ == __name__ \
-        and not k.startswith('_')
+        and not k.startswith('_') \
+        and k != 'main'
     }
 
 
@@ -311,14 +320,22 @@ def bash():
     ])
 
 
-if __name__ == '__main__':
+def _bash_complete(completion_iterable, str_index='1', arg=''):
+    if str_index == '1':
+        available = [c for c in completion_iterable if c.startswith(arg)]
+        print(f"[{', '.join(available)}]")
+    else:
+        print([])
+
+
+def main(local_functions):
     if sys.version_info[0] < 3:
         print("Only supported in python 3")
-        exit()
+        return -1
 
     import argparse
 
-    local_functions = _filter_locals(locals())
+    local_functions = _filter_locals(local_functions)
     
     if len(sys.argv) == 1:
         _print_functions(local_functions)
@@ -334,5 +351,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
+    if args.function == '_bash_complete':
+        _bash_complete(local_functions, *args.args)
+        return 0
+
     func = local_functions[args.function]
-    func(*args.args)
+    with _quittable():
+        func(*args.args)
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(locals()))
