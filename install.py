@@ -348,14 +348,11 @@ def bash():
         except Exception as error:
             print(error)
 
-    backup_path = _path('~/.bashrc-backup')
-    if os.path.isfile(backup_path):
-        _run([
-            f"mv ~/.bashrc {backup_path}",
-        ])
-
     symlink_home('.notes')
     symlink_home('.bash_aliases')
+    original = os.path.join(HOME_DIR, '.bashrc')
+    if os.path.exists(original):
+        os.remove(original)
     symlink_home('.bashrc')
 
 
