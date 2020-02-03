@@ -76,9 +76,9 @@ def lightdm():
     '''Installs and configures lightdm
     '''
     _run([
-        'sudo apt install -y lightdm',
+        'sudo pacman -S --noconfirm lightdm',
         'sudo dpkg-reconfigure lightdm',
-        'sudo apt install -y slick-greeter',
+        'sudo pacman -S --noconfirm slick-greeter',
         'lightdm --show-config',
     ])
 
@@ -88,8 +88,8 @@ def onedrive():
     '''Installs OneDrive cli
     '''
     _run([
-        'sudo apt install -y libcurl4-openssl-dev',
-        'sudo apt install -y libsqlite3-dev',
+        'sudo pacman -S --noconfirm libcurl4-openssl-dev',
+        'sudo pacman -S --noconfirm libsqlite3-dev',
         'sudo snap install --classic dmd && sudo snap install --classic dub',
         f'cd {_path("/opt")}'
         f'git clone https://github.com/skilion/onedrive.git'
@@ -102,22 +102,22 @@ def onedrive():
 
 
 def performance():
-    '''Ubuntu performance related fixes
+    '''Linux performance related fixes
     '''
     _run([
-        'sudo apt install cpufrequtils -y',
-        '''grep -qxF 'GOVERNOR="performance"' /etc/default/cpufrequtils || echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils  ''',
-        'sudo apt install indicator-cpufreq -y',
-        'sudo apt install htop',
+        # 'sudo pacman -S cpufrequtils',
+        # '''grep -qxF 'GOVERNOR="performance"' /etc/default/cpufrequtils || echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils  ''',
+        # 'sudo pacman -S indicator-cpufreq',
+        'sudo pacman -S --noconfirm htop',
     ])
 
 def battery():
-    '''Ubuntu battery usage related fixes
+    '''Linux tlp install
     '''
     _run([
-        'sudo apt install laptop-mode-tools -y',
-        'sudo apt install powerstat -y',
-        'sudo apt install pm-utils -y'
+        'sudo pamac install tlp',
+        'sudo systemctl enable --now tlp'
+        'sudo systemctl enable --now tlp-sleep.service'
     ])
 
 
@@ -127,7 +127,7 @@ def pyflame():
     '''
     INSTALL_PATH = _path('~/.local/lib')
     _run([
-        'sudo apt install autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
+        'sudo pacman -S autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
         f'git clone https://github.com/uber/pyflame.git {INSTALL_PATH}',
         f'cd {INSTALL_PATH}/pyflame',
         'sudo ./autogen.sh',
@@ -142,22 +142,29 @@ def apps():
     i.e git, vim, slack, thunderbird, vscode etc..
     '''
     _run([
-        'sudo apt -y update',
-        'sudo apt -y upgrade',
-        'sudo apt install -y vim',
-        'sudo apt install pinta -y',
-        'sudo apt install -y arandr',
-        'sudo apt install -y autorandr',
-        'sudo apt install -y thunderbird'
-        'sudo apt install -y libreoffice',
-        'sudo apt install -y flameshot',
-        'sudo apt install -y python3-pip',
-        'pip3 install virtualenv',
+        'sudo pacman -Syyu --noconfirm'
+        'sudo pacman -S yay --noconfirm',
+        'yay VSCode',
+        'yay -S slack-desktop'
+        'sudo pacman -S vim --noconfirm',
+        # 'sudo pacman -S --noconfirm thunderbird',
+        # 'sudo pacman -S --noconfirm libreoffice',
+    ])
 
-        'sudo apt install -y snapd',
-        'sudo snap install slack --classic',
-        'sudo snap install code --classic',
-        ])
+
+def flameshot():
+    '''Build flameshot from source
+    '''
+    INSTALL_DIR = '/opt/flameshot'
+    _run([
+        f'sudo mkdir {INSTALL_DIR}'
+        f'git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
+        f'sudo mkdir {INSTALL_DIR}/build',
+        f'cd {INSTALL_DIR}/build',
+        'qmake ../'
+        'make',
+        'make install',
+    ])
 
 
 def add_ssh(filename):
@@ -170,7 +177,7 @@ def add_ssh(filename):
             f'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
-        dependencies=['sudo apt install -y xclip']
+        dependencies=['sudo pacman -S --noconfirm xclip']
     )
 
 def password(length=32):
@@ -180,7 +187,7 @@ def password(length=32):
         [
             f'< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
         ],
-        dependencies=['sudo apt install -y xclip']
+        dependencies=['sudo pacman -S --noconfirm xclip']
     )
 
 
@@ -210,28 +217,28 @@ def _odoo_deps(branch='12.0'):
     '''
     if float(branch) < 12.0:
         _run([
-            'sudo apt install nodejs -y',
-            'sudo apt install libssl1.0-dev -y',
-            'sudo apt install nodejs-dev -y',
-            'sudo apt install node-gyp -y',
-            'sudo apt install npm -y',
-            'sudo npm install -g less -y',
+            'sudo pacman -S nodejs',
+            'sudo pacman -S libssl1.0-dev',
+            'sudo pacman -S nodejs-dev',
+            'sudo pacman -S node-gyp',
+            'sudo pacman -S npm',
+            'sudo npm install -g less',
         ])
 
     if float(branch) <= 10.0:
         _run([
-            'sudo apt install python-dev -y',
-            'sudo apt install libjpeg-dev -y',
-            'sudo apt install libjpeg8-dev -y',
+            'sudo pacman -S python-dev',
+            'sudo pacman -S libjpeg-dev',
+            'sudo pacman -S libjpeg8-dev',
         ])
     _run([
-        'sudo apt install libxml2-dev -y',
-        'sudo apt install libxslt-dev -y',
-        'sudo apt install libevent-dev -y',
-        'sudo apt install libsasl2-dev -y',
-        'sudo apt install libldap2-dev -y',
+        'sudo pacman -S libxml2-dev',
+        'sudo pacman -S libxslt-dev',
+        'sudo pacman -S libevent-dev',
+        'sudo pacman -S libsasl2-dev',
+        'sudo pacman -S libldap2-dev',
 
-        'sudo apt install postgresql -y',
+        'sudo pacman -S postgresql',
     ])
     try:
         _run([
@@ -328,7 +335,7 @@ def _print_functions(locals_dict):
 
 def bash():
     '''Symling .bash_aliases and .notes from this directory
-    to '~/' and change wallpapers
+    to '~/'
     '''
     def symlink_home(fname):
         dest = os.path.join(HOME_DIR, fname)
@@ -341,13 +348,13 @@ def bash():
         except Exception as error:
             print(error)
 
+    _run([
+        "mv ~/.bashrc ~/.bashrc-backup",
+    ])
     symlink_home('.notes')
     symlink_home('.bash_aliases')
+    symlink_home('.bashrc')
 
-    _run([
-        f'gsettings set org.gnome.desktop.background picture-uri file://{FILES_DIR}/home.jpg',
-        f'gsettings set org.gnome.desktop.screensaver picture-uri file://{FILES_DIR}/lock.jpg'
-    ])
 
 
 def _bash_complete(completion_iterable, str_index='1', arg=''):
@@ -370,7 +377,7 @@ def main(local_functions):
     if len(sys.argv) == 1:
         _print_functions(local_functions)
 
-    parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
+    parser = argparse.ArgumentParser(description='Setup your Linux system')
 
     parser.add_argument(
         'function', help="Install function to run (use 0 params to list function signatures)")

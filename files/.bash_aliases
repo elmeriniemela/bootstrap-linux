@@ -1,4 +1,6 @@
 
+# \w in PS1 means show full path in bash!!
+
 
 # Eternal bash history.
 # ---------------------
@@ -66,15 +68,15 @@ complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
 odoo() {
     version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
     if (( version < 10  ));
-    then 
+    then
         python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
     else
-        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf 
+        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
     fi;
 }
 
 venv() {
-    python3 -m virtualenv ~/.venv/$1 ${@:2}
+    python3 -m venv ~/.venv/$1 ${@:2}
 }
 
 
@@ -87,8 +89,6 @@ clean_migrations () {
     python manage.py migrate
 }
 
-
-alias create_module="/home/elmeri/.venv/odoo_manager/bin/python3.6 /home/elmeri/Code/work/odoo/odoo_manager/odoo_manager/manager.py"
 
 alias notes="curl https://www.thecodebase.site/notes"
 alias notes="cat ~/.notes"
@@ -117,14 +117,14 @@ hard_reset_submodules() {
 }
 
 
-alias cls="tput reset"
+alias cls="tput reset && clear"
 
 
 
 
 export VISUAL=vim
 export EDITOR="$VISUAL"
-export FLASK_ENV=development 
+export FLASK_ENV=development
 export ANSIBLE_DEBUG=0
 
 stty -ixon
@@ -166,14 +166,14 @@ npm-upgrade() {
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
-ubuntu-install-scripts() {
+bootstrap-linux() {
     current_dir
     python3 $DIR/install.py $*
 }
 
-_ubuntu_install_scripts_completions()
+_bootstrap_linux_completions()
 {
-    COMPREPLY=($(ubuntu-install-scripts _bash_complete $COMP_CWORD ${COMP_WORDS[COMP_CWORD]} | tr -d '[],'))
+    COMPREPLY=($(bootstrap-linux _bash_complete $COMP_CWORD ${COMP_WORDS[COMP_CWORD]} | tr -d '[],'))
 }
 
-complete -F _ubuntu_install_scripts_completions ubuntu-install-scripts
+complete -F _bootstrap_linux_completions bootstrap-linux
