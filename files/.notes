@@ -8,7 +8,7 @@ javac -encoding ISO-8859-1 -cp 'src/main/java/:src/main/resources' src/main/java
 python odoo-bin -d db_12 -u sprintit_download_bank_statements --test-enable --stop-after-init
 git reset --hard origin/<branch>
 git checkout HEAD -- my-file.txt
-find . -iname __manifest__.py -exec rename 's/__manifest__.py/__openerp__.py/' '{}' \; 
+find . -iname __manifest__.py -exec rename 's/__manifest__.py/__openerp__.py/' '{}' \;
 chown -R odoo: /opt/odoo/addons
 DELETE FROM ir_ui_view WHERE arch_db LIKE '%is_company_account%' AND model='res.partner.bank';
 git submodule foreach git checkout 12.0; git submodule foreach git pull
@@ -36,3 +36,6 @@ pg_restore -d tarfi tarfi_2019-09-05_13-05-50.dump
 < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32;echo;
 rsync -avz --progress --stats /media/elmeri/T5-SSD/bachelor/ /home/elmeri/Code/personal/python/bachelor
 ls -l | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/) *2^(8-i));if(k)printf("%0o ",k);print}'
+git push --force-with-lease
+echo "odoo.addons.safe_test_databases.helpers.try_cleaning_tables('kiinteisto')" | odoo shell
+curl --data '{}' -X POST http://127.0.0.1:8069/web/ansible/end --header "Content-Type:application/json"

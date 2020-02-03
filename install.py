@@ -72,6 +72,18 @@ def tmc_cli():
     _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
 
 
+def lightdm():
+    '''Installs and configures lightdm
+    '''
+    _run([
+        'sudo apt install -y lightdm',
+        'sudo dpkg-reconfigure lightdm',
+        'sudo apt install -y slick-greeter',
+        'lightdm --show-config',
+    ])
+
+
+
 def onedrive():
     '''Installs OneDrive cli
     '''
@@ -99,6 +111,16 @@ def performance():
         'sudo apt install htop',
     ])
 
+def battery():
+    '''Ubuntu battery usage related fixes
+    '''
+    _run([
+        'sudo apt install laptop-mode-tools -y',
+        'sudo apt install powerstat -y',
+        'sudo apt install pm-utils -y'
+    ])
+
+
 
 def pyflame():
     '''Install pyflame
@@ -116,7 +138,7 @@ def pyflame():
 
 
 def apps():
-    '''Installs all useful apps 
+    '''Installs all useful apps
     i.e git, vim, slack, thunderbird, vscode etc..
     '''
     _run([
@@ -150,7 +172,17 @@ def add_ssh(filename):
         ],
         dependencies=['sudo apt install -y xclip']
     )
-    
+
+def password(length=32):
+    '''Generate secure password and copy to clipboard
+    '''
+    _run(
+        [
+            f'< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
+        ],
+        dependencies=['sudo apt install -y xclip']
+    )
+
 
 
 def _get_odoo_path(branch='13.0', repo='odoo'):
@@ -216,7 +248,7 @@ def odoo(branch='13.0', python='python3.6'):
         assert python == 'python2.7'
 
     odoo_path = _get_odoo_path(branch, repo='odoo')
-    
+
     _get_odoo_source(repo='odoo', branch=branch)
     if float(branch) >= 9.0:
         _get_odoo_source(repo='enterprise', branch=branch)
@@ -296,7 +328,7 @@ def _print_functions(locals_dict):
 
 def bash():
     '''Symling .bash_aliases and .notes from this directory
-    to '~/' and change wallpapers 
+    to '~/' and change wallpapers
     '''
     def symlink_home(fname):
         dest = os.path.join(HOME_DIR, fname)
@@ -334,10 +366,10 @@ def main(local_functions):
     import argparse
 
     local_functions = _filter_locals(local_functions)
-    
+
     if len(sys.argv) == 1:
         _print_functions(local_functions)
-        
+
     parser = argparse.ArgumentParser(description='Setup your Ubuntu system')
 
     parser.add_argument(
