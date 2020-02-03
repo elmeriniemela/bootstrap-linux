@@ -133,43 +133,38 @@ if [ -d "/opt/FlameGraph" ] ; then
     PATH="$PATH:/opt/FlameGraph"
 fi
 
-current_dir() {
-    if [ -z "$DIR" ]
-    then
+update_dir() {
+    # if [ -z "$current_dir" ]
+    # then
         SOURCE="${BASH_SOURCE[0]}"
         while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-            PARENT_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+            parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
             SOURCE="$(readlink "$SOURCE")"
-            [[ $SOURCE != /* ]] && SOURCE="$PARENT_DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+            [[ $SOURCE != /* ]] && SOURCE="$parent_dir/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
         done
-        PARENT_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-        DIR=$(dirname "${PARENT_DIR}")
-    fi
+        parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+        current_dir=$(dirname "${parent_dir}")
+    # fi
 }
 
 
 ssh_origin() {
-    current_dir
-    bash $DIR/ssh_origin.sh
+    update_dir
+    bash $current_dir/ssh_origin.sh
 }
 
 https_origin() {
-    current_dir
-    bash $DIR/https_origin.sh
+    update_dir
+    bash $current_dir/https_origin.sh
 }
 
 npm-upgrade() {
-    current_dir
-    bash $DIR/npm-upgrade.sh
+    update_dir
+    bash $current_dir/npm-upgrade.sh
 }
 
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
-
-bootstrap-linux() {
-    current_dir
-    python3 $DIR/install.py $*
-}
 
 _bootstrap_linux_completions()
 {

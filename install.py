@@ -195,7 +195,7 @@ def password(length=32):
 def _get_odoo_path(branch='13.0', repo='odoo'):
     return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
 
-def _odoo_venv(branch='13.0', python='python3.6'):
+def _odoo_venv(branch='13.0'):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -203,13 +203,24 @@ def _odoo_venv(branch='13.0', python='python3.6'):
     odoo_path = _get_odoo_path(branch)
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
-        _run([
-            'cd ~/.venv',
-            'python3 -m virtualenv -p {} {}'.format(python, venv_name),
-        ])
+        if float(branch) <= 10.0:
+            _run([
+                'cd ~/.venv',
+                'python2 -m virtualenv -p python2 {}'.format(venv_name),
+            ], dependencies=[
+                'sudo pacman -S --noconfirm python2',
+                'sudo pacman -S --noconfirm python2-virtualenv',
+            ])
+
+        else:
+            _run([
+                'cd ~/.venv',
+                'python3 -m venv {}'.format(venv_name),
+            ])
+
     _run([
-        '/home/elmeri/.venv/{}/bin/pip install -r {}/requirements.txt'.format(
-            venv_name, odoo_path),
+        'sed "/psycopg2/d" {}/requirements.txt | /home/elmeri/.venv/{}/bin/pip install -r /dev/stdin psycopg2'.format(
+            odoo_path, venv_name),
     ], dependencies=_lazyfunction(_odoo_deps, branch=branch))
 
 def _odoo_deps(branch='12.0'):
@@ -217,26 +228,16 @@ def _odoo_deps(branch='12.0'):
     '''
     if float(branch) < 12.0:
         _run([
-            'sudo pacman -S nodejs',
-            'sudo pacman -S libssl1.0-dev',
-            'sudo pacman -S nodejs-dev',
-            'sudo pacman -S node-gyp',
-            'sudo pacman -S npm',
-            'sudo npm install -g less',
+            'sudo pacman -S  --noconfirm nodejs-less',
         ])
 
-    if float(branch) <= 10.0:
-        _run([
-            'sudo pacman -S python-dev',
-            'sudo pacman -S libjpeg-dev',
-            'sudo pacman -S libjpeg8-dev',
-        ])
     _run([
-        'sudo pacman -S libxml2-dev',
-        'sudo pacman -S libxslt-dev',
-        'sudo pacman -S libevent-dev',
-        'sudo pacman -S libsasl2-dev',
-        'sudo pacman -S libldap2-dev',
+        # TODO: Test if needed on manjaro
+        # 'sudo pacman -S libxml2-dev',
+        # 'sudo pacman -S libxslt-dev',
+        # 'sudo pacman -S libevent-dev',
+        # 'sudo pacman -S libsasl2-dev',
+        # 'sudo pacman -S libldap2-dev',
 
         'sudo pacman -S postgresql',
     ])
@@ -248,11 +249,9 @@ def _odoo_deps(branch='12.0'):
         pass
 
 
-def odoo(branch='13.0', python='python3.6'):
+def odoo(branch='13.0'):
     '''Installs odoo, enterprise and all the dependencies
     '''
-    if float(branch) <= 10.0:
-        assert python == 'python2.7'
 
     odoo_path = _get_odoo_path(branch, repo='odoo')
 
@@ -268,7 +267,8 @@ def odoo(branch='13.0', python='python3.6'):
         f_write.write(
             data.format(odoo_version=branch[:-2])
         )
-    _odoo_venv(branch, python)
+
+    _odoo_venv(branch)
 
 
 def _get_odoo_source(repo='odoo', branch='13.0'):
@@ -348,9 +348,12 @@ def bash():
         except Exception as error:
             print(error)
 
-    _run([
-        "mv ~/.bashrc ~/.bashrc-backup",
-    ])
+    backup_path = _path('~/.bashrc-backup')
+    if os.path.isfile(backup_path):
+        _run([
+            f"mv ~/.bashrc {backup_path}",
+        ])
+
     symlink_home('.notes')
     symlink_home('.bash_aliases')
     symlink_home('.bashrc')
@@ -364,18 +367,20 @@ def _bash_complete(completion_iterable, str_index='1', arg=''):
     else:
         print([])
 
+LOCALS = locals()
 
-def main(local_functions):
+def main():
     if sys.version_info[0] < 3:
         print("Only supported in python 3")
         return -1
 
     import argparse
 
-    local_functions = _filter_locals(local_functions)
+    global LOCALS
+    LOCALS = _filter_locals(LOCALS)
 
     if len(sys.argv) == 1:
-        _print_functions(local_functions)
+        _print_functions(LOCALS)
 
     parser = argparse.ArgumentParser(description='Setup your Linux system')
 
@@ -389,10 +394,10 @@ def main(local_functions):
 
 
     if args.function == '_bash_complete':
-        _bash_complete(local_functions, *args.args)
+        _bash_complete(LOCALS, *args.args)
         return 0
 
-    func = local_functions[args.function]
+    func = LOCALS[args.function]
     with _quittable():
         func(*args.args)
 
@@ -400,4 +405,4 @@ def main(local_functions):
 
 
 if __name__ == '__main__':
-    sys.exit(main(locals()))
+    sys.exit(main())
