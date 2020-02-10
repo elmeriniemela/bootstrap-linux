@@ -72,6 +72,16 @@ def tmc_cli():
     _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
 
 
+def git():
+    '''Configure git
+    '''
+    _run([
+        'git config --global user.email "niemela.elmeri@gmail.com"',
+        'git config --global user.name "Elmeri Niemelä"',
+        'git config --global credential.helper store',
+    ])
+
+
 def lightdm():
     '''Installs and configures lightdm
     '''
@@ -142,28 +152,47 @@ def apps():
     i.e git, vim, slack, thunderbird, vscode etc..
     '''
     _run([
-        'sudo pacman -Syyu --noconfirm'
+        'sudo pacman -Syyu --noconfirm',
         'sudo pacman -S yay --noconfirm',
         'yay VSCode',
-        'yay -S slack-desktop'
+        'yay -S slack-desktop',
         'sudo pacman -S vim --noconfirm',
-        # 'sudo pacman -S --noconfirm thunderbird',
-        # 'sudo pacman -S --noconfirm libreoffice',
+        'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
     ])
+
+def backups():
+    '''Installs timeshift
+    '''
+    _run([
+        'sudo pacman -S timeshift --noconfirm',
+    ])
+
 
 
 def flameshot():
     '''Build flameshot from source
     '''
+    # Global shortcuts -> Spectacle -> Disable all
+    # Add -> Graphics -> Flameshot
     INSTALL_DIR = '/opt/flameshot'
+    os.makedirs(INSTALL_DIR, exist_ok=True)
+    try:
+        _run([
+            f'sudo git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
+        ])
+    except:
+        _run([
+            f'cd {INSTALL_DIR}',
+            f'sudo git pull',
+        ])
+
+    os.makedirs(f'{INSTALL_DIR}/build', exist_ok=True)
+
     _run([
-        f'sudo mkdir {INSTALL_DIR}'
-        f'git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
-        f'sudo mkdir {INSTALL_DIR}/build',
         f'cd {INSTALL_DIR}/build',
-        'qmake ../'
-        'make',
-        'make install',
+        'sudo qmake ../',
+        'sudo make',
+        'sudo make install',
     ])
 
 
