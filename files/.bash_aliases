@@ -134,8 +134,8 @@ if [ -d "/opt/FlameGraph" ] ; then
 fi
 
 update_dir() {
-    # if [ -z "$current_dir" ]
-    # then
+    if [ -z "$current_dir" ]
+    then
         SOURCE="${BASH_SOURCE[0]}"
         while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
             parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
@@ -144,7 +144,7 @@ update_dir() {
         done
         parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
         current_dir=$(dirname "${parent_dir}")
-    # fi
+    fi
 }
 
 

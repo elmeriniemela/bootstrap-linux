@@ -147,6 +147,17 @@ def pyflame():
     ])
 
 
+def update():
+    '''Update the system
+    '''
+    _run([
+        'sudo pacman-mirrors -f',
+        'sudo pacman -Syyu --noconfirm',
+        'inxi -Fxxxza --no-host',
+    ])
+
+
+
 def apps():
     '''Installs all useful apps
     i.e git, vim, slack, thunderbird, vscode etc..
@@ -156,6 +167,9 @@ def apps():
         'sudo pacman -S yay --noconfirm',
         'yay VSCode',
         'yay -S slack-desktop',
+        'sudo pacman -S veracrypt --noconfirm',
+        'sudo pacman -S sshpass --noconfirm',
+        'sudo pacman -S bind-tools --noconfirm', # nslookup
         'sudo pacman -S vim --noconfirm',
         'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
     ])
@@ -269,9 +283,12 @@ def _odoo_deps(branch='12.0'):
         # 'sudo pacman -S libldap2-dev',
 
         'sudo pacman -S postgresql',
+        'sudo pacman -S wkhtmltopdf'
     ])
     try:
         _run([
+            "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
+            'sudo systemctl enable --now postgresql.service',
             'sudo su - postgres -c "createuser -s $USER"',
         ])
     except:

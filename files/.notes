@@ -37,10 +37,12 @@ pg_restore -d tarfi tarfi_2019-09-05_13-05-50.dump
 rsync -avz --progress --stats /media/elmeri/T5-SSD/bachelor/ /home/elmeri/Code/personal/python/bachelor
 ls -l | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/) *2^(8-i));if(k)printf("%0o ",k);print}'
 git push --force-with-lease
-echo "odoo.addons.safe_test_databases.helpers.try_cleaning_tables('kiinteisto')" | odoo shell
+echo "from odoo.addons.safe_test_databases.helpers import try_cleaning_tables;try_cleaning_tables('karto')" | odoo shell
 curl --data '{}' -X POST http://127.0.0.1:8069/web/ansible/end --header "Content-Type:application/json"
 git subtree pull --prefix=jsonrpc_server git@github.com:thecodebasesite/jsonrpc_server.git forking
 rsync -avz /home/elmeri/Code/work/odoo/11/sprintit_addons/sprintit_ansible_connector/jsonrpc_server/ /home/elmeri/Code/personal/jsonrpc_server
 inxi -G
 git config --global credential.helper store
-sudo -u www-data php /opt/website/nextcloud/occ files:scan elmeri
+sudo -u www-data php /opt/website/nextcloud/occ files:scan elmeri -vvv
+g++ -std=c++11 -Wall -Wextra -Wshadow -fsanitize=undefined -O2
+sed -i 's/\/opt\/odoo/\/opt\/test-odoo/g' odoo-server-test.conf
