@@ -152,8 +152,10 @@ def update():
     '''
     _run([
         'sudo pacman-mirrors -f',
-        'sudo pacman -Syyu --noconfirm',
+        'sudo pacman -Syyu',
         'inxi -Fxxxza --no-host',
+        # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
+        'sudo modprobe nvidia',
     ])
 
 
