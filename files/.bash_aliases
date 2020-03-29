@@ -17,6 +17,8 @@ export HISTFILE=~/.bash_eternal_history
 PROMPT_COMMAND="history -a"
 
 
+
+
 activate() {
     if [[ $1 == odoo* ]];
     then
@@ -81,7 +83,7 @@ venv() {
 
 
 clean_migrations () {
-    # find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
+    find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
     find . -path "*/migrations/*.pyc"  -delete
     dropdb thecodebase
     createdb thecodebase
@@ -89,13 +91,13 @@ clean_migrations () {
     python manage.py migrate
 }
 
-
-alias notes="curl https://www.thecodebase.site/notes"
+alias gitignore="cp /home/elmeri/Code/personal/odoo_manager/odoo_manager/module_template/.gitignore ."
+alias notes="curl https://www.thecodebase.tech/notes"
 alias notes="cat ~/.notes"
 add_note() {
     data=$(printf 'note=%s' "$1")
     TOKEN="eyJ1aWQiOjEsInRpbWUiOiIyMDE5LTA1LTAyIDE0OjQ5OjI0LjE2MDMxMCJ9.ehnllVNGn2App8Hz8WiuKkohqFs"
-    curl -u "$TOKEN":unused -X POST --data-urlencode "$data" https://www.thecodebase.site/add_note/
+    curl -u "$TOKEN":unused -X POST --data-urlencode "$data" https://www.thecodebase.tech/add_note/
 }
 
 add_note() {
@@ -114,6 +116,24 @@ hard_reset_submodules() {
     git reset --hard
     git submodule foreach --recursive git reset --hard
     git submodule update --init --recursive
+}
+
+
+bitbucket_commit() {
+    if [ -z "$1" ]
+    then
+        echo "Specify branch name"
+    else
+        gitignore
+        git init
+        git checkout -b $1
+        git add .
+        git commit -m "Initial commit"
+        module_name=${PWD##*/}
+        git remote add origin git@bitbucket.org:sprintit/$module_name.git
+        git push -u origin $1
+    fi
+
 }
 
 

@@ -18,7 +18,7 @@ ls | python -c "import sys;print(sys.stdin.read().split('\n')[:-1])"
 diff <(ls -1a /opt/odoo/ansible_test/) <(ls -1a /opt/odoo/addons/sprintit/)
 find . -name "*.pyc" -exec rm -f {} \;
 gcc -g -Wall -std=c99 -o test source.c
-bash <(curl -s https://raw.githubusercontent.com/thecodebasesite/bootstrap-linux/master/https_origin.sh)
+bash <(curl -s https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/master/https_origin.sh)
 sudo dd bs=4M if=ubuntu-18.04.2-live-server-amd64.iso of=/dev/sdb status=progress
 git -c user.email="niemela.elmeri@gmail.com" -c user.name="Elmeri Niemelä" commit -m "Inital Commit"
 set tabstop=4 shiftwidth=4 expandtab
@@ -37,12 +37,13 @@ pg_restore -d tarfi tarfi_2019-09-05_13-05-50.dump
 rsync -avz --progress --stats /media/elmeri/T5-SSD/bachelor/ /home/elmeri/Code/personal/python/bachelor
 ls -l | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/) *2^(8-i));if(k)printf("%0o ",k);print}'
 git push --force-with-lease
-echo "from odoo.addons.safe_test_databases.helpers import try_cleaning_tables;try_cleaning_tables('karto')" | odoo shell
+echo "from odoo.addons.safe_test_databases.controllers.main import try_cleaning_tables;try_cleaning_tables('karto')" | odoo shell
 curl --data '{}' -X POST http://127.0.0.1:8069/web/ansible/end --header "Content-Type:application/json"
-git subtree pull --prefix=jsonrpc_server git@github.com:thecodebasesite/jsonrpc_server.git forking
+git subtree pull --prefix=jsonrpc_server git@github.com:elmeriniemela/jsonrpc_server.git forking
 rsync -avz /home/elmeri/Code/work/odoo/11/sprintit_addons/sprintit_ansible_connector/jsonrpc_server/ /home/elmeri/Code/personal/jsonrpc_server
 inxi -G
 git config --global credential.helper store
 sudo -u www-data php /opt/website/nextcloud/occ files:scan elmeri -vvv
 g++ -std=c++11 -Wall -Wextra -Wshadow -fsanitize=undefined -O2
 sed -i 's/\/opt\/odoo/\/opt\/test-odoo/g' odoo-server-test.conf
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch -rf l10n_fi_reports_enterprise sprintit_account_financial_report_modifications' --prune-empty -f HEAD

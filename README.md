@@ -13,4 +13,4 @@ Usage instructions:
 * `bootstrap-linux` <-- this will start the CLI-interface and print available functions
 
 
-![alt text](https://raw.githubusercontent.com/thecodebasesite/bootstrap-linux/master/bootstrap-linux.png)
+![alt text](https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/master/bootstrap-linux.png)

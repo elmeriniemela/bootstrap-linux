@@ -153,9 +153,10 @@ def update():
     _run([
         'sudo pacman-mirrors -f',
         'sudo pacman -Syyu',
+        'yay -Syu'
         'inxi -Fxxxza --no-host',
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
-        'sudo modprobe nvidia',
+        # 'sudo modprobe nvidia',
     ])
 
 
@@ -273,7 +274,9 @@ def _odoo_deps(branch='12.0'):
     '''
     if float(branch) < 12.0:
         _run([
-            'sudo pacman -S  --noconfirm nodejs-less',
+            'sudo pacman -S --noconfirm nodejs-less',
+            'sudo pacman -S --noconfirm npm',
+            'sudo npm install --global less-plugin-clean-css',
         ])
 
     _run([
