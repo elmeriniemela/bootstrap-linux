@@ -171,6 +171,21 @@ update_dir() {
 }
 
 
+fix_origin() {
+    REPO_URL=`git remote -v | grep -m1 '^origin' | awk '{ print $2 }'`
+    NEW_URL="${REPO_URL/thecodebasesite/elmeriniemela}"
+    echo "Changing repo url from "
+    echo "  '$REPO_URL'"
+    echo "      to "
+    echo "  '$NEW_URL'"
+    echo ""
+
+    CHANGE_CMD="git remote set-url origin $NEW_URL"
+    `$CHANGE_CMD`
+
+    echo "Success"
+}
+
 ssh_origin() {
     update_dir
     bash $current_dir/ssh_origin.sh
