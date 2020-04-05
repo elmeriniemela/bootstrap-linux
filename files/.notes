@@ -47,3 +47,4 @@ sudo -u www-data php /opt/website/nextcloud/occ files:scan elmeri -vvv
 g++ -std=c++11 -Wall -Wextra -Wshadow -fsanitize=undefined -O2
 sed -i 's/\/opt\/odoo/\/opt\/test-odoo/g' odoo-server-test.conf
 git filter-branch --index-filter 'git rm --cached --ignore-unmatch -rf l10n_fi_reports_enterprise sprintit_account_financial_report_modifications' --prune-empty -f HEAD
+rsync -avzz uusioaines.sprintit.fi:/opt/odoo/addons/sprintit/* .
