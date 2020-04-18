@@ -7,9 +7,9 @@ if [ -z "$REPO_URL" ]; then
   echo "   It is possible this repo is already using SSH instead of HTTPS."
   exit
 fi
-HOST=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\1#p'`
-USER=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\2#p'`
-REPO=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/(.*).git#\3#p'`
+HOST=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/([^\.]*)(\.git){0,1}#\1#p'`
+USER=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/([^\.]*)(\.git){0,1}#\2#p'`
+REPO=`echo $REPO_URL | sed -Ene's#https://([^/]*)/([^/]*)/([^\.]*)(\.git){0,1}#\3#p'`
 if [ -z "$USER" ]; then
   echo "-- ERROR:  Could not identify User."
   exit
@@ -33,6 +33,7 @@ echo "  '$NEW_URL'"
 echo ""
 
 CHANGE_CMD="git remote set-url origin $NEW_URL"
+echo "$CHANGE_CMD"
 `$CHANGE_CMD`
 
 echo "Success"

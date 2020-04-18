@@ -151,7 +151,7 @@ def update():
     '''Update the system
     '''
     _run([
-        # 'sudo pacman-mirrors -f',
+        'sudo pacman-mirrors -f',
         'sudo pacman -Syyu',
         'yay -Syu',
         'inxi -Fxxxza --no-host',

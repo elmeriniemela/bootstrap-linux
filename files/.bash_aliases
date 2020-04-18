@@ -119,6 +119,13 @@ hard_reset_submodules() {
 }
 
 
+task_commit() {
+    current_task="20215"
+    git commit -m "[$current_task] $1"
+}
+
+
+
 bitbucket_commit() {
     if [ -z "$1" ]
     then
