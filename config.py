@@ -76,10 +76,10 @@ for i in groups:
 
 
 layout_theme = {
-    "border_width": 2,
-    "margin": 6,
-    "border_focus": "e1acff",
-    "border_normal": "1D2330"
+    # "border_width": 2,
+    # "margin": 6,
+    # "border_focus": "e1acff",
+    # "border_normal": "1D2330"
 }
 
 
@@ -95,6 +95,7 @@ widget_defaults = dict(
     fontsize=12,
     padding=3,
 )
+
 extension_defaults = widget_defaults.copy()
 
 
@@ -118,10 +119,9 @@ def get_num_monitors():
             if preferred:
                 num_monitors += 1
     except Exception as e:
-        # always setup at least one monitor
-        return 1
-    else:
-        return num_monitors
+        pass
+
+    return num_monitors or 1
 
 num_monitors = get_num_monitors()
 
@@ -138,27 +138,8 @@ screens = [
             ],
             24,
         ),
-    ),
+    ), for _ in range(num_monitors)
 ]
-
-if num_monitors > 1:
-    for m in range(num_monitors - 1):
-        screens.append(
-            Screen(
-                bottom=bar.Bar(
-                    [
-                        widget.GroupBox(),
-                        widget.Prompt(),
-                        widget.WindowName(),
-                        widget.TextBox("default config", name="default"),
-                        widget.Systray(),
-                        widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
-                    ],
-                    24,
-                ),
-            ),
-        )
-
 
 # Drag floating layouts.
 mouse = [
