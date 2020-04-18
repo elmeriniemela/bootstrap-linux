@@ -101,10 +101,10 @@ extension_defaults = widget_defaults.copy()
 
 
 def get_num_monitors():
-    # this import requires python-xlib to be installed
-    from Xlib import display as xdisplay
     num_monitors = 0
     try:
+        # this import requires python-xlib to be installed
+        from Xlib import display as xdisplay
         display = xdisplay.Display()
         screen = display.screen()
         resources = screen.root.xrandr_get_screen_resources()
@@ -119,6 +119,7 @@ def get_num_monitors():
             if preferred:
                 num_monitors += 1
     except Exception as e:
+        print(e)
         pass
 
     return num_monitors or 1
@@ -138,7 +139,7 @@ screens = [
             ],
             24,
         ),
-    ), for _ in range(num_monitors)
+    ) for _ in range(num_monitors)
 ]
 
 # Drag floating layouts.
