@@ -255,6 +255,7 @@ def distro():
     '''Commands needed for empty arch based distro install
     '''
     _run([
+        'sudo pacman -S inxi', # Command line system information script for console
         'sudo pacman -S konsole', # Terminal configured to awesome
         'sudo systemctl enable --now avahi-daemon', # SSH bash completion
         'sudo pacman -S bash-completion',
