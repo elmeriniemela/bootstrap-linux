@@ -4,7 +4,7 @@ import subprocess
 import os
 import sys
 from contextlib import contextmanager
-
+import re
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
@@ -91,6 +91,77 @@ def lightdm():
         'sudo pacman -S --noconfirm slick-greeter',
         'lightdm --show-config',
     ])
+
+
+
+class _Monitor():
+    def __init__(self, name, width, height, x=0, y=0):
+        self.name = name
+        self.width = int(width)
+        self.height = int(height)
+        self.x = int(x)
+        self.y = int(y)
+        self.primary = False
+
+    def __eq__(self, other):
+        return self.width == other.width
+
+    def __ne__(self, other):
+        return self.width != other.width
+
+    def __gt__(self, other):
+        return self.width > other.width
+
+    def __ge__(self, other):
+        return self.width >= other.width
+
+    def __lt__(self, other):
+        return self.width < other.width
+
+    def __le__(self, other):
+        return self.width <= other.width
+
+
+    def __str__(self):
+        prim_flag = ' --primary' if self.primary else ''
+        return f'--output {self.name}{prim_flag} --mode {self.width}x{self.height} --pos {self.x}x{self.y}'
+
+    def __repr__(self):
+        return str(self)
+
+
+def monitor():
+    output = subprocess.check_output("xrandr -q --current", shell=True, encoding='utf-8')
+    monitors = []
+    lines = output.splitlines()
+    for i, line in enumerate(lines):
+        match = re.findall(r'^([\w-]+) connected', line)
+        if match and i < len(lines):
+            name = match[0]
+            max_res_line = lines[i+1]
+            res_match = re.findall(r'[\s]*(\d+)x(\d+)', max_res_line)
+            if res_match:
+                width, height = res_match[0]
+                monitors.append(_Monitor(name, width, height))
+
+    if len(monitors) != 2:
+        command = 'xrandr --auto'
+    else:
+        below = min(monitors)
+        below.primary = True
+
+        above = max(monitors)
+
+        below.x = above.width // 4
+        below.y = above.height
+
+        command = 'xrandr ' + ' '.join(str(m) for m in monitors)
+
+    _run([command])
+
+
+
+
 
 
 
