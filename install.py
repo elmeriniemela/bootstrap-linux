@@ -262,7 +262,7 @@ def distro():
         'sudo pacman -S ttf-droid',
         'sudo pacman -S ttf-roboto',
         'sudo pacman -S pcmanfm', # Light filemanager
-        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa', # Sound
+        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa pavucontrol', # Sound
         'sudo pacman -S arandr', # display
         'sudo pacman -S acpilight', # Laptop backlight
         f'sudo cp {FILES_DIR}/backlight.rules /etc/udev/rules.d/backlight.rules',
