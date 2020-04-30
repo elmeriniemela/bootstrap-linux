@@ -125,9 +125,9 @@ def battery():
     '''Linux tlp install
     '''
     _run([
-        'sudo pamac install tlp',
-        'sudo systemctl enable --now tlp'
-        'sudo systemctl enable --now tlp-sleep.service'
+        'sudo pacman -S tlp',
+        'sudo systemctl enable --now tlp',
+        # 'sudo systemctl enable --now tlp-sleep.service',
     ])
 
 
@@ -168,14 +168,43 @@ def apps():
     _run([
         'sudo pacman -Syyu --noconfirm',
         'sudo pacman -S yay --noconfirm',
-        'yay VSCode',
+        'sudo pacman -S code --noconfirm',
+        'sudo pacman -S firefox --noconfirm',
         'yay -S slack-desktop',
         'sudo pacman -S veracrypt --noconfirm',
         'sudo pacman -S sshpass --noconfirm',
+        'sudo pacman -S thunderbird --noconfirm',
         'sudo pacman -S bind-tools --noconfirm', # nslookup
         'sudo pacman -S vim --noconfirm',
         'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
     ])
+
+
+def distro():
+    '''Commands needed for empty arch based distro install
+    '''
+    _run([
+        'sudo pacman -S konsole', # Terminal configured to awesome
+        'sudo systemctl enable --now avahi-daemon', # SSH bash completion
+        'sudo pacman -S bash-completion',
+        'sudo pacman -S ttf-bitstream-vera', # Fix vscode fonts
+        'sudo pacman -S ttf-droid',
+        'sudo pacman -S ttf-roboto',
+        'sudo pacman -S pcmanfm', # Light filemanager
+        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa', # Sound
+        'sudo pacman -S arandr', # display
+        'sudo pacman -S acpilight', # Laptop backlight
+        f'sudo cp {FILES_DIR}/backlight.rules /etc/udev/rules.d/backlight.rules',
+        'sudo usermod -aG video $USER',
+        'echo "Xcursor.theme: Vanilla-DMZ-AA" >> ~/.Xresources', # Cursor size
+        'echo "Xcursor.size: 36" >> ~/.Xresources',
+        'sudo pacman -S udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
+        'sudo pacman -S unzip zip', # Zip
+        'sudo pacman -S openssh', # SSH client
+
+    ])
+
+
 
 def backups():
     '''Installs timeshift
@@ -192,7 +221,14 @@ def flameshot():
     # Global shortcuts -> Spectacle -> Disable all
     # Add -> Graphics -> Flameshot
     INSTALL_DIR = '/opt/flameshot'
-    os.makedirs(INSTALL_DIR, exist_ok=True)
+    _run([
+        f'sudo mkdir {INSTALL_DIR} -p',
+        # Compile-time
+        'sudo pacman -S base-devel git qt5-base qt5-tools',
+
+        # Run-time
+        'sudo pacman -S qt5-svg',
+    ])
     try:
         _run([
             f'sudo git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
@@ -203,7 +239,7 @@ def flameshot():
             f'sudo git pull',
         ])
 
-    os.makedirs(f'{INSTALL_DIR}/build', exist_ok=True)
+    _run([f'sudo mkdir {INSTALL_DIR}/build -p'])
 
     _run([
         f'cd {INSTALL_DIR}/build',
@@ -280,15 +316,8 @@ def _odoo_deps(branch='12.0'):
         ])
 
     _run([
-        # TODO: Test if needed on manjaro
-        # 'sudo pacman -S libxml2-dev',
-        # 'sudo pacman -S libxslt-dev',
-        # 'sudo pacman -S libevent-dev',
-        # 'sudo pacman -S libsasl2-dev',
-        # 'sudo pacman -S libldap2-dev',
-
         'sudo pacman -S postgresql',
-        'sudo pacman -S wkhtmltopdf'
+        'yay -S wkhtmltopdf-static'
     ])
     try:
         _run([
