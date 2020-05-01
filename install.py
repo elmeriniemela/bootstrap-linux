@@ -152,7 +152,7 @@ def monitor():
 
         above = max(monitors)
 
-        below.x = above.width // 4
+        below.x = above.width // 2 - below.width // 2
         below.y = above.height
 
         command = 'xrandr ' + ' '.join(str(m) for m in monitors)
@@ -270,6 +270,14 @@ def distro():
         'sudo pacman -S xorg-xev --noconfirm', # Discover keykodes with 'xev'
     ])
 
+
+
+def material_awesome():
+    _run([
+        'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
+        'sudo pacman -S rofi compton xclip gnome-keyring polkit --noconfirm',
+        'yay -S i3lock-fancy-git --noconfirm',
+    ])
 
 
 def flameshot():
