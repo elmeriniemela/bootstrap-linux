@@ -182,16 +182,6 @@ def onedrive():
     ])
 
 
-def performance():
-    '''Linux performance related fixes
-    '''
-    _run([
-        # 'sudo pacman -S cpufrequtils',
-        # '''grep -qxF 'GOVERNOR="performance"' /etc/default/cpufrequtils || echo 'GOVERNOR="performance"' | sudo tee -a /etc/default/cpufrequtils  ''',
-        # 'sudo pacman -S indicator-cpufreq',
-        'sudo pacman -S --noconfirm htop',
-    ])
-
 def battery():
     '''Linux tlp install
     '''
@@ -223,8 +213,8 @@ def update():
     '''
     _run([
         'sudo pacman-mirrors -f',
-        'sudo pacman -Syyu',
-        'yay -Syu',
+        'sudo pacman -Syyu --noconfirm',
+        'yay -Syu  --noconfirm',
         'inxi -Fxxxza --no-host',
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
         # 'sudo modprobe nvidia',
@@ -241,12 +231,13 @@ def apps():
         'sudo pacman -S yay --noconfirm',
         'sudo pacman -S code --noconfirm',
         'sudo pacman -S firefox --noconfirm',
-        'yay -S slack-desktop',
+        'yay -S slack-desktop  --noconfirm',
         'sudo pacman -S veracrypt --noconfirm',
         'sudo pacman -S sshpass --noconfirm',
         'sudo pacman -S thunderbird --noconfirm',
         'sudo pacman -S bind-tools --noconfirm', # nslookup
         'sudo pacman -S vim --noconfirm',
+        'sudo pacman -S htop --noconfirm',
         'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
     ])
 
@@ -255,34 +246,28 @@ def distro():
     '''Commands needed for empty arch based distro install
     '''
     _run([
-        'sudo pacman -S inxi', # Command line system information script for console
-        'sudo pacman -S konsole', # Terminal configured to awesome
+        'sudo pacman -S inxi --noconfirm', # Command line system information script for console
+        'sudo pacman -S konsole --noconfirm', # Terminal configured to awesome
         'sudo systemctl enable --now avahi-daemon', # SSH bash completion
-        'sudo pacman -S bash-completion',
-        'sudo pacman -S ttf-bitstream-vera', # Fix vscode fonts
-        'sudo pacman -S ttf-droid',
-        'sudo pacman -S ttf-roboto',
-        'sudo pacman -S pcmanfm', # Light filemanager
-        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa pavucontrol', # Sound
-        'sudo pacman -S arandr', # display
-        'sudo pacman -S acpilight', # Laptop backlight
+        'sudo pacman -S bash-completion --noconfirm',
+        'sudo pacman -S ttf-bitstream-vera --noconfirm', # Fix vscode fonts
+        'sudo pacman -S ttf-droid --noconfirm',
+        'sudo pacman -S ttf-roboto --noconfirm',
+        'sudo pacman -S pcmanfm --noconfirm', # Light filemanager
+        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa pavucontrol --noconfirm', # Sound
+        'sudo pacman -S arandr --noconfirm', # display
+        'sudo pacman -S acpilight --noconfirm', # Laptop backlight
         f'sudo cp {FILES_DIR}/backlight.rules /etc/udev/rules.d/backlight.rules',
         'sudo usermod -aG video $USER',
         'echo "Xcursor.theme: Vanilla-DMZ-AA" >> ~/.Xresources', # Cursor size
         'echo "Xcursor.size: 36" >> ~/.Xresources',
-        'sudo pacman -S udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
-        'sudo pacman -S unzip zip', # Zip
-        'sudo pacman -S openssh', # SSH client
-
-    ])
-
-
-
-def backups():
-    '''Installs timeshift
-    '''
-    _run([
-        'sudo pacman -S timeshift --noconfirm',
+        'sudo pacman -S udisks2 --noconfirm', # For easy mount 'udisksctl mount -b /dev/sdb1',
+        'sudo pacman -S unzip zip --noconfirm', # Zip
+        'sudo pacman -S openssh --noconfirm', # SSH client
+        'yay -S lightdm-webkit-theme-aether --noconfirm', # Greeter theme
+        'sudo pacman -S nm-connection-editor --noconfirm', # Wifi selections
+        'sudo pacman -S timeshift --noconfirm', # Backups
+        'sudo pacman -S xorg-xev --noconfirm', # Discover keykodes with 'xev'
     ])
 
 
@@ -296,10 +281,10 @@ def flameshot():
     _run([
         f'sudo mkdir {INSTALL_DIR} -p',
         # Compile-time
-        'sudo pacman -S base-devel git qt5-base qt5-tools',
+        'sudo pacman -S base-devel git qt5-base qt5-tools --noconfirm',
 
         # Run-time
-        'sudo pacman -S qt5-svg',
+        'sudo pacman -S qt5-svg --noconfirm',
     ])
     try:
         _run([
@@ -349,7 +334,7 @@ def password(length=32):
 def _get_odoo_path(branch='13.0', repo='odoo'):
     return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
 
-def _odoo_venv(branch='13.0'):
+def odoo_venv(branch='13.0'):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -388,8 +373,8 @@ def _odoo_deps(branch='12.0'):
         ])
 
     _run([
-        'sudo pacman -S postgresql',
-        'yay -S wkhtmltopdf-static'
+        'sudo pacman -S postgresql --noconfirm',
+        'yay -S wkhtmltopdf-static --noconfirm'
     ])
     try:
         _run([
