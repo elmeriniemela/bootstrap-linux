@@ -258,10 +258,20 @@ def distro():
         'xarchiver', # browse zip files
         'slock',  # Screenlock
     ])
+
     _run([
-        'git clone https://aur.archlinux.org/yay.git /opt/yay',
+        'useradd -m -G video,wheel -s /bin/bash elmeri',
+        'passwd elmeri',
+        'chown elmeri:elmeri /opt',
+    ])
+
+def apps()
+    '''User space apps, cannot be run as root. Run after distro.
+    '''
+    _run([
         'cd /opt/yay',
         'makepkg -si',
+        'git clone https://aur.archlinux.org/yay.git /opt/yay',
     ])
     _aur([
         'lightdm-webkit-theme-aether',
