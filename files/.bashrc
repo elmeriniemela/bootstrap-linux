@@ -156,7 +156,7 @@ export HISTFILE=~/.bash_eternal_history
 PROMPT_COMMAND="history -a"
 
 
-
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 activate() {
     if [[ $1 == odoo* ]];
