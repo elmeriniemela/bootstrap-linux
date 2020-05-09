@@ -238,7 +238,6 @@ def distro():
         'vim',
         'htop',
         'zathura-pdf-mupdf',
-        'inxi', # Command line system information script for console
         'konsole', # Terminal configured to awesome
         'bash-completion',
         'ttf-bitstream-vera', # Fix vscode fonts
@@ -269,7 +268,7 @@ def distro():
         'whatsapp-nativefier-dark',
         'slack-desktop',
         'teams',
-        'inxi',
+        'inxi', # Command line system information script for console
         'timeshift',  # Backups
     ])
     _run([
