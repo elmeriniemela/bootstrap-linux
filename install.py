@@ -270,11 +270,13 @@ def distro():
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
     '''
-    _run([
-        'cd /opt/yay',
-        'makepkg -si',
-        'git clone https://aur.archlinux.org/yay.git /opt/yay',
-    ])
+    if not os.path.exists(_path('/opt/yay')):
+        _run([
+            'git clone https://aur.archlinux.org/yay.git /opt/yay',
+            'cd /opt/yay',
+            'makepkg -si',
+        ])
+
     _aur([
         'lightdm-webkit-theme-aether',
         'whatsapp-nativefier-dark',
@@ -283,10 +285,13 @@ def apps():
         'inxi', # Command line system information script for console
         'timeshift',  # Backups
     ])
-    _run([
-        'git clone --recursive https://github.com/lcpz/awesome-copycats.git ~/.config/awesome-copycats',
-        'ln -s ~/.config/awesome-copycats ~/.config/awesome'
-    ])
+
+    if not os.path.exists(_path('~/.config/awesome-copycats')):
+        _run([
+            'git clone --recursive https://github.com/lcpz/awesome-copycats.git ~/.config/awesome-copycats',
+            'ln -s ~/.config/awesome-copycats ~/.config/awesome'
+        ])
+
     _copy({
         'backlight.rules': '/etc/udev/rules.d/backlight.rules'
     })
