@@ -66,32 +66,23 @@ def _run(commands, dependencies=None, **kwargs):
                     raise
 
 
-def tmc_cli():
-    '''Installs TMC CLI
-    '''
-    _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
+def _description(desc_str):
+    print(desc_str)
 
-
-def git():
-    '''Configure git
-    '''
+def _packages(list_of_packages):
     _run([
-        'git config --global user.email "niemela.elmeri@gmail.com"',
-        'git config --global user.name "Elmeri Niemelä"',
-        'git config --global credential.helper store',
+        'sudo pacman -S --noconfirm ' + ' '.join(list_of_packages)
+    ])
+
+def _aur(list_of_packages):
+    _run([
+        'yay -S --noconfirm ' + ' '.join(list_of_packages)
     ])
 
 
-def lightdm():
-    '''Installs and configures lightdm
-    '''
-    _run([
-        'sudo pacman -S --noconfirm lightdm',
-        'sudo dpkg-reconfigure lightdm',
-        'sudo pacman -S --noconfirm slick-greeter',
-        'lightdm --show-config',
-    ])
-
+def _copy(files_dict):
+    for fname, dest_path in files_dict.items():
+        _run([f'sudo cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
 
 
 class _Monitor():
@@ -161,25 +152,12 @@ def monitor():
 
 
 
-
-
-
-
-def onedrive():
-    '''Installs OneDrive cli
+def tmc_cli():
+    '''Installs TMC CLI
     '''
-    _run([
-        'sudo pacman -S --noconfirm libcurl4-openssl-dev',
-        'sudo pacman -S --noconfirm libsqlite3-dev',
-        'sudo snap install --classic dmd && sudo snap install --classic dub',
-        f'cd {_path("/opt")}'
-        f'git clone https://github.com/skilion/onedrive.git'
-        'cd /opt/onedrive',
-        'make',
-        'sudo make install',
-        'systemctl --user enable onedrive',
-        'systemctl --user start onedrive',
-    ])
+    _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
+
+
 
 
 def battery():
@@ -224,67 +202,82 @@ def update():
 def serial():
     '''Print machine serial number
     '''
+    _packages(['dmidecode'])
     _run([
-        'sudo pacman -S dmidecode --noconfirm',
         'dmidecode -s system-serial-number',
-    ])
-
-
-
-def apps():
-    '''Installs all useful apps
-    i.e git, vim, slack, thunderbird, vscode etc..
-    '''
-    _run([
-        'sudo pacman -Syyu --noconfirm',
-        'sudo pacman -S yay --noconfirm',
-        'sudo pacman -S code --noconfirm',
-        'sudo pacman -S firefox --noconfirm',
-        'yay -S slack-desktop  --noconfirm',
-        'yay -S teams --noconfirm',
-        'sudo pacman -S veracrypt --noconfirm',
-        'sudo pacman -S sshpass --noconfirm',
-        'sudo pacman -S thunderbird --noconfirm',
-        'sudo pacman -S bind-tools --noconfirm', # nslookup
-        'sudo pacman -S vim --noconfirm',
-        'sudo pacman -S htop --noconfirm',
-        'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
-
     ])
 
 
 def distro():
     '''Commands needed for empty arch based distro install
     '''
-    _run([
-        'sudo pacman -S inxi --noconfirm', # Command line system information script for console
-        'sudo pacman -S konsole --noconfirm', # Terminal configured to awesome
-        'sudo systemctl enable --now avahi-daemon', # SSH bash completion
-        'sudo pacman -S bash-completion --noconfirm',
-        'sudo pacman -S ttf-bitstream-vera --noconfirm', # Fix vscode fonts
-        'sudo pacman -S ttf-droid --noconfirm',
-        'sudo pacman -S ttf-roboto --noconfirm',
-        'sudo pacman -S pcmanfm --noconfirm', # Light filemanager
-        'sudo pacman -S alsa-utils pulseaudio pulseaudio-alsa pavucontrol --noconfirm', # Sound
-        'sudo pacman -S arandr --noconfirm', # display
-        'sudo pacman -S acpilight --noconfirm', # Laptop backlight
-        f'sudo cp {FILES_DIR}/backlight.rules /etc/udev/rules.d/backlight.rules',
-        'sudo usermod -aG video $USER',
-        'echo "Xcursor.theme: Vanilla-DMZ-AA" >> ~/.Xresources', # Cursor size
-        'echo "Xcursor.size: 36" >> ~/.Xresources',
-        'sudo pacman -S udisks2 --noconfirm', # For easy mount 'udisksctl mount -b /dev/sdb1',
-        'sudo pacman -S unzip zip --noconfirm', # Zip
-        'sudo pacman -S openssh --noconfirm', # SSH client
-        'yay -S lightdm-webkit-theme-aether --noconfirm', # Greeter theme
-        'sudo pacman -S nm-connection-editor --noconfirm', # Wifi selections
-        'sudo pacman -S timeshift --noconfirm', # Backups
-        'sudo pacman -S xorg-xev --noconfirm', # Discover keykodes with 'xev'
-        'yay -S whatsapp-nativefier-dark --noconfirm', #whatsapp native
-        'sudo pacman -S xarchiver --noconfirm',  # browse zip files
-        'sudo pacman -S slock --noconfirm', # Screenlock
+    _packages([
+        'xorg-server',
+        'lightdm',
+        'awesome',
+        'yay',
+
+        'code',
+        'firefox',
+        'veracrypt',
+        'sshpass',
+        'thunderbird',
+        'bind-tools',
+        'vim',
+        'htop',
+        'zathura-pdf-mupdf',
+        'inxi', # Command line system information script for console
+        'konsole', # Terminal configured to awesome
+        'bash-completion',
+        'ttf-bitstream-vera', # Fix vscode fonts
+        'ttf-droid',
+        'ttf-roboto',
+        'pcmanfm', # Light filemanager
+        'alsa-utils',
+        'pulseaudio',
+        'pulseaudio-alsa',
+        'pavucontrol',
+        'arandr',
+        'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
+        'unzip',
+        'zip',
+        'openssh', # SSH client
+        'nm-connection-editor', # Wifi selections
+        'timeshift',  # Backups
+        'xorg-xev',
+        'xarchiver', # browse zip files
+        'slock',  # Screenlock
     ])
+    _aur([
+        'lightdm-webkit-theme-aether',
+        'whatsapp-nativefier-dark',
+        'slack-desktop',
+        'teams',
+    ])
+    _run([
+        'sudo systemctl enable --now avahi-daemon',
+        'sudo usermod -aG video $USER',
+    ])
+    _copy({
+        'backlight.rules': '/etc/udev/rules.d/backlight.rules'
+    })
 
 
+
+def dotfiles():
+    f''' This setups basic configuration.
+        * Generate global bashrc from {FILES_DIR}/global.bashrc
+        * Clone dotfiles
+    '''
+    line = f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'
+    filename = '/etc/bash.bashrc'
+    _run([
+        f"grep -qxF '{line}' {filename} || echo '{line}' | sudo tee -a {filename}",
+        '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
+        '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
+        '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no'
+
+    ])
 
 def material_awesome():
     _run([
@@ -497,18 +490,6 @@ def _print_functions(locals_dict):
             params.append(str(parameter))
         print("def {}({}):".format(value.__name__, ', '.join(params)))
         print("    {}".format(value.__doc__))
-
-
-def bash():
-    ''' Generate global bashrc
-    '''
-    line = f'[ -r {FILES_DIR}/.bashrc   ] && . {FILES_DIR}/.bashrc'
-    filename = '/etc/bash.bashrc'
-    _run([
-        f"grep -qxF '{line}' {filename} || echo '{line}' | sudo tee -a {filename}"
-    ])
-
-
 
 
 def _bash_complete(completion_iterable, str_index='1', arg=''):
