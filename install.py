@@ -265,7 +265,7 @@ def distro():
         'chown elmeri:elmeri /opt',
     ])
 
-def apps()
+def apps():
     '''User space apps, cannot be run as root. Run after distro.
     '''
     _run([
