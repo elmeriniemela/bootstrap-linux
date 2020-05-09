@@ -122,6 +122,9 @@ class _Monitor():
 
 
 def monitor():
+    '''Autoconfigure dual monitor with xrandr
+    '''
+
     output = subprocess.check_output("xrandr -q --current", shell=True, encoding='utf-8')
     monitors = []
     lines = output.splitlines()
@@ -265,21 +268,25 @@ def distro():
 
 
 def dotfiles():
-    f''' This setups basic configuration.
-        * Generate global bashrc from {FILES_DIR}/global.bashrc
+    ''' This setups basic configuration.
+        * Generate global bashrc
         * Clone dotfiles
     '''
     line = f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'
     filename = '/etc/bash.bashrc'
     _run([
         f"grep -qxF '{line}' {filename} || echo '{line}' | sudo tee -a {filename}",
-        '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
-        '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
-        '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no'
-
     ])
+    if not os.path.exists(_path('~/.dotfiles')):
+        _run([
+            '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
+            '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
+            '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
+        ])
 
 def material_awesome():
+    '''Install material-awesome
+    '''
     _run([
         'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
         'sudo pacman -S rofi compton xclip gnome-keyring polkit --noconfirm',

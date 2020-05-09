@@ -4,8 +4,8 @@ I Reinstall my system regularly, so having apps and bash scripts in version cont
 
 Install instructions:
 
-* `git clone <this repo>`
-* `cd <this repo>`
+* `git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstrap-linux`
+* `cd ~/.config/bootstrap-linux`
 * `sudo -H pip install -e .`
 
 Usage instructions:
