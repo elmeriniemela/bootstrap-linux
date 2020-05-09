@@ -260,6 +260,8 @@ def distro():
     ])
 
     _run([
+        'sudo systemctl enable --now avahi-daemon',
+        'sudo systemctl enable --now lightdm',
         'useradd -m -G video,wheel -s /bin/bash elmeri',
         'passwd elmeri',
         'chown elmeri:elmeri /opt',
@@ -282,9 +284,6 @@ def apps():
         'timeshift',  # Backups
     ])
     _run([
-        'sudo systemctl enable --now avahi-daemon',
-        'sudo systemctl enable --now lightdm',
-        'sudo usermod -aG video $USER',
         'git clone --recursive https://github.com/lcpz/awesome-copycats.git ~/.config/awesome-copycats',
         'ln -s ~/.config/awesome-copycats ~/.config/awesome'
     ])
