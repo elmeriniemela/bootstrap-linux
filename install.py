@@ -262,6 +262,7 @@ def distro():
     _run([
         'sudo systemctl enable --now avahi-daemon',
         'sudo systemctl enable --now lightdm',
+        'localectl --no-convert set-x11-keymap fi pc104',
         'useradd -m -G video,wheel -s /bin/bash elmeri',
         'passwd elmeri',
         'chown elmeri:elmeri /opt',
