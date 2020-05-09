@@ -70,8 +70,11 @@ def _description(desc_str):
     print(desc_str)
 
 def _packages(list_of_packages):
+    prepend = ''
+    if os.geteuid() != 0:
+        prepend = 'sudo '
     _run([
-        'sudo pacman -S --noconfirm ' + ' '.join(list_of_packages)
+        f'{prepend}pacman -S --noconfirm ' + ' '.join(list_of_packages)
     ])
 
 def _aur(list_of_packages):
@@ -81,8 +84,11 @@ def _aur(list_of_packages):
 
 
 def _copy(files_dict):
+    prepend = ''
+    if os.geteuid() != 0:
+        prepend = 'sudo '
     for fname, dest_path in files_dict.items():
-        _run([f'sudo cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
+        _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
 
 
 class _Monitor():
@@ -215,7 +221,8 @@ def distro():
     '''Commands needed for empty arch based distro install
     '''
     _packages([
-        'xorg-server',
+        'sudo',
+        'xorg',
         'lightdm',
         'awesome',
         'yay',
@@ -259,7 +266,10 @@ def distro():
     ])
     _run([
         'sudo systemctl enable --now avahi-daemon',
+        'sudo systemctl enable --now lightdm',
         'sudo usermod -aG video $USER',
+        'git clone --recursive https://github.com/lcpz/awesome-copycats.git ~/.config/awesome-copycats',
+        'ln -s ~/.config/awesome-copycats ~/.config/awesome'
     ])
     _copy({
         'backlight.rules': '/etc/udev/rules.d/backlight.rules'
