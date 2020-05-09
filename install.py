@@ -219,13 +219,15 @@ def serial():
 
 def distro():
     '''Commands needed for empty arch based distro install
+    Post-install dependencies
+        * pacman -S dhcpcd vim networkmanager git python python-pip
     '''
     _packages([
         'sudo',
         'xorg',
         'lightdm',
         'awesome',
-        'yay',
+        'base-devel',
 
         'code',
         'firefox',
@@ -253,16 +255,22 @@ def distro():
         'zip',
         'openssh', # SSH client
         'nm-connection-editor', # Wifi selections
-        'timeshift',  # Backups
         'xorg-xev',
         'xarchiver', # browse zip files
         'slock',  # Screenlock
+    ])
+    _run([
+        'git clone https://aur.archlinux.org/yay.git /opt/yay',
+        'cd /opt/yay',
+        'makepkg -si',
     ])
     _aur([
         'lightdm-webkit-theme-aether',
         'whatsapp-nativefier-dark',
         'slack-desktop',
         'teams',
+        'inxi',
+        'timeshift',  # Backups
     ])
     _run([
         'sudo systemctl enable --now avahi-daemon',
