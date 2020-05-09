@@ -6,7 +6,7 @@ Install instructions:
 
 * `git clone <this repo>`
 * `cd <this repo>`
-* `pip install -e .`
+* `sudo -H pip install -e .`
 
 Usage instructions:
 

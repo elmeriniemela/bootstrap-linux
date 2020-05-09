@@ -221,6 +221,15 @@ def update():
     ])
 
 
+def serial():
+    '''Print machine serial number
+    '''
+    _run([
+        'sudo pacman -S dmidecode --noconfirm',
+        'dmidecode -s system-serial-number',
+    ])
+
+
 
 def apps():
     '''Installs all useful apps
@@ -232,6 +241,7 @@ def apps():
         'sudo pacman -S code --noconfirm',
         'sudo pacman -S firefox --noconfirm',
         'yay -S slack-desktop  --noconfirm',
+        'yay -S teams --noconfirm',
         'sudo pacman -S veracrypt --noconfirm',
         'sudo pacman -S sshpass --noconfirm',
         'sudo pacman -S thunderbird --noconfirm',
@@ -239,6 +249,7 @@ def apps():
         'sudo pacman -S vim --noconfirm',
         'sudo pacman -S htop --noconfirm',
         'sudo pacman -S zathura-pdf-mupdf --noconfirm', # Vim like .epub reader
+
     ])
 
 
@@ -268,6 +279,9 @@ def distro():
         'sudo pacman -S nm-connection-editor --noconfirm', # Wifi selections
         'sudo pacman -S timeshift --noconfirm', # Backups
         'sudo pacman -S xorg-xev --noconfirm', # Discover keykodes with 'xev'
+        'yay -S whatsapp-nativefier-dark --noconfirm', #whatsapp native
+        'sudo pacman -S xarchiver --noconfirm',  # browse zip files
+        'sudo pacman -S slock --noconfirm', # Screenlock
     ])
 
 
@@ -366,13 +380,20 @@ def odoo_venv(branch='13.0'):
             ])
 
     _run([
-        'sed "/psycopg2/d" {}/requirements.txt | /home/elmeri/.venv/{}/bin/pip install -r /dev/stdin psycopg2'.format(
-            odoo_path, venv_name),
+        f'sed "/psycopg2/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2',
     ], dependencies=_lazyfunction(_odoo_deps, branch=branch))
 
-def _odoo_deps(branch='12.0'):
+def odoo_deps(branch='12.0'):
     '''Installs odoo deps
     '''
+    if float(branch) >= 11.0:
+        # Bank connector deps
+        venv_name = 'odoo{}'.format(branch[:-2])
+        _run([
+            'sudo pacman -S xmlsec pwgen libxml2 pkg-config --noconfirm',
+            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec'
+        ])
+
     if float(branch) < 12.0:
         _run([
             'sudo pacman -S --noconfirm nodejs-less',
@@ -479,26 +500,14 @@ def _print_functions(locals_dict):
 
 
 def bash():
-    '''Symling .bash_aliases and .notes from this directory
-    to '~/'
+    ''' Generate global bashrc
     '''
-    def symlink_home(fname):
-        dest = os.path.join(HOME_DIR, fname)
-        if os.path.islink(dest):
-            os.remove(dest)
-        src = os.path.join(FILES_DIR, fname)
-        print(f'Symlink: ~/{fname} -> {src}')
-        try:
-            os.symlink(src=src, dst=dest)
-        except Exception as error:
-            print(error)
+    line = f'[ -r {FILES_DIR}/.bashrc   ] && . {FILES_DIR}/.bashrc'
+    filename = '/etc/bash.bashrc'
+    _run([
+        f"grep -qxF '{line}' {filename} || echo '{line}' | sudo tee -a {filename}"
+    ])
 
-    symlink_home('.notes')
-    symlink_home('.bash_aliases')
-    original = os.path.join(HOME_DIR, '.bashrc')
-    if os.path.exists(original):
-        os.remove(original)
-    symlink_home('.bashrc')
 
 
 
