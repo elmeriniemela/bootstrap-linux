@@ -269,6 +269,10 @@ def distro():
         'xarchiver', # browse zip files
         'slock',  # Screenlock
         'rtorrent',
+
+        # May be needed
+        # 'acpi',
+        # 'acpid',
     ])
 
     _run([
@@ -290,6 +294,11 @@ def distro():
         'hosts': '/etc/hosts',
         'locale.conf': '/etc/locale.conf',
     })
+
+def asus_backlight_fix():
+    _packages([
+        'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
+    ])
 
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
