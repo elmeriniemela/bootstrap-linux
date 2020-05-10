@@ -421,11 +421,12 @@ def password(length=32):
     )
 
 
+DEFAULT_ODOO_BRANCH = '13.0'
 
-def _get_odoo_path(branch='13.0', repo='odoo'):
+def _get_odoo_path(branch=DEFAULT_ODOO_BRANCH, repo='odoo'):
     return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
 
-def odoo_venv(branch='13.0'):
+def odoo_venv(branch=DEFAULT_ODOO_BRANCH):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -448,11 +449,20 @@ def odoo_venv(branch='13.0'):
                 'python3 -m venv {}'.format(venv_name),
             ])
 
+
+
     _run([
         f'sed "/psycopg2/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2',
-    ], dependencies=_lazyfunction(_odoo_deps, branch=branch))
+    ], dependencies=_lazyfunction(global_odoo_deps, branch=branch))
 
-def odoo_deps(branch='12.0'):
+    if float(branch) >= 11.0:
+        # Bank connector deps
+        _run([
+            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec'
+        ], dependencies=_lazyfunction(global_odoo_deps, branch=branch))
+
+
+def global_odoo_deps(branch=DEFAULT_ODOO_BRANCH):
     '''Installs odoo deps
     '''
     if float(branch) >= 11.0:
@@ -460,7 +470,6 @@ def odoo_deps(branch='12.0'):
         venv_name = 'odoo{}'.format(branch[:-2])
         _run([
             'sudo pacman -S xmlsec pwgen libxml2 pkg-config --noconfirm',
-            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec'
         ])
 
     if float(branch) < 12.0:
@@ -484,7 +493,7 @@ def odoo_deps(branch='12.0'):
         pass
 
 
-def odoo(branch='13.0'):
+def odoo(branch=DEFAULT_ODOO_BRANCH):
     '''Installs odoo, enterprise and all the dependencies
     '''
 
@@ -506,7 +515,7 @@ def odoo(branch='13.0'):
     _odoo_venv(branch)
 
 
-def _get_odoo_source(repo='odoo', branch='13.0'):
+def _get_odoo_source(repo='odoo', branch=DEFAULT_ODOO_BRANCH):
     import glob
     from distutils.dir_util import copy_tree
     odoo_path = _get_odoo_path(branch, repo=repo)
