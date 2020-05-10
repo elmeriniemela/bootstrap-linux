@@ -226,6 +226,8 @@ def distro():
         'sudo',
         'xorg',
         'lightdm',
+        'lightdm-gtk-greeter',
+        'lightdm-gtk-greeter-settings',
         'awesome',
         'base-devel',
 
@@ -289,7 +291,7 @@ def apps():
 
     if not os.path.exists(_path('~/.config/awesome-copycats')):
         _run([
-            'git clone --recursive https://github.com/lcpz/awesome-copycats.git ~/.config/awesome-copycats',
+            'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome-copycats',
             'ln -s ~/.config/awesome-copycats ~/.config/awesome'
         ])
 
