@@ -280,6 +280,7 @@ def distro():
         'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
+        'echo "kernel.sysrq=1" >> /etc/sysctl.d/99-sysctl.conf',
         'useradd -m -G video,wheel -s /bin/bash elmeri',
         'passwd elmeri',
         'chown elmeri:elmeri /opt',
