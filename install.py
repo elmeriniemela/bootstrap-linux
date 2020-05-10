@@ -293,6 +293,10 @@ def distro():
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
     '''
+    if os.geteuid() == 0:
+        print("Do not run this as root")
+        return
+
     if not os.path.exists(_path('/opt/yay')):
         _run([
             'git clone https://aur.archlinux.org/yay.git /opt/yay',
@@ -323,6 +327,10 @@ def dotfiles():
         * Generate global bashrc
         * Clone dotfiles
     '''
+    if os.geteuid() == 0:
+        print("Do not run this as root")
+        return
+
     line = f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'
     filename = '/etc/bash.bashrc'
     _run([
