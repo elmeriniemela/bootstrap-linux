@@ -221,6 +221,13 @@ def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
         * pacman -S dhcpcd vim networkmanager git python python-pip
+        * systemctl enable dhcpcd --now
+        * pacman -S grub efibootmgr
+        * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
+        * grub-mkconfig -o /boot/grub/grub.cfg
+        * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
+        * hwclock --systohc
+        * visudo # uncomment wheel
     '''
     _packages([
         'sudo',
@@ -255,6 +262,8 @@ def distro():
         'unzip',
         'zip',
         'openssh', # SSH client
+        'network-manager-applet',
+        'notification-daemon',
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
@@ -269,6 +278,11 @@ def distro():
         'passwd elmeri',
         'chown elmeri:elmeri /opt',
     ])
+    _copy({
+        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
+        'hosts': '/etc/hosts',
+        'locale.conf': '/etc/locale.conf',
+    })
 
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
@@ -295,9 +309,6 @@ def apps():
             'ln -s ~/.config/awesome-copycats ~/.config/awesome'
         ])
 
-    _copy({
-        'backlight.rules': '/etc/udev/rules.d/backlight.rules'
-    })
 
 
 
