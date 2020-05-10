@@ -220,13 +220,13 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
-        * pacman -S dhcpcd vim networkmanager git python python-pip
+        * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
+        * hwclock --systohc
+        * pacman -S dhcpcd vim git python python-pip
         * systemctl enable dhcpcd --now
         * pacman -S grub efibootmgr
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
         * grub-mkconfig -o /boot/grub/grub.cfg
-        * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
-        * hwclock --systohc
         * visudo # uncomment wheel
     '''
     _packages([
@@ -237,7 +237,7 @@ def distro():
         'lightdm-gtk-greeter-settings',
         'awesome',
         'base-devel',
-
+        'networkmanager',
         'code',
         'firefox',
         'veracrypt',
@@ -268,12 +268,18 @@ def distro():
         'xorg-xev',
         'xarchiver', # browse zip files
         'slock',  # Screenlock
+        'rtorrent',
     ])
 
     _run([
-        'sudo systemctl enable --now avahi-daemon',
-        'sudo systemctl enable --now lightdm',
+        'systemctl enable --now NetworkManager',
+        'systemctl enable --now avahi-daemon',
+        'systemctl enable --now lightdm',
+        "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
+        "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
+        'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
+        'echo "arch" > /etc/hostname',
         'useradd -m -G video,wheel -s /bin/bash elmeri',
         'passwd elmeri',
         'chown elmeri:elmeri /opt',
