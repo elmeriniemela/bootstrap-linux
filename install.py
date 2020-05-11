@@ -66,9 +66,6 @@ def _run(commands, dependencies=None, **kwargs):
                     raise
 
 
-def _description(desc_str):
-    print(desc_str)
-
 def _packages(list_of_packages):
     prepend = ''
     if os.geteuid() != 0:
