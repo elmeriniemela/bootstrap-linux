@@ -83,6 +83,12 @@ def _aur(list_of_packages):
     ])
 
 
+def _lineinfile(line, filename):
+    line = line.replace(r"'", r"\'")
+    _run([
+        f"grep -qxF $'{line}' {filename} || echo $'{line}' | sudo tee -a {filename}",
+    ])
+
 def _copy(files_dict):
     prepend = ''
     if os.geteuid() != 0:
@@ -273,6 +279,9 @@ def distro():
         # May be needed
         # 'acpi',
         # 'acpid',
+
+        'feh', # to view images
+        'libreoffice-fresh', # to view docs
     ])
 
     _run([
@@ -300,6 +309,18 @@ def asus_backlight_fix():
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
     ])
 
+def swapfile(gigabytes):
+    _run([
+        f'sudo dd if=/dev/zero of=/swapfile bs=1M count={int(gigabytes) * 1024} status=progress',
+        'sudo chmod 600 /swapfile',
+        'sudo mkswap /swapfile',
+        'sudo swapon /swapfile',
+    ])
+    _lineinfile(
+        line='/swapfile none swap defaults 0 0',
+        filename='/etc/fstab',
+    )
+
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
     '''
@@ -326,7 +347,9 @@ def apps():
     if not os.path.exists(_path('~/.config/awesome-copycats')):
         _run([
             'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome-copycats',
-            'ln -s ~/.config/awesome-copycats ~/.config/awesome'
+            'ln -s ~/.config/awesome-copycats ~/.config/awesome',
+            "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
+            "sudo systemctl restart systemd-logind",
         ])
 
 
@@ -341,11 +364,10 @@ def dotfiles():
         print("Do not run this as root")
         return
 
-    line = f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'
-    filename = '/etc/bash.bashrc'
-    _run([
-        f"grep -qxF '{line}' {filename} || echo '{line}' | sudo tee -a {filename}",
-    ])
+    _lineinfile(
+        line=f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
+        filename='/etc/bash.bashrc',
+    )
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
             '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',

@@ -357,3 +357,5 @@ _bootstrap_linux_completions()
 
 complete -F _bootstrap_linux_completions bootstrap-linux
 
+
+[ -r /usr/bin/neofetch ] &&  /usr/bin/neofetch
