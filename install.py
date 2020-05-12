@@ -202,7 +202,6 @@ def update():
     '''Update the system
     '''
     _run([
-        'sudo pacman-mirrors -f',
         'sudo pacman -Syyu --noconfirm',
         'yay -Syu  --noconfirm',
         'inxi -Fxxxza --no-host',
@@ -270,8 +269,10 @@ def distro():
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
-        'slock',  # Screenlock
+        'light-locker',  # Screenlock
         'rtorrent',
+        'wget',
+        'xclip', # To copy to clipboard from terminal
 
         # May be needed
         # 'acpi',
@@ -333,7 +334,7 @@ def apps():
         ])
 
     _aur([
-        'lightdm-webkit-theme-aether',
+        'lightdm-webkit-theme-aether-git',
         'whatsapp-nativefier-dark',
         'slack-desktop',
         'teams',
