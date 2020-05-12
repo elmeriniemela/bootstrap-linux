@@ -222,11 +222,12 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
+        * pacstrap /mnt base linux linux-firmware dhcpcd vim git python python-pip
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
-        * pacman -S dhcpcd vim git python python-pip
-        * systemctl enable dhcpcd --now
-        * pacman -S grub efibootmgr
+        * systemctl enable dhcpcd
+        # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
+        * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
         * grub-mkconfig -o /boot/grub/grub.cfg
         * visudo # uncomment wheel
@@ -283,9 +284,9 @@ def distro():
     ])
 
     _run([
-        'systemctl enable --now NetworkManager',
-        'systemctl enable --now avahi-daemon',
-        'systemctl enable --now lightdm',
+        'systemctl enable NetworkManager',
+        'systemctl enable avahi-daemon',
+        'systemctl enable lightdm',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
         'locale-gen',
