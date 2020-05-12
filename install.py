@@ -390,19 +390,19 @@ def flameshot():
     # Global shortcuts -> Spectacle -> Disable all
     # Add -> Graphics -> Flameshot
     INSTALL_DIR = '/opt/flameshot'
-    _run([
-        f'sudo mkdir {INSTALL_DIR} -p',
+    _packages([
         # Compile-time
-        'sudo pacman -S base-devel git qt5-base qt5-tools --noconfirm',
+        'qt5-base',
+        'qt5-tools',
 
         # Run-time
-        'sudo pacman -S qt5-svg --noconfirm',
+        'qt5-svg',
     ])
-    try:
+    if not os.path.exists(INSTALL_DIR):
         _run([
             f'sudo git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
         ])
-    except:
+    else:
         _run([
             f'cd {INSTALL_DIR}',
             f'sudo git pull',
