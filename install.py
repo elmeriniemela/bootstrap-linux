@@ -66,19 +66,20 @@ def _run(commands, dependencies=None, **kwargs):
                     raise
 
 
-def _packages(list_of_packages, flags=['--noconfirm']):
+def _packages(list_of_packages, flags=['-S', '--noconfirm']):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
 
     flag_str = ' '.join(flags)
     _run([
-        f'{prepend}pacman -S {flag_str} ' + ' '.join(list_of_packages)
+        f'{prepend}pacman {flag_str} ' + ' '.join(list_of_packages)
     ])
 
-def _aur(list_of_packages):
+def _aur(list_of_packages, flags=['-S', '--noconfirm']):
+    flag_str = ' '.join(flags)
     _run([
-        'yay -S --noconfirm ' + ' '.join(list_of_packages)
+        f'yay {flag_str} ' + ' '.join(list_of_packages)
     ])
 
 
@@ -202,9 +203,10 @@ def pyflame():
 def update():
     '''Update the system
     '''
+
+    _packages([], flags='-Syyu --noconfirm'.split())
+    _aur([], flags='-Syyu --noconfirm'.split())
     _run([
-        'sudo pacman -Syyu --noconfirm',
-        'yay -Syu  --noconfirm',
         'inxi -Fxxxza --no-host',
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
         # 'sudo modprobe nvidia',
