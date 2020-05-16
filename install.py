@@ -177,10 +177,9 @@ def tmc_cli():
 def battery():
     '''Linux tlp install
     '''
+    _packages(['tlp'])
     _run([
-        'sudo pacman -S tlp',
         'sudo systemctl enable --now tlp',
-        # 'sudo systemctl enable --now tlp-sleep.service',
     ])
 
 
@@ -189,8 +188,8 @@ def pyflame():
     '''Install pyflame
     '''
     INSTALL_PATH = _path('~/.local/lib')
+    _packages('autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make'.split())
     _run([
-        'sudo pacman -S autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make',
         f'git clone https://github.com/uber/pyflame.git {INSTALL_PATH}',
         f'cd {INSTALL_PATH}/pyflame',
         'sudo ./autogen.sh',
@@ -234,6 +233,7 @@ def distro():
         * grub-mkconfig -o /boot/grub/grub.cfg
         * visudo # uncomment wheel
     '''
+    USER = 'elmeri'
     _packages([
         'sudo',
         'xorg',
@@ -279,11 +279,6 @@ def distro():
         'rtorrent',
         'wget',
         'xclip', # To copy to clipboard from terminal
-
-        # May be needed
-        # 'acpi',
-        # 'acpid',
-
         'feh', # to view images
         'libreoffice-fresh', # to view docs
     ])
@@ -298,9 +293,8 @@ def distro():
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
         'echo "kernel.sysrq=1" >> /etc/sysctl.d/99-sysctl.conf',
-        'useradd -m -G video,wheel -s /bin/bash elmeri',
-        'passwd elmeri',
-        'chown elmeri:elmeri /opt',
+        f'useradd -m -G video,wheel -s /bin/bash {USER}',
+        f'passwd {USER}',
     ])
     _copy({
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
@@ -334,9 +328,12 @@ def apps():
 
     if not os.path.exists(_path('/opt/yay')):
         _run([
+            'sudo mkdir -p /opt/yay',
+            'sudo chown $USER:$USER /opt/yay'
             'git clone https://aur.archlinux.org/yay.git /opt/yay',
             'cd /opt/yay',
             'makepkg -si',
+            'chown root:root /opt/yay'
         ])
 
     _aur([
@@ -391,10 +388,10 @@ def dotfiles():
 def material_awesome():
     '''Install material-awesome
     '''
+    _packages('rofi compton xclip gnome-keyring polkit'.split())
+    _aur(['i3lock-fancy-git'])
     _run([
         'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
-        'sudo pacman -S rofi compton xclip gnome-keyring polkit --noconfirm',
-        'yay -S i3lock-fancy-git --noconfirm',
     ])
 
 
@@ -408,7 +405,6 @@ def flameshot():
         # Compile-time
         'qt5-base',
         'qt5-tools',
-
         # Run-time
         'qt5-svg',
     ])
@@ -442,7 +438,7 @@ def add_ssh(filename):
             f'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
-        dependencies=['sudo pacman -S --noconfirm xclip']
+        dependencies=_lazyfunction(_packages, ['xclip'])
     )
 
 def password(length=32):
@@ -452,16 +448,15 @@ def password(length=32):
         [
             f'< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
         ],
-        dependencies=['sudo pacman -S --noconfirm xclip']
+        dependencies=_lazyfunction(_packages, ['xclip'])
     )
 
 
-DEFAULT_ODOO_BRANCH = '13.0'
 
-def _get_odoo_path(branch=DEFAULT_ODOO_BRANCH, repo='odoo'):
+def _get_odoo_path(branch, repo='odoo'):
     return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
 
-def odoo_venv(branch=DEFAULT_ODOO_BRANCH):
+def odoo_venv(branch):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -470,13 +465,13 @@ def odoo_venv(branch=DEFAULT_ODOO_BRANCH):
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
         if float(branch) <= 10.0:
-            _run([
-                'cd ~/.venv',
-                'python2 -m virtualenv -p python2 {}'.format(venv_name),
-            ], dependencies=[
-                'sudo pacman -S --noconfirm python2',
-                'sudo pacman -S --noconfirm python2-virtualenv',
-            ])
+            _run(
+                [
+                    'cd ~/.venv',
+                    'python2 -m virtualenv -p python2 {}'.format(venv_name),
+                ],
+                dependencies=_lazyfunction(_packages, ['python2', 'python2-virtualenv'])
+            )
 
         else:
             _run([
@@ -497,27 +492,31 @@ def odoo_venv(branch=DEFAULT_ODOO_BRANCH):
         ], dependencies=_lazyfunction(global_odoo_deps, branch=branch))
 
 
-def global_odoo_deps(branch=DEFAULT_ODOO_BRANCH):
+def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
     if float(branch) >= 11.0:
         # Bank connector deps
         venv_name = 'odoo{}'.format(branch[:-2])
-        _run([
-            'sudo pacman -S xmlsec pwgen libxml2 pkg-config --noconfirm',
+        _packages([
+            'xmlsec',
+            'pwgen',
+            'libxml2',
+            'pkg-config',
         ])
-
     if float(branch) < 12.0:
+        _packages([
+            'nodejs-less',
+            'npm',
+        ])
         _run([
-            'sudo pacman -S --noconfirm nodejs-less',
-            'sudo pacman -S --noconfirm npm',
             'sudo npm install --global less-plugin-clean-css',
         ])
 
-    _run([
-        'sudo pacman -S postgresql --noconfirm',
-        'yay -S wkhtmltopdf-static --noconfirm'
-    ])
+
+    _packages(['postgresql'])
+    _aur(['wkhtmltopdf-static'])
+
     try:
         _run([
             "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
@@ -528,7 +527,7 @@ def global_odoo_deps(branch=DEFAULT_ODOO_BRANCH):
         pass
 
 
-def odoo(branch=DEFAULT_ODOO_BRANCH):
+def odoo(branch):
     '''Installs odoo, enterprise and all the dependencies
     '''
 
@@ -550,7 +549,7 @@ def odoo(branch=DEFAULT_ODOO_BRANCH):
     _odoo_venv(branch)
 
 
-def _get_odoo_source(repo='odoo', branch=DEFAULT_ODOO_BRANCH):
+def _get_odoo_source(repo, branch):
     import glob
     from distutils.dir_util import copy_tree
     odoo_path = _get_odoo_path(branch, repo=repo)
