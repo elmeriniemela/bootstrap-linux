@@ -66,12 +66,14 @@ def _run(commands, dependencies=None, **kwargs):
                     raise
 
 
-def _packages(list_of_packages):
+def _packages(list_of_packages, flags=['--noconfirm']):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
+
+    flag_str = ' '.join(flags)
     _run([
-        f'{prepend}pacman -S --noconfirm ' + ' '.join(list_of_packages)
+        f'{prepend}pacman -S {flag_str} ' + ' '.join(list_of_packages)
     ])
 
 def _aur(list_of_packages):
@@ -215,7 +217,7 @@ def serial():
     '''
     _packages(['dmidecode'])
     _run([
-        'dmidecode -s system-serial-number',
+        'sudo udmidecode -s system-serial-number',
     ])
 
 
@@ -255,13 +257,16 @@ def distro():
         'ttf-bitstream-vera', # Fix vscode fonts
         'ttf-droid',
         'ttf-roboto',
-        'pcmanfm', # Light filemanager
         'alsa-utils',
         'pulseaudio',
         'pulseaudio-alsa',
         'pavucontrol',
         'arandr',
+        'pcmanfm', # Light filemanager
         'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
+        'gvfs', # For automount
+        'polkit-gnome', # For automount
+        'udiskie' # For automount
         'unzip',
         'zip',
         'openssh', # SSH client
@@ -303,10 +308,10 @@ def distro():
         'locale.conf': '/etc/locale.conf',
     })
 
-def asus_backlight_fix():
+def backlight_fix():
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
-    ])
+    ], flags=[])
 
 def swapfile(gigabytes):
     _run([
@@ -345,6 +350,15 @@ def apps():
 
     if not os.path.exists(_path('~/.config/awesome-copycats')):
         _run([
+            # Set default lightdm-webkit2-greeter theme to Aether
+            "sudo sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = lightdm-webkit-theme-aether #\1/g' /etc/lightdm/lightdm-webkit2-greeter.conf",
+
+            # Set default lightdm greeter to lightdm-webkit2-greeter. TODO: FIXME
+            "sudo sed -i 's/^\(#?greeter\)-session\s*=\s*\(.*\)/greeter-session = lightdm-webkit2-greeter #\1/ #\2g' /etc/lightdm/lightdm.conf",
+
+            # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
+            'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER'
+
             'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome-copycats',
             'ln -s ~/.config/awesome-copycats ~/.config/awesome',
             "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
