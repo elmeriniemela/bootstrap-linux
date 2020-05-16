@@ -150,18 +150,18 @@ def monitor():
                 width, height = res_match[0]
                 monitors.append(_Monitor(name, width, height))
 
-    if len(monitors) != 2:
-        command = 'xrandr --auto'
-    else:
-        below = min(monitors)
+    if len(monitors) == 2:
+        # Sort with ASC
+        monitors.sort()
+        below, above = monitors
         below.primary = True
-
-        above = max(monitors)
 
         below.x = above.width // 2 - below.width // 2
         below.y = above.height
 
         command = 'xrandr ' + ' '.join(str(m) for m in monitors)
+    else:
+        command = 'xrandr --auto'
 
     _run([command])
 
@@ -298,6 +298,7 @@ def distro():
         f'useradd -m -G video,wheel -s /bin/bash {USER}',
         f'passwd {USER}',
     ])
+
     _copy({
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
