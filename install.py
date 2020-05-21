@@ -216,10 +216,9 @@ def update():
 def serial():
     '''Print machine serial number
     '''
-    _packages(['dmidecode'])
     _run([
-        'sudo udmidecode -s system-serial-number',
-    ])
+        'sudo dmidecode -s system-serial-number',
+    ], dependencies=_lazyfunction(_packages, ['dmidecode']))
 
 
 def distro():
@@ -615,6 +614,7 @@ def _print_functions(locals_dict):
 
 
 def _bash_complete(completion_iterable, str_index='1', arg=''):
+    # TODO: Implement using grep: grep -Po "(?<=^def )[^_](.*?)\(" install.py
     if str_index == '1':
         available = [c for c in completion_iterable if c.startswith(arg)]
         print(f"[{', '.join(available)}]")
