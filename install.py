@@ -83,11 +83,16 @@ def _aur(list_of_packages, flags=['-S', '--noconfirm']):
     ])
 
 
-def _lineinfile(line, filename):
-    line = line.replace(r"'", r"\'")
-    _run([
-        f"grep -qxF $'{line}' {filename} || echo $'{line}' | sudo tee -a {filename}",
-    ])
+def _lineinfile(files_dict):
+    prepend = ''
+    if os.geteuid() != 0:
+        prepend = 'sudo '
+
+    for filename, line in files_dict.items():
+        line = line.replace(r"'", r"\'")
+        _run([
+            f"grep -qxF $'{line}' {filename} || echo $'{line}' | {prepend}tee -a {filename}",
+        ])
 
 def _copy(files_dict):
     prepend = ''
@@ -204,7 +209,11 @@ def update():
     '''Update the system
     '''
 
-    _packages([], flags='-Syyu --noconfirm'.split())
+    _run([
+        """
+        curl -s "https://www.archlinux.org/mirrorlist/?country=FI&country=RU&country=SE&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
+        """
+    ])
     _aur([], flags='-Syyu --noconfirm'.split())
     _run([
         'inxi -Fxxxza --no-host',
@@ -304,6 +313,12 @@ def distro():
         'locale.conf': '/etc/locale.conf',
     })
 
+    _lineinfile({
+        '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
+        '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
+    })
+
+
 def backlight_fix():
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
@@ -316,10 +331,9 @@ def swapfile(gigabytes):
         'sudo mkswap /swapfile',
         'sudo swapon /swapfile',
     ])
-    _lineinfile(
-        line='/swapfile none swap defaults 0 0',
-        filename='/etc/fstab',
-    )
+    _lineinfile({
+        '/etc/fstab': '/swapfile none swap defaults 0 0',
+    })
 
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
@@ -376,10 +390,10 @@ def dotfiles():
         print("Do not run this as root")
         return
 
-    _lineinfile(
-        line=f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
-        filename='/etc/bash.bashrc',
-    )
+    _lineinfile({
+        '/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
+    })
+
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
             '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
