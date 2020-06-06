@@ -311,6 +311,7 @@ def distro():
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
         'locale.conf': '/etc/locale.conf',
+        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
     })
 
     _lineinfile({
