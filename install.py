@@ -562,7 +562,7 @@ def odoo(branch):
             data.format(odoo_version=branch[:-2])
         )
 
-    _odoo_venv(branch)
+    odoo_venv(branch)
 
 
 def _get_odoo_source(repo, branch):
