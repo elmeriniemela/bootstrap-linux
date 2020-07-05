@@ -285,12 +285,15 @@ def distro():
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
-        'light-locker',  # Screenlock
+        # 'light-locker',  # Screenlock
+        'xscreensaver',
         'rtorrent',
         'wget',
         'xclip', # To copy to clipboard from terminal
         'feh', # to view images
         'libreoffice-fresh', # to view docs
+        'rofi', # application launcher
+        'picom', # Transparency
     ])
 
     _run([
