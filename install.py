@@ -286,7 +286,7 @@ def distro():
         'xorg-xev',
         'xarchiver', # browse zip files
         # 'light-locker',  # Screenlock
-        'xscreensaver',
+        'slock',
         'rtorrent',
         'wget',
         'xclip', # To copy to clipboard from terminal
