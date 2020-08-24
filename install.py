@@ -5,6 +5,7 @@ import os
 import sys
 from contextlib import contextmanager
 import re
+import random
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
@@ -103,12 +104,13 @@ def _copy(files_dict):
 
 
 class _Monitor():
-    def __init__(self, name, width, height, x=0, y=0):
+    def __init__(self, name, width=0, height=0, x=0, y=0, off=False):
         self.name = name
         self.width = int(width)
         self.height = int(height)
         self.x = int(x)
         self.y = int(y)
+        self.off = off
         self.primary = False
 
     def __eq__(self, other):
@@ -131,11 +133,13 @@ class _Monitor():
 
 
     def __str__(self):
+        if self.off:
+            return f'--output {self.name} --off'
         prim_flag = ' --primary' if self.primary else ''
         return f'--output {self.name}{prim_flag} --mode {self.width}x{self.height} --pos {self.x}x{self.y}'
 
     def __repr__(self):
-        return str(self)
+        return f'_Monitor(name={self.name!r}, width={self.width!r}, height={self.height!r}, x={self.x!r}, y={self.y!r}, off={self.off!r})'
 
 
 def monitor():
@@ -143,7 +147,8 @@ def monitor():
     '''
 
     output = subprocess.check_output("xrandr -q --current", shell=True, encoding='utf-8')
-    monitors = []
+    connected_monitors = []
+    all_monitors = []
     lines = output.splitlines()
     for i, line in enumerate(lines):
         match = re.findall(r'^([\w-]+) connected', line)
@@ -153,18 +158,39 @@ def monitor():
             res_match = re.findall(r'[\s]*(\d+)x(\d+)', max_res_line)
             if res_match:
                 width, height = res_match[0]
-                monitors.append(_Monitor(name, width, height))
+                monitor = _Monitor(name, width, height)
+                connected_monitors.append(monitor)
+                all_monitors.append(monitor)
 
-    if len(monitors) == 2:
+        disconnected = re.findall(r'^([\w-]+) disconnected', line)
+        for name in disconnected:
+            all_monitors.append(_Monitor(name, off=True))
+
+
+    if len(connected_monitors) == 2:
         # Sort with ASC
-        monitors.sort()
-        below, above = monitors
+        connected_monitors.sort()
+        below, above = connected_monitors
         below.primary = True
+
+        # Fix black screen after lid has been closed by moving the connected_monitors temp
+        below.x = random.randint(10, 1000)
+        below.y = random.randint(10, 1000)
+
+        above.x = random.randint(10, 1000)
+        above.y = random.randint(10, 1000)
+
+        command = 'xrandr ' + ' '.join(str(m) for m in connected_monitors)
+        _run([command])
+
+        above.x = 0
+        above.y = 0
+
 
         below.x = above.width // 2 - below.width // 2
         below.y = above.height
 
-        command = 'xrandr ' + ' '.join(str(m) for m in monitors)
+        command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
     else:
         command = 'xrandr --auto'
 
@@ -276,7 +302,9 @@ def distro():
         'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
         'gvfs', # For automount
         'polkit-gnome', # For automount
-        'udiskie' # For automount
+        'udiskie', # For automount
+        'polkit',
+        'lxqt-policykit',
         'unzip',
         'zip',
         'openssh', # SSH client
