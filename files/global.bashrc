@@ -95,6 +95,7 @@ alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
 alias np='nano -w PKGBUILD'
 alias more=less
+alias feh="feh --scale-down --auto-zoom"
 
 xhost +local:root > /dev/null 2>&1
 

@@ -174,14 +174,13 @@ def monitor():
         below.primary = True
 
         # Fix black screen after lid has been closed by moving the connected_monitors temp
-        below.x = random.randint(10, 1000)
-        below.y = random.randint(10, 1000)
+        # below.x = random.randint(10, 1000)
+        # below.y = random.randint(10, 1000)
 
-        above.x = random.randint(10, 1000)
-        above.y = random.randint(10, 1000)
+        # above.x = random.randint(10, 1000)
+        # above.y = random.randint(10, 1000)
 
-        command = 'xrandr ' + ' '.join(str(m) for m in connected_monitors)
-        _run([command])
+        _run(['xrandr ' + ' '.join(str(m) for m in connected_monitors)])
 
         above.x = 0
         above.y = 0
@@ -321,7 +320,9 @@ def distro():
         'feh', # to view images
         'libreoffice-fresh', # to view docs
         'rofi', # application launcher
+        'rofi-calc',
         'picom', # Transparency
+        'ntfs-3g', # Read/write implementation of windows filesystem
     ])
 
     _run([
