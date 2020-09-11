@@ -355,7 +355,16 @@ alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
 _bootstrap_linux_completions()
 {
-    COMPREPLY=($(bootstrap-linux _bash_complete $COMP_CWORD ${COMP_WORDS[COMP_CWORD]} | tr -d '[],'))
+    update_dir
+    n=($(grep -Po "(?<=^def )[^_](.*?)\(" $current_dir/install.py | sed 's/(//'))
+    COMPREPLY=()
+
+    for i in "${n[@]}"
+    do
+        if [[ $COMP_CWORD == 1 && $i != "main" && $i == ${COMP_WORDS[COMP_CWORD]}* ]]; then
+            COMPREPLY+=($i)
+        fi
+    done
 }
 
 complete -F _bootstrap_linux_completions bootstrap-linux

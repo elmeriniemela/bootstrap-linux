@@ -660,14 +660,6 @@ def _print_functions(locals_dict):
         print("    {}".format(value.__doc__))
 
 
-def _bash_complete(completion_iterable, str_index='1', arg=''):
-    # TODO: Implement using grep: grep -Po "(?<=^def )[^_](.*?)\(" install.py
-    if str_index == '1':
-        available = [c for c in completion_iterable if c.startswith(arg)]
-        print(f"[{', '.join(available)}]")
-    else:
-        print([])
-
 LOCALS = locals()
 
 def main():
@@ -692,11 +684,6 @@ def main():
                         help='argument for the function')
 
     args = parser.parse_args()
-
-
-    if args.function == '_bash_complete':
-        _bash_complete(LOCALS, *args.args)
-        return 0
 
     func = LOCALS[args.function]
     with _quittable():
