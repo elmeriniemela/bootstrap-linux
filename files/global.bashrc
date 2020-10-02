@@ -369,5 +369,44 @@ _bootstrap_linux_completions()
 
 complete -F _bootstrap_linux_completions bootstrap-linux
 
+pull() {
+    for d in */ ; do
+        folder="$(basename $d)"
+        echo $folder
+        if [ -d "$folder" ]; then
+            cd $folder
+            bash /home/elmeri/.config/bootstrap-linux/ssh_origin.sh
+            git pull && git submodule update --init
+            cd ..
+        fi
+    done
+
+}
+
+add_access_file() {
+    if [ -z "$1" ]; then
+        echo "Specify model name (i.e partner_blocking_wizard)"
+    else
+        mkdir -p security
+        if [ ! -f security/ir.model.access.csv ]; then
+            echo "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink" > security/ir.model.access.csv
+        fi
+
+        rule="access_$1,access_$1,model_$1,base.group_user,1,1,1,1"
+
+        if grep -q "$rule" security/ir.model.access.csv ; then
+            echo "$rule exists"
+        else
+            echo "$rule" >> security/ir.model.access.csv
+        fi
+
+        if grep -q "security/ir.model.access.csv" __manifest__.py ; then
+            echo "security/ir.model.access.csv in __manifest__.py exists"
+        else
+            sed -i "/.*data.*:.*\[/a\ \ \ \ \ \ \ \ 'security/ir.model.access.csv'," __manifest__.py
+        fi
+    fi
+}
+
 
 [ -r /usr/bin/neofetch ] &&  /usr/bin/neofetch --disable gpu

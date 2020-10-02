@@ -77,11 +77,23 @@ def _packages(list_of_packages, flags=['-S', '--noconfirm']):
         f'{prepend}pacman {flag_str} ' + ' '.join(list_of_packages)
     ])
 
+def _yay():
+    dst = '/tmp/yay'
+    _run([
+        f'git clone https://aur.archlinux.org/yay.git {dst}',
+        f'cd {dst}',
+        'makepkg -si',
+        f'rm -rf {dst}'
+    ])
+
 def _aur(list_of_packages, flags=['-S', '--noconfirm']):
+    if os.geteuid() == 0:
+        print("Do not run this as root")
+        return
     flag_str = ' '.join(flags)
     _run([
         f'yay {flag_str} ' + ' '.join(list_of_packages)
-    ])
+    ], dependencies=_yay)
 
 
 def _lineinfile(files_dict):
@@ -215,20 +227,6 @@ def battery():
 
 
 
-def pyflame():
-    '''Install pyflame
-    '''
-    INSTALL_PATH = _path('~/.local/lib')
-    _packages('autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make'.split())
-    _run([
-        f'git clone https://github.com/uber/pyflame.git {INSTALL_PATH}',
-        f'cd {INSTALL_PATH}/pyflame',
-        'sudo ./autogen.sh',
-        'sudo ./configure',
-        'sudo make',
-        'sudo make install'
-    ])
-
 
 def update():
     '''Update the system
@@ -317,7 +315,7 @@ def distro():
         'rtorrent',
         'wget',
         'xclip', # To copy to clipboard from terminal
-        'feh', # to view images
+        'nomacs', # to view images
         'libreoffice-fresh', # to view docs
         'rofi', # application launcher
         'rofi-calc',
@@ -334,7 +332,6 @@ def distro():
         'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
-        'echo "kernel.sysrq=1" >> /etc/sysctl.d/99-sysctl.conf',
         f'useradd -m -G video,wheel -s /bin/bash {USER}',
         f'passwd {USER}',
     ])
@@ -349,6 +346,25 @@ def distro():
     _lineinfile({
         '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
         '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
+    })
+
+def secure():
+    _packages(['ufw', 'fail2ban'])
+    _run([
+        'sudo systemctl enable fail2ban --now'
+        'sudo systemctl enable ufw --now'
+        'sudo ufw limit 22/tcp',
+        'sudo ufw allow 80/tcp',
+        'sudo ufw allow 443/tcp',
+        'sudo ufw default deny incoming',
+        'sudo ufw default allow outgoing',
+        'sudo ufw enable',
+    ])
+
+    _lineinfile({
+        # https://forums.whonix.org/t/enforce-kernel-module-software-signature-verification-module-signing-disallow-kernel-module-loading-by-default/7880/11
+        # THIS CAUSES BOOT PARTITION NOT TO LOAD
+        # '/etc/sysctl.d/99-modules-disabled.conf': 'kernel.modules_disabled=1',
     })
 
 
@@ -371,20 +387,6 @@ def swapfile(gigabytes):
 def apps():
     '''User space apps, cannot be run as root. Run after distro.
     '''
-    if os.geteuid() == 0:
-        print("Do not run this as root")
-        return
-
-    if not os.path.exists(_path('/opt/yay')):
-        _run([
-            'sudo mkdir -p /opt/yay',
-            'sudo chown $USER:$USER /opt/yay'
-            'git clone https://aur.archlinux.org/yay.git /opt/yay',
-            'cd /opt/yay',
-            'makepkg -si',
-            'chown root:root /opt/yay'
-        ])
-
     _aur([
         'lightdm-webkit-theme-aether-git',
         'whatsapp-nativefier-dark',
@@ -392,6 +394,7 @@ def apps():
         'teams',
         'inxi', # Command line system information script for console
         'timeshift',  # Backups
+        'flameshot-git', # Screenshots
     ])
 
     if not os.path.exists(_path('~/.config/awesome-copycats')):
@@ -405,8 +408,7 @@ def apps():
             # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
             'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER'
 
-            'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome-copycats',
-            'ln -s ~/.config/awesome-copycats ~/.config/awesome',
+            'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome',
             "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
             "sudo systemctl restart systemd-logind",
         ])
@@ -443,38 +445,6 @@ def material_awesome():
         'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
     ])
 
-
-def flameshot():
-    '''Build flameshot from source
-    '''
-    # Global shortcuts -> Spectacle -> Disable all
-    # Add -> Graphics -> Flameshot
-    INSTALL_DIR = '/opt/flameshot'
-    _packages([
-        # Compile-time
-        'qt5-base',
-        'qt5-tools',
-        # Run-time
-        'qt5-svg',
-    ])
-    if not os.path.exists(INSTALL_DIR):
-        _run([
-            f'sudo git clone https://github.com/lupoDharkael/flameshot.git {INSTALL_DIR}',
-        ])
-    else:
-        _run([
-            f'cd {INSTALL_DIR}',
-            f'sudo git pull',
-        ])
-
-    _run([f'sudo mkdir {INSTALL_DIR}/build -p'])
-
-    _run([
-        f'cd {INSTALL_DIR}/build',
-        'sudo qmake ../',
-        'sudo make',
-        'sudo make install',
-    ])
 
 
 def add_ssh(filename):
@@ -571,6 +541,7 @@ def global_odoo_deps(branch):
             "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
             'sudo systemctl enable --now postgresql.service',
             'sudo su - postgres -c "createuser -s $USER"',
+            'sudo su - postgres -c "createuser -s root"',
         ])
     except:
         pass
