@@ -321,6 +321,10 @@ def distro():
         'rofi-calc',
         'picom', # Transparency
         'ntfs-3g', # Read/write implementation of windows filesystem
+        'hicolor-icon-theme', # It is recommended to install the hicolor-icon-theme package as many programs will deposit their icons in /usr/share/icons/hicolor and most other icon themes will inherit icons from the Hicolor icon theme.
+        'papirus-icon-theme', # Icon theme
+        'arc-gtk-theme', # Gtk theme
+        'lxappearance', # theme picker
     ])
 
     _run([
