@@ -67,10 +67,17 @@ def _run(commands, dependencies=None, **kwargs):
                     raise
 
 
+def _installed_packages():
+    return set(subprocess.check_output('pacman -Qqe', shell=True, encoding='utf-8').splitlines())
+
+
 def _packages(list_of_packages, flags=['-S', '--noconfirm']):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
+
+    existing = _installed_packages()
+    list_of_packages = [p for p in list_of_packages if p not in existing]
 
     flag_str = ' '.join(flags)
     _run([
@@ -91,6 +98,10 @@ def _aur(list_of_packages, flags=['-S', '--noconfirm']):
         print("Do not run this as root")
         return
     flag_str = ' '.join(flags)
+
+    existing = _installed_packages()
+    list_of_packages = [p for p in list_of_packages if p not in existing]
+
     _run([
         f'yay {flag_str} ' + ' '.join(list_of_packages)
     ], dependencies=_yay)
@@ -405,7 +416,7 @@ def apps():
 
     _run([
         # Set default lightdm-webkit2-greeter theme to Aether
-        "sudo sed -i 's/^webkit_theme\s*=\s*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
+        "sudo sed -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
 
         # Set default lightdm greeter to lightdm-webkit2-greeter.
         "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
