@@ -285,7 +285,7 @@ def distro():
         'vim',
         'htop',
         'zathura-pdf-mupdf',
-        'konsole', # Terminal configured to awesome
+        'terminator', # Terminal configured to awesome
         'bash-completion',
         'ttf-bitstream-vera', # Fix vscode fonts
         'ttf-droid',
@@ -400,22 +400,25 @@ def apps():
         'inxi', # Command line system information script for console
         'timeshift',  # Backups
         'flameshot-git', # Screenshots
+        'zoom',
     ])
 
+    _run([
+        # Set default lightdm-webkit2-greeter theme to Aether
+        "sudo sed -i 's/^webkit_theme\s*=\s*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
+
+        # Set default lightdm greeter to lightdm-webkit2-greeter.
+        "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
+
+        # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
+        # 'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
+
+        "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
+        "sudo systemctl restart systemd-logind",
+    ])
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
-            # Set default lightdm-webkit2-greeter theme to Aether
-            # "sudo sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = lightdm-webkit-theme-aether #\1/g' /etc/lightdm/lightdm-webkit2-greeter.conf",
-
-            # Set default lightdm greeter to lightdm-webkit2-greeter. TODO: FIXME
-            # "sudo sed -i 's/^\(#?greeter\)-session\s*=\s*\(.*\)/greeter-session = lightdm-webkit2-greeter #\1/ #\2g' /etc/lightdm/lightdm.conf",
-
-            # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
-            # 'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
-
             'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome',
-            "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
-            "sudo systemctl restart systemd-logind",
         ])
 
 
