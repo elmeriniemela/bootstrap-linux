@@ -286,7 +286,6 @@ def distro():
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
         * grub-mkconfig -o /boot/grub/grub.cfg
-        * visudo # uncomment wheel
     '''
     USER = 'elmeri'
     _packages([
@@ -360,6 +359,7 @@ def distro():
         'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
+        "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER})',
     ])
@@ -428,7 +428,7 @@ def apps():
 
     _run([
         # Set default lightdm-webkit2-greeter theme to Aether
-        "sudo sed -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
+        "sudo sed -E -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
 
         # Set default lightdm greeter to lightdm-webkit2-greeter.
         "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
@@ -436,9 +436,9 @@ def apps():
         "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
 
         # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
-        'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
+        'sudo sed -E -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
 
-        "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
+        "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
     ])
     if not os.path.exists(_path('~/.config/awesome')):
