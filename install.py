@@ -79,6 +79,9 @@ def _packages(list_of_packages, flags=['-S', '--noconfirm']):
     existing = _installed_packages()
     list_of_packages = [p for p in list_of_packages if p not in existing]
 
+    if '-S' in flags and not list_of_packages:
+        return
+
     flag_str = ' '.join(flags)
     _run([
         f'{prepend}pacman {flag_str} ' + ' '.join(list_of_packages)
@@ -422,7 +425,7 @@ def apps():
         "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
 
         # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
-        # 'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
+        'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
 
         "sudo sed -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
