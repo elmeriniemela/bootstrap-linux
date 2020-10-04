@@ -303,7 +303,7 @@ def distro():
         'veracrypt',
         'sshpass',
         'thunderbird',
-        'bind-tools',
+        'bind', # bind-tools
         'vim',
         'htop',
         'zathura-pdf-mupdf',
@@ -361,7 +361,7 @@ def distro():
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
-        f'grep {USER} /etc/passwd > /dev/null || useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER}',
+        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER})',
     ])
 
     _copy({
