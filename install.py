@@ -178,15 +178,17 @@ def monitor():
     lines = output.splitlines()
     for i, line in enumerate(lines):
         match = re.findall(r'^([\w-]+) connected', line)
-        if match and i < len(lines):
+        if match:
             name = match[0]
-            max_res_line = lines[i+1]
-            res_match = re.findall(r'[\s]*(\d+)x(\d+)', max_res_line)
-            if res_match:
-                width, height = res_match[0]
-                monitor = _Monitor(name, width, height)
-                connected_monitors.append(monitor)
-                all_monitors.append(monitor)
+            # 3 tries
+            for max_res_line in lines[i+1: i+4]:
+                res_match = re.findall(r'[\s]*(\d+)x(\d+)', max_res_line)
+                if res_match:
+                    width, height = res_match[0]
+                    monitor = _Monitor(name, width, height)
+                    connected_monitors.append(monitor)
+                    all_monitors.append(monitor)
+                    break
 
         disconnected = re.findall(r'^([\w-]+) disconnected', line)
         for name in disconnected:
