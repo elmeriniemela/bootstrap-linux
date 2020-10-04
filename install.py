@@ -344,6 +344,7 @@ def distro():
         'arc-gtk-theme', # Gtk theme
         'lxappearance', # theme picker
         'pacman-contrib', # rank mirrors
+        'crontab',
     ])
 
     _run([
@@ -355,8 +356,8 @@ def distro():
         'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
-        f'useradd -m -G video,wheel -s /bin/bash {USER}',
-        f'passwd {USER}',
+        '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
+        f'grep {USER} /etc/passwd > /dev/null || useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER}',
     ])
 
     _copy({
