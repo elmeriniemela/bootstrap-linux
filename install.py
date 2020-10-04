@@ -218,6 +218,8 @@ def monitor():
         below.y = above.height
 
         command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
+    elif len(connected_monitors) == 1:
+        command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
     else:
         command = 'xrandr --auto'
 
