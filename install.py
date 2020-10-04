@@ -428,6 +428,8 @@ def apps():
         # Set default lightdm greeter to lightdm-webkit2-greeter.
         "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
 
+        "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
+
         # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
         'sudo sed -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
 
