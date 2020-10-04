@@ -68,7 +68,11 @@ def _run(commands, dependencies=None, **kwargs):
 
 
 def _installed_packages():
-    return set(subprocess.check_output('pacman -Qqe', shell=True, encoding='utf-8').splitlines())
+    return set(subprocess.check_output(
+            "pacman -Qqe --groups | awk '{print $1}' && pacman -Qqe",
+            shell=True,
+            encoding='utf-8',
+        ).splitlines())
 
 
 def _packages(list_of_packages, flags=['-S', '--noconfirm']):
@@ -344,7 +348,7 @@ def distro():
         'arc-gtk-theme', # Gtk theme
         'lxappearance', # theme picker
         'pacman-contrib', # rank mirrors
-        'crontab',
+        'cronie',
     ])
 
     _run([
