@@ -314,6 +314,10 @@ def distro():
         'alsa-utils',
         'pulseaudio',
         'pulseaudio-alsa',
+        'pulseaudio-bluetooth', # bluetoothctl
+        'bluez-utils', # bluetoothctl
+        'blueman',
+        'copyq',
         'pavucontrol',
         'arandr',
         'pcmanfm', # Light filemanager

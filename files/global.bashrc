@@ -209,6 +209,11 @@ _ssh_clipboard_completer () {
 complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
 
 
+odoo_coverage() {
+    coverage run --source=$PWD $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
+    coverage html
+}
+
 odoo() {
     version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
     if (( version < 10  ));
