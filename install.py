@@ -230,15 +230,6 @@ def monitor():
     _run([command])
 
 
-
-def tmc_cli():
-    '''Installs TMC CLI
-    '''
-    _run(['curl -0 https://raw.githubusercontent.com/testmycode/tmc-cli/master/scripts/install.sh | bash'])
-
-
-
-
 def battery():
     '''Linux tlp install
     '''
@@ -256,7 +247,7 @@ def update():
 
     _run([
         """
-        curl -s "https://www.archlinux.org/mirrorlist/?country=FI&country=RU&country=SE&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
+        curl -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
         """
     ])
     _aur([], flags='-Syyu --noconfirm'.split())
@@ -321,11 +312,13 @@ def distro():
         'pavucontrol',
         'arandr',
         'pcmanfm', # Light filemanager
-        'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1',
+        'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1'. GVFS uses udisks2 for mounting functionality and is the recommended solution for most file managers.
         'gvfs', # For automount
-        'polkit-gnome', # For automount
+        'gvfs-mtp', # Media Transfer Protocol for pcmanfm to automount android devices and browse files
+        # 'gvfs-smb', # Samba support
         'udiskie', # For automount
-        'polkit',
+        'polkit', # privilege escalation
+        'polkit-gnome', # privilege escalation gui 'auth agent'
         'lxqt-policykit',
         'unzip',
         'zip',
@@ -366,6 +359,7 @@ def distro():
         "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER})',
+        f'if [ ! -d /media ]; then ln -s /run/media/{USER} /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
     ])
 
     _copy({
