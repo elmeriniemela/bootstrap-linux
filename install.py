@@ -6,6 +6,7 @@ import sys
 from contextlib import contextmanager
 import re
 import random
+from functools import partial
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
@@ -17,16 +18,6 @@ def _quittable():
         yield
     except (EOFError, KeyboardInterrupt):
         print("Bye")
-
-
-class _lazyfunction:
-    def __init__(self, func, *args, **kwargs):
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self):
-        return self.func(*self.args, **self.kwargs)
 
 
 def _path(path):
@@ -56,12 +47,8 @@ def _run(commands, dependencies=None, **kwargs):
                 subprocess.run(command, **default_kwargs)
             except subprocess.CalledProcessError as error:
                 if dependencies:
-                    if callable(dependencies):
-                        dependencies()
-                    elif isinstance(dependencies, list):
-                        _run(dependencies, **kwargs)
-                    else:
-                        raise TypeError(f'Expected a list or a function for dependencies, got {type(dependencies)!r}')
+                    dependencies()
+                    # Retry after running dependencies.
                     _run([command], **kwargs)
                 else:
                     raise
@@ -221,11 +208,7 @@ def monitor():
         below.x = above.width // 2 - below.width // 2
         below.y = above.height
 
-        command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
-    elif len(connected_monitors) == 1:
-        command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
-    else:
-        command = 'xrandr --auto'
+    command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
 
     _run([command])
 
@@ -263,7 +246,7 @@ def serial():
     '''
     _run([
         'sudo dmidecode -s system-serial-number',
-    ], dependencies=_lazyfunction(_packages, ['dmidecode']))
+    ], dependencies=partial(_packages, ['dmidecode']))
 
 
 def distro():
@@ -488,7 +471,7 @@ def add_ssh(filename):
             f'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
-        dependencies=_lazyfunction(_packages, ['xclip'])
+        dependencies=partial(_packages, ['xclip'])
     )
 
 def password(length=32):
@@ -498,7 +481,7 @@ def password(length=32):
         [
             f'< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
         ],
-        dependencies=_lazyfunction(_packages, ['xclip'])
+        dependencies=partial(_packages, ['xclip'])
     )
 
 
@@ -520,7 +503,7 @@ def odoo_venv(branch):
                     'cd ~/.venv',
                     'python2 -m virtualenv -p python2 {}'.format(venv_name),
                 ],
-                dependencies=_lazyfunction(_packages, ['python2', 'python2-virtualenv'])
+                dependencies=partial(_packages, ['python2', 'python2-virtualenv'])
             )
 
         else:
@@ -533,13 +516,13 @@ def odoo_venv(branch):
 
     _run([
         f'sed "/psycopg2/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2',
-    ], dependencies=_lazyfunction(global_odoo_deps, branch=branch))
+    ], dependencies=partial(global_odoo_deps, branch=branch))
 
     if float(branch) >= 11.0:
         # Bank connector deps
         _run([
             f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec'
-        ], dependencies=_lazyfunction(global_odoo_deps, branch=branch))
+        ], dependencies=partial(global_odoo_deps, branch=branch))
 
 
 def global_odoo_deps(branch):
