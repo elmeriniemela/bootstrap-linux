@@ -304,7 +304,6 @@ export EDITOR="$VISUAL"
 export FLASK_ENV=development
 export ANSIBLE_DEBUG=0
 
-stty -ixon
 
 if [ -d "/opt/FlameGraph" ] ; then
     PATH="$PATH:/opt/FlameGraph"
@@ -414,4 +413,22 @@ add_access_file() {
 }
 
 
+git_export() {
+    if [ -z "$1" ]; then
+        echo "Specify module name (i.e web_widget_colorpicker)"
+    elif [ -z "$2" ]; then
+        echo "Specify branch name (i.e 12.0)"
+    else
+        git init
+        echo "*.pyc" >> .gitignore
+        git checkout -b $2
+        git add .
+        git -c user.email="niemela.elmeri@gmail.com" -c user.name="Elmeri Niemelä" commit -m "Inital Commit"
+        git remote add origin https://bitbucket.org/sprintit/$1.git
+        git push --set-upstream origin $2
+    fi
+}
+
 [ -r /usr/bin/neofetch ] &&  /usr/bin/neofetch --disable gpu
+
+stty -ixon

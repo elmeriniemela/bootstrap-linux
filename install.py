@@ -62,7 +62,7 @@ def _installed_packages():
         ).splitlines())
 
 
-def _packages(list_of_packages, flags=['-S', '--noconfirm']):
+def _packages(list_of_packages, flags=('-S', '--noconfirm')):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
@@ -87,7 +87,7 @@ def _yay():
         f'rm -rf {dst}'
     ])
 
-def _aur(list_of_packages, flags=['-S', '--noconfirm']):
+def _aur(list_of_packages, flags=('-S', '--noconfirm')):
     if os.geteuid() == 0:
         print("Do not run this as root")
         return
@@ -398,7 +398,7 @@ def apps():
     '''
     _aur([
         'lightdm-webkit-theme-aether-git',
-        'whatsapp-nativefier-dark',
+        'whatsapp-nativefier',
         'slack-desktop',
         'teams',
         'inxi', # Command line system information script for console
@@ -500,22 +500,20 @@ def odoo_venv(branch):
         if float(branch) <= 10.0:
             _run(
                 [
-                    'cd ~/.venv',
-                    'python2 -m virtualenv -p python2 {}'.format(venv_name),
+                    'python2 -m virtualenv -p python2 ~/.venv/{}'.format(venv_name),
                 ],
                 dependencies=partial(_packages, ['python2', 'python2-virtualenv'])
             )
 
         else:
             _run([
-                'cd ~/.venv',
-                'python3 -m venv {}'.format(venv_name),
+                'python3.8 -m venv ~/.venv/{}'.format(venv_name),
             ])
 
 
 
     _run([
-        f'sed "/psycopg2/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2',
+        f'sed "/psycopg2/d;/lxml/d;/greenlet/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
     if float(branch) >= 11.0:
