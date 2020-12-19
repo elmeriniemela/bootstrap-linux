@@ -109,6 +109,7 @@ def _lineinfile(files_dict):
     for filename, line in files_dict.items():
         line = line.replace(r"'", r"\'")
         _run([
+            f"{prepend}touch {filename}",
             f"grep -qxF $'{line}' {filename} || echo $'{line}' | {prepend}tee -a {filename}",
         ])
 
@@ -230,7 +231,7 @@ def update():
 
     _run([
         """
-        curl -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
+        curl -L -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
         """
     ])
     _aur([], flags='-Syyu --noconfirm'.split())
@@ -272,6 +273,7 @@ def distro():
         'base-devel',
         'networkmanager',
         'code',
+        'tmux',
         'firefox',
         'veracrypt',
         'sshpass',
