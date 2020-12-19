@@ -252,7 +252,7 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
-        * pacstrap /mnt base linux linux-firmware dhcpcd vim git python python-pip
+        * pacstrap /mnt base linux linux-firmware archlinux-keyring dhcpcd vim git python python-pip
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
         * systemctl enable dhcpcd
