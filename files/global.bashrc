@@ -225,7 +225,7 @@ odoo() {
 }
 
 venv() {
-    python3 -m venv ~/.venv/$1 ${@:2}
+    python3.8 -m venv ~/.venv/$1 ${@:2}
 }
 
 
@@ -432,3 +432,5 @@ git_export() {
 [ -r /usr/bin/neofetch ] &&  /usr/bin/neofetch --disable gpu
 
 stty -ixon
+
+export ANDROID_SDK=/home/elmeri/Android/Sdk

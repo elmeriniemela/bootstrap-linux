@@ -27,6 +27,24 @@ def _path(path):
         formatted = path
     return formatted
 
+def _pipe(data, command):
+    default_kwargs = {
+        'shell': True,
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.PIPE,
+        'stdin': subprocess.PIPE,
+        'encoding': 'utf-8'
+    }
+    p = subprocess.Popen(
+        command,
+        **default_kwargs,
+    )
+    stdout_data, stderr_data = p.communicate(input=data)
+    if stderr_data:
+        print(stderr_data)
+    assert p.returncode == 0
+    return stdout_data
+
 
 def _run(commands, dependencies=None, **kwargs):
     for command in commands:
@@ -87,7 +105,7 @@ def _yay():
         f'rm -rf {dst}'
     ])
 
-def _aur(list_of_packages, flags=('-S', '--noconfirm')):
+def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=True):
     if os.geteuid() == 0:
         print("Do not run this as root")
         return
@@ -98,7 +116,7 @@ def _aur(list_of_packages, flags=('-S', '--noconfirm')):
 
     _run([
         f'yay {flag_str} ' + ' '.join(list_of_packages)
-    ], dependencies=_yay)
+    ], dependencies=_yay if deps else False)
 
 
 def _lineinfile(files_dict):
@@ -229,12 +247,27 @@ def update():
     '''Update the system
     '''
 
-    _run([
-        """
-        curl -L -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
-        """
-    ])
-    _aur([], flags='-Syyu --noconfirm'.split())
+    import urllib.request
+    import re
+    # Use urllib instead of curl to better handle errors
+    url = (
+        'https://www.archlinux.org/mirrorlist/'
+        '?country=FI'
+        '&protocol=http'
+        '&protocol=https'
+        '&ip_version=4'
+        '&use_mirror_status=on'
+    )
+    with urllib.request.urlopen(url) as response:
+        mirrors = response.read().decode()
+
+    if mirrors:
+        ranked_mirrors = _pipe(mirrors, "sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - ")
+        # First pipe into rank mirrors, and only if it succeeds then edit mirrorlist
+        if ranked_mirrors:
+            _pipe(ranked_mirrors, "sudo tee /etc/pacman.d/mirrorlist")
+
+    _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split(), deps=False)
     _run([
         'inxi -Fxxxza --no-host',
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
@@ -382,7 +415,7 @@ def secure():
 def backlight_fix():
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
-    ], flags=[])
+    ], flags=('-S',))
 
 def swapfile(gigabytes):
     _run([
@@ -416,6 +449,7 @@ def apps():
         # Set default lightdm greeter to lightdm-webkit2-greeter.
         "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
 
+        # Unstable if python major version changes.
         # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
 
         # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
