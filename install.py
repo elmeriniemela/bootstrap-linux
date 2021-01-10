@@ -131,12 +131,14 @@ def _lineinfile(files_dict):
             f"grep -qxF $'{line}' {filename} || echo $'{line}' | {prepend}tee -a {filename}",
         ])
 
-def _copy(files_dict):
+def _link(files_dict):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
     for fname, dest_path in files_dict.items():
-        _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
+        if os.path.isfile(dest_path):
+            _run([f'{prepend}rm {dest_path}'])
+        _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'])
 
 
 class _Monitor():
@@ -380,7 +382,7 @@ def distro():
         f'if [ ! -d /media ]; then ln -s /run/media/{USER} /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
     ])
 
-    _copy({
+    _link({
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
         'locale.conf': '/etc/locale.conf',
