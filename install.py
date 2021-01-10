@@ -553,9 +553,9 @@ def odoo_venv(branch):
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
     if float(branch) >= 11.0:
-        # Bank connector deps
+        # Taha deps
         _run([
-            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec'
+            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
         ], dependencies=partial(global_odoo_deps, branch=branch))
 
 
@@ -563,7 +563,7 @@ def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
     if float(branch) >= 11.0:
-        # Bank connector deps
+        # Taha deps
         venv_name = 'odoo{}'.format(branch[:-2])
         _packages([
             'xmlsec',
