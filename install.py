@@ -465,7 +465,12 @@ def apps():
             'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome',
         ])
 
-
+    extensions_dst = _path('~/.vscode-oss/extensions/vscode-extensions-open-in-browser')
+    if not os.path.exists(extensions_dst):
+        _run([
+            f'git clone --recursive https://github.com/elmeriniemela/vscode-extensions-open-in-browser.git {extensions_dst}',
+            f'npm install --prefix {extensions_dst}',
+        ])
 
 
 def dotfiles():
@@ -575,11 +580,10 @@ def global_odoo_deps(branch):
         ])
     if float(branch) < 12.0:
         _packages([
-            'nodejs-less',
             'npm',
         ])
         _run([
-            'sudo npm install --global less-plugin-clean-css',
+            'sudo npm install --global less@3.0.1 less-plugin-clean-css',
         ])
 
 
