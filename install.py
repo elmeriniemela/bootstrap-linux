@@ -213,13 +213,6 @@ def monitor():
         below, above = connected_monitors
         below.primary = True
 
-        # Fix black screen after lid has been closed by moving the connected_monitors temp
-        # below.x = random.randint(10, 1000)
-        # below.y = random.randint(10, 1000)
-
-        # above.x = random.randint(10, 1000)
-        # above.y = random.randint(10, 1000)
-
         _run(['xrandr ' + ' '.join(str(m) for m in connected_monitors)])
 
         above.x = 0
@@ -395,6 +388,8 @@ def distro():
     })
 
 def secure():
+    """ Install and setup ufw and fail2ban.
+    """
     _packages(['ufw', 'fail2ban'])
     _run([
         'sudo systemctl enable fail2ban --now'
@@ -415,11 +410,15 @@ def secure():
 
 
 def backlight_fix():
+    """ Fix the backlight control on a laptop.
+    """
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
     ], flags=('-S',))
 
 def swapfile(gigabytes):
+    """ Generate and enable a swapfile
+    """
     _run([
         f'sudo dd if=/dev/zero of=/swapfile bs=1M count={int(gigabytes) * 1024} status=progress',
         'sudo chmod 600 /swapfile',
@@ -676,13 +675,27 @@ def _print_functions(locals_dict):
     '''Lists the available functions
     '''
     import inspect
-    for key, value in locals_dict.items():
-        sign = inspect.signature(value)
+    try:
+        import colorama
+        colorama.init()
+        C = {
+            'B': colorama.Fore.BLUE,
+            'Y': colorama.Fore.YELLOW,
+            'R': colorama.Fore.RESET,
+        }
+    except ImportError:
+        print("For color support: $ pip install colorama")
+        from collections import defaultdict
+        C = defaultdict(str)
+
+    for fname, func in locals_dict.items():
+        sign = inspect.signature(func)
         params = []
         for string_name, parameter in sign.parameters.items():
             params.append(str(parameter))
-        print("def {}({}):".format(value.__name__, ', '.join(params)))
-        print("    {}".format(value.__doc__))
+        print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
+        assert func.__doc__ and func.__doc__.endswith('\n    '), f"Invalid docstring for {fname}: '{func.__doc__}'"
+        print("    {}".format(func.__doc__))
 
 
 LOCALS = locals()
