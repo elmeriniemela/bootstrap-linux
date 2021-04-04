@@ -358,6 +358,20 @@ def distro():
         'lxappearance', # theme picker
         'pacman-contrib', # rank mirrors
         'cronie',
+        'deluge', # torrent
+        'deluge-gtk',
+        'gocryptfs',
+        'syncthing',
+        'telegram-desktop',
+        'signal-desktop',
+        'openvpn', # personal
+        'openconnect',  # work
+        'rsync',
+        'simplescreenrecorder',
+        'vlc',
+        'texlive-most', # Latex
+        'ncdu', # diskspace
+
     ])
 
     _run([
