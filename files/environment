@@ -4,4 +4,5 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 CM_LAUNCHER=rofi
+CM_HISTLENGTH=15
 CM_DIR=.config/clipmenu/cache
