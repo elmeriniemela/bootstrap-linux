@@ -321,7 +321,7 @@ def distro():
         'pulseaudio-bluetooth', # bluetoothctl
         'bluez-utils', # bluetoothctl
         'blueman',
-        'copyq',
+        'clipmenu',
         'pavucontrol',
         'arandr',
         'pcmanfm', # Light filemanager
@@ -394,6 +394,7 @@ def distro():
         'hosts': '/etc/hosts',
         'locale.conf': '/etc/locale.conf',
         '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
+        'environment': '/etc/environment',
     })
 
     _lineinfile({

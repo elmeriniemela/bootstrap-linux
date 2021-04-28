@@ -254,7 +254,7 @@ add_note() {
 rm_submodule() {
     git submodule deinit -f -- "$1"
     rm -rf ".git/modules/a/$1"
-    git rm -f "$1"
+    git rm -rf "$1"
 }
 
 hard_reset_submodules() {
