@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Referenced from vscode settings.json
 # "terminal.integrated.shell.linux": "$HOME/.config/bootstrap-linux/files/tmux-vscode.sh",
 tmux_session="vscode`pwd | sed s/[^a-zA-Z0-9_]/-/g`"
