@@ -547,6 +547,7 @@ def glorious_dotfiles():
         'nerd-fonts-fantasque-sans-mono',
 
     ], flags=('-S',))
+
     _run([
         'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
     ])
@@ -555,7 +556,7 @@ def glorious_dotfiles():
 def material_awesome():
     '''Install material-awesome
     '''
-    _packages('rofi compton xclip gnome-keyring polkit'.split())
+    _packages('rofi xclip gnome-keyring polkit'.split())
     _aur(['i3lock-fancy-git'])
     _run([
         'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
