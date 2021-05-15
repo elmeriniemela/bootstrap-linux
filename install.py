@@ -518,7 +518,7 @@ def dotfiles():
 def glorious_dotfiles():
     '''Install material-awesome
     '''
-    _aur(['awesome-git picom-git'], flags=('-S'))
+    _aur(['awesome-git picom-git'], flags=('-S',))
     _run([
         'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
     ])
