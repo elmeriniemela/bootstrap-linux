@@ -505,7 +505,7 @@ def dotfiles():
 
     for path in unlink:
         if os.path.exists(path):
-            os.path.unlink(path)
+            os.unlink(path)
 
 
     if not os.path.exists(_path('~/.dotfiles')):
