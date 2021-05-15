@@ -454,6 +454,7 @@ def apps():
         'flameshot-git', # Screenshots
         'zoom',
         'visual-studio-code-bin',
+        'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
     ], deps=True)
 
     _run([
@@ -528,7 +529,6 @@ def glorious_dotfiles():
         'maim',
         'feh',
         'xclip',
-        'xprop',
         'imagemagick',
         'blueman',
         'redshift',
