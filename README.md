@@ -14,3 +14,16 @@ Usage instructions:
 
 
 ![alt text](https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/files/bootstrap-linux.png)
+
+### TODO:
+
+* Xorg disable screen off:
+    * `xset -dpms` for disabling energy star features and
+    * `xset s off` for disable screensaver
+    * Run these in  `~/.xprofile` or `/etc/xprofile`?
+* Xorg disable right mouse up click (ButtonRelease on 3).
+    * Maybe this is a feature that I should learn?
+    * https://www.reddit.com/r/linuxquestions/comments/dbf1ht/disable_mouse_button_release_x11/
+* Awesome disable notifications:
+    * Do a widget that toggles naughty
+    * https://awesomewm.org/doc/api/libraries/naughty.html

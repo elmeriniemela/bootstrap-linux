@@ -300,7 +300,6 @@ def distro():
         'awesome',
         'base-devel',
         'networkmanager',
-        'code',
         'tmux',
         'firefox',
         'veracrypt',
@@ -337,13 +336,11 @@ def distro():
         'zip',
         'openssh', # SSH client
         'network-manager-applet',
-        'notification-daemon',
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
         # 'light-locker',  # Screenlock
         'slock',
-        'rtorrent',
         'wget',
         'xclip', # To copy to clipboard from terminal
         'nomacs', # to view images
@@ -453,9 +450,10 @@ def apps():
         'slack-desktop',
         'teams',
         'inxi', # Command line system information script for console
-        'timeshift',  # Backups
+        # 'timeshift',  # Backups
         'flameshot-git', # Screenshots
         'zoom',
+        'visual-studio-code-bin',
     ])
 
     _run([
@@ -467,10 +465,6 @@ def apps():
 
         # Unstable if python major version changes.
         # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
-
-        # Fix missing avatar https://github.com/NoiSek/Aether/issues/14#issuecomment-426979496
-        'sudo sed -E -i "/^Icon=/c\Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png" /var/lib/AccountsService/users/$USER',
-
         "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
     ])
@@ -479,12 +473,16 @@ def apps():
             'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome',
         ])
 
-    extensions_dst = _path('~/.vscode-oss/extensions/vscode-extensions-open-in-browser')
-    if not os.path.exists(extensions_dst):
-        _run([
-            f'git clone --recursive https://github.com/elmeriniemela/vscode-extensions-open-in-browser.git {extensions_dst}',
-            f'npm install --prefix {extensions_dst}',
-        ])
+    # extensions_dst = _path('~/.vscode-oss/extensions/vscode-extensions-open-in-browser')
+    # if not os.path.exists(extensions_dst):
+    #     _run([
+    #         f'git clone --recursive https://github.com/elmeriniemela/vscode-extensions-open-in-browser.git {extensions_dst}',
+    #         f'npm install --prefix {extensions_dst}',
+    #     ])
+
+    _link({
+        'elmeri': '/var/lib/AccountsService/users/elmeri',
+    })
 
 
 def dotfiles():

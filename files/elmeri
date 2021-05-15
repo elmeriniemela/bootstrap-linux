@@ -1,0 +1,4 @@
+[User]
+XSession=awesome
+Icon=/usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png
+SystemAccount=false
