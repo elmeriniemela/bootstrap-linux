@@ -498,6 +498,16 @@ def dotfiles():
         '/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
     })
 
+    unlink = [
+        _path('~/.bashrc'),
+        _path('~/.bash_profile'),
+    ]
+
+    for path in unlink:
+        if os.path.exists(path):
+            os.path.unlink(path)
+
+
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
             '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
