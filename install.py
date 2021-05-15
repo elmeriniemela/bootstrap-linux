@@ -105,7 +105,7 @@ def _yay():
         f'rm -rf {dst}'
     ])
 
-def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=True):
+def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=False):
     if os.geteuid() == 0:
         print("Do not run this as root")
         return
@@ -368,7 +368,7 @@ def distro():
         'vlc',
         'texlive-most', # Latex
         'ncdu', # diskspace
-
+        'galculator', # calculator
     ])
 
     _run([
@@ -454,7 +454,7 @@ def apps():
         'flameshot-git', # Screenshots
         'zoom',
         'visual-studio-code-bin',
-    ])
+    ], deps=True)
 
     _run([
         # Set default lightdm-webkit2-greeter theme to Aether
@@ -515,6 +515,15 @@ def dotfiles():
             '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
         ])
 
+def glorious_dotfiles():
+    '''Install material-awesome
+    '''
+    _aur(['awesome-git picom-git'], flags=('-S'))
+    _run([
+        'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
+    ])
+
+
 def material_awesome():
     '''Install material-awesome
     '''
@@ -533,7 +542,7 @@ def add_ssh(filename):
     '''
     _run(
         [
-            f'ssh-keygen -C ansible@sprintit.fi -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
+            f'ssh-keygeny -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
         dependencies=partial(_packages, ['xclip'])
