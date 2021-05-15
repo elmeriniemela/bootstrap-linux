@@ -516,9 +516,37 @@ def dotfiles():
         ])
 
 def glorious_dotfiles():
-    '''Install material-awesome
+    '''Install the glorious dotfiles
     '''
-    _aur(['awesome-git picom-git'], flags=('-S',))
+
+    _packages([
+        'acpi',
+        'acpid',
+        'acpi_call',
+        'mpd',
+        'mpc',
+        'maim',
+        'feh',
+        'xclip',
+        'xprop',
+        'imagemagick',
+        'blueman',
+        'redshift',
+        'xfce4-power-manager',
+        'upower',
+        'noto-fonts-emoji',
+        'xdg-user-dirs',
+        'iproute2',
+        'iw',
+        'ffmpeg',
+    ])
+    _aur([
+        'awesome-git',
+        'picom-git',
+        'light-git',
+        'nerd-fonts-fantasque-sans-mono',
+
+    ], flags=('-S',))
     _run([
         'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
     ])
