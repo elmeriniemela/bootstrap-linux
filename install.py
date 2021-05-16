@@ -297,7 +297,6 @@ def distro():
         'lightdm',
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
-        'awesome',
         'base-devel',
         'networkmanager',
         'tmux',
@@ -347,7 +346,6 @@ def distro():
         'libreoffice-fresh', # to view docs
         'rofi', # application launcher
         'rofi-calc',
-        'picom', # Transparency
         'ntfs-3g', # Read/write implementation of windows filesystem
         'hicolor-icon-theme', # It is recommended to install the hicolor-icon-theme package as many programs will deposit their icons in /usr/share/icons/hicolor and most other icon themes will inherit icons from the Hicolor icon theme.
         'papirus-icon-theme', # Icon theme
@@ -446,6 +444,8 @@ def apps():
     '''
     _aur([
         'lightdm-webkit-theme-aether-git',
+        'awesome-git',
+        'picom-git',
         'whatsapp-nativefier',
         'slack-desktop',
         'teams',
