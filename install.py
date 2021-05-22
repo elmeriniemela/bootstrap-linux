@@ -492,6 +492,7 @@ def apps():
 
     _link({
         'elmeri': '/var/lib/AccountsService/users/elmeri',
+        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
     })
 
 
