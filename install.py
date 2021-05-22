@@ -244,6 +244,7 @@ def update():
 
     import urllib.request
     import re
+    print("Updating and ranking mirrors..")
     # Use urllib instead of curl to better handle errors
     url = (
         'https://www.archlinux.org/mirrorlist/'
@@ -262,12 +263,13 @@ def update():
         if ranked_mirrors:
             _pipe(ranked_mirrors, "sudo tee /etc/pacman.d/mirrorlist")
 
-    _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split(), deps=False)
+    _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
     _run([
         'inxi -Fxxxza --no-host',
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
         # 'sudo modprobe nvidia',
     ])
+    input("Press any key to quit\n")
 
 
 def serial():
@@ -367,6 +369,11 @@ def distro():
         'texlive-most', # Latex
         'ncdu', # diskspace
         'galculator', # calculator
+        'ffmpeg', # screenrecorder
+        'xdg-user-dirs',
+        'xfce4-power-manager', # default launch application for battery widget
+        'upower', # upower - UPower command line tool, Battery widget
+        'redshift', # Sets color temperature of display according to time of day, Blue light widget
     ])
 
     _run([
@@ -380,7 +387,7 @@ def distro():
         'echo "arch" > /etc/hostname',
         "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
-        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel -s /bin/bash {USER} && passwd {USER})',
+        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash {USER} && passwd {USER})',
         f'if [ ! -d /media ]; then ln -s /run/media/{USER} /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
     ])
 
@@ -454,6 +461,7 @@ def apps():
         'flameshot-git', # Screenshots
         'zoom',
         'visual-studio-code-bin',
+        'light-git', #RandR-based backlight control application
         'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
     ], deps=True)
 
@@ -468,6 +476,7 @@ def apps():
         # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
         "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
+        "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
     ])
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
