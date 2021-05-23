@@ -269,7 +269,7 @@ def update():
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
         # 'sudo modprobe nvidia',
     ])
-    input("Press any key to quit\n")
+    input("Press any key to quit.\n")
 
 
 def serial():
@@ -481,7 +481,7 @@ def apps():
     ])
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
-            'git clone --recursive https://github.com/elmeriniemela/awesome-copycats.git ~/.config/awesome',
+            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
         ])
 
     # extensions_dst = _path('~/.vscode-oss/extensions/vscode-extensions-open-in-browser')
@@ -522,9 +522,9 @@ def dotfiles():
 
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
-            '/usr/bin/git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
-            '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
-            '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
+            'git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
+            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
+            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
         ])
 
 def glorious_dotfiles():
@@ -703,10 +703,10 @@ def _get_odoo_source(repo, branch):
 
     cleaning_args = [
         f'cd {odoo_path}',
-        f'/usr/bin/git reset --hard',
-        f'/usr/bin/git clean -xfdf',
-        f'/usr/bin/git checkout {branch}',
-        f'/usr/bin/git pull',
+        f'git reset --hard',
+        f'git clean -xfdf',
+        f'git checkout {branch}',
+        f'git pull',
     ]
     if os.path.isdir(odoo_path):
         try:
@@ -729,7 +729,7 @@ def _get_odoo_source(repo, branch):
     else:
         _run([
             f'cd {odoo_base_path}',
-            f'/usr/bin/git clone https://github.com/odoo/{repo}.git {odoo_path} -b {branch}',
+            f'git clone https://github.com/odoo/{repo}.git {odoo_path} -b {branch}',
         ])
 
 
