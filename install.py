@@ -236,12 +236,9 @@ def battery():
     ])
 
 
-
-
-def update():
-    '''Update the system
+def mirrors():
+    '''Update mirrors
     '''
-
     import urllib.request
     import re
     print("Updating and ranking mirrors..")
@@ -258,11 +255,18 @@ def update():
         mirrors = response.read().decode()
 
     if mirrors:
-        ranked_mirrors = _pipe(mirrors, "sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - ")
+        try:
+            ranked_mirrors = _pipe(mirrors, "sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - ")
+        except:
+            ranked_mirrors = _pipe(mirrors, "sed -e 's/^#Server/Server/' -e '/^#/d'")
         # First pipe into rank mirrors, and only if it succeeds then edit mirrorlist
         if ranked_mirrors:
             _pipe(ranked_mirrors, "sudo tee /etc/pacman.d/mirrorlist")
 
+def update():
+    '''Update the system
+    '''
+    mirrors()
     _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
     _run([
         'inxi -Fxxxza --no-host',
