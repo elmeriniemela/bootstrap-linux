@@ -261,7 +261,10 @@ def mirrors():
             ranked_mirrors = _pipe(mirrors, "sed -e 's/^#Server/Server/' -e '/^#/d'")
         # First pipe into rank mirrors, and only if it succeeds then edit mirrorlist
         if ranked_mirrors:
-            _pipe(ranked_mirrors, "sudo tee /etc/pacman.d/mirrorlist")
+            prepend = ''
+            if os.geteuid() != 0:
+                prepend = 'sudo '
+            _pipe(ranked_mirrors, f"{prepend}tee /etc/pacman.d/mirrorlist")
 
 def update():
     '''Update the system
