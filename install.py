@@ -463,6 +463,7 @@ def apps():
         'visual-studio-code-bin',
         'light-git', #RandR-based backlight control application
         'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
+        'lua-pam-git', # pam authentication for awesome wm lockscreen
     ], deps=True)
 
     _run([
