@@ -276,7 +276,7 @@ def update():
         # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
         # 'sudo modprobe nvidia',
     ])
-    input("Press any key to quit.\n")
+    input("Press enter key to quit.\n")
 
 
 def serial():
