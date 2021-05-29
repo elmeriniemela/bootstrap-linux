@@ -316,7 +316,6 @@ def distro():
         'bind', # bind-tools
         'vim',
         'htop',
-        'zathura-pdf-mupdf',
         'terminator', # Terminal configured to awesome
         'bash-completion',
         'ttf-bitstream-vera', # Fix vscode fonts
@@ -347,8 +346,6 @@ def distro():
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
-        # 'light-locker',  # Screenlock
-        'slock',
         'wget',
         'xclip', # To copy to clipboard from terminal
         'nomacs', # to view images
@@ -471,6 +468,7 @@ def apps():
         'light-git', #RandR-based backlight control application
         'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
         'lua-pam-git', # pam authentication for awesome wm lockscreen
+        'zulip-desktop',
     ], deps=True)
 
     _run([
@@ -531,6 +529,7 @@ def dotfiles():
         _run([
             'git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
+            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init',
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
         ])
 
@@ -638,7 +637,6 @@ def odoo_venv(branch):
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
     if float(branch) >= 11.0:
-        # Taha deps
         _run([
             f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
         ], dependencies=partial(global_odoo_deps, branch=branch))
@@ -648,7 +646,6 @@ def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
     if float(branch) >= 11.0:
-        # Taha deps
         venv_name = 'odoo{}'.format(branch[:-2])
         _packages([
             'xmlsec',
@@ -690,13 +687,14 @@ def odoo(branch):
         _get_odoo_source(repo='enterprise', branch=branch)
 
 
-    with open(f'{FILES_DIR}/.odoorc.conf') as f_read:
-        data = f_read.read()
+    if not os.path.exists(f'{odoo_path}/.odoorc.conf'):
+        with open(f'{FILES_DIR}/.odoorc.conf') as f_read:
+            data = f_read.read()
 
-    with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
-        f_write.write(
-            data.format(odoo_version=branch[:-2])
-        )
+        with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
+            f_write.write(
+                data.format(odoo_version=branch[:-2])
+            )
 
     odoo_venv(branch)
 
@@ -711,7 +709,6 @@ def _get_odoo_source(repo, branch):
     cleaning_args = [
         f'cd {odoo_path}',
         f'git reset --hard',
-        f'git clean -xfdf',
         f'git checkout {branch}',
         f'git pull',
     ]
@@ -732,6 +729,7 @@ def _get_odoo_source(repo, branch):
             print("Copying the installation is faster than cloning..")
             copy_tree(full_path, odoo_path)
             _run(cleaning_args)
+            _run(['git clean -xfdf'])
             break
     else:
         _run([
