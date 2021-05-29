@@ -291,6 +291,8 @@ def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
         * pacstrap /mnt base linux linux-firmware archlinux-keyring dhcpcd vim git python python-pip
+        * genfstab -U /mnt >> /mnt/etc/fstab
+        * arch-chroot /mnt
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
         * systemctl enable dhcpcd
@@ -298,6 +300,7 @@ def distro():
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
         * grub-mkconfig -o /boot/grub/grub.cfg
+        * passwd
     '''
     USER = 'elmeri'
     _packages([
