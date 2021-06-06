@@ -459,7 +459,7 @@ def server():
     _aur([
         'ethminer-cuda',
         'python38',
-    ])
+    ], deps=True)
 
     _lineinfile({'/etc/php/php.ini': 'extension=pdo_pgsql'})
     _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
@@ -472,10 +472,14 @@ def server():
     _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
 
 
+    if not os.path.exists(_path('~/thecodebase')):
+        _run([
+            'git clone https://github.com/elmeriniemela/thecodebase.git',
+            'cd thecodebase',
+            'git submodule update --init',
+        ])
+
     _run([
-        'git clone https://github.com/elmeriniemela/thecodebase.git',
-        'cd thecodebase',
-        'git submodule update --init',
         'echo "homeserver" > /etc/hostname',
     ])
 
