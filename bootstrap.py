@@ -504,12 +504,13 @@ def server():
             'git submodule update --init',
         ])
 
+    ethminer_cron = '* * * * * pgrep ethminer > /dev/null || systemctl start ethminer'
     _run([
         # 'echo "homeserver" > /etc/hostname', # sudo
         # 'sudo systemctl enable httpd.service --now',
         'sudo systemctl enable nginx --now',
         'sudo systemctl enable php-fpm --now',
-        '( crontab -l | grep -v -F "pgrep ethminer > /dev/null || systemctl start ethminer" ; echo "* * * * * pgrep ethminer > /dev/null || systemctl start ethminer" ) | crontab -',
+        f'( crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | crontab -',
     ])
 
     _link({
