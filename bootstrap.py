@@ -468,7 +468,7 @@ def server():
         'php-gd',
         'php-intl',
         'php-cgi',
-        'php-fpm'
+        'php-fpm',
         'nvidia',
     ])
 
