@@ -465,6 +465,9 @@ def server():
         'php-pgsql',
         'nginx',
         'php-apcu',
+        'php-gd',
+        'php-intl',
+        'nvidia',
     ])
 
     _aur([
@@ -472,7 +475,8 @@ def server():
         'python38',
     ], deps=True)
 
-    _lineinfile({'/etc/php/php.ini': 'extension=pdo_pgsql'})
+    _lineinfile({'/etc/php/php.ini': 'extension=gd'})
+    _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
     _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
     # _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
 
@@ -493,7 +497,7 @@ def server():
 
     _run([
         # 'echo "homeserver" > /etc/hostname', # sudo
-        'sudo systemctl enable httpd.service --now',
+        # 'sudo systemctl enable httpd.service --now',
     ])
 
     _link({
