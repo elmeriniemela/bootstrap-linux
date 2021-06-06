@@ -11,6 +11,7 @@ from functools import partial
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
 HOME_DIR = os.path.expanduser('~')
+ODOO_INSTALLS_DEFAULT_DIR = '~/Code/work/odoo'
 
 @contextmanager
 def _quittable():
@@ -276,6 +277,7 @@ def serial():
         'sudo dmidecode -s system-serial-number',
     ], dependencies=partial(_packages, ['dmidecode']))
 
+
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
@@ -293,23 +295,48 @@ def distro():
     '''
     USER = 'elmeri'
     _packages([
+        'base-devel',
+        'openssh', # SSH client
         'sudo',
+        'pacman-contrib', # rank mirrors
+        'cronie',
+        'rsync',
+        'ncdu', # diskspace
+        'htop',
+        'bash-completion',
+        'tmux',
+        'unzip',
+        'zip',
+        'wget',
+        'syncthing',
+    ])
+    _run([
+        'systemctl enable cronie --now',
+        '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
+        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash {USER} && passwd {USER})',
+        "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
+    ])
+
+    _lineinfile({
+        '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
+        '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
+    })
+
+def desktop():
+    '''User space apps, cannot be run as root. Run after distro.
+    '''
+    _packages([
         'xorg',
         'lightdm',
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
-        'base-devel',
         'networkmanager',
-        'tmux',
         'firefox',
         'veracrypt',
         'sshpass',
         'thunderbird',
         'bind', # bind-tools
-        'vim',
-        'htop',
         'terminator', # Terminal configured to awesome
-        'bash-completion',
         'ttf-bitstream-vera', # Fix vscode fonts
         'ttf-droid',
         'ttf-roboto',
@@ -326,19 +353,14 @@ def distro():
         'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1'. GVFS uses udisks2 for mounting functionality and is the recommended solution for most file managers.
         'gvfs', # For automount
         'gvfs-mtp', # Media Transfer Protocol for pcmanfm to automount android devices and browse files
-        # 'gvfs-smb', # Samba support
         'udiskie', # For automount
         'polkit', # privilege escalation
         'polkit-gnome', # privilege escalation gui 'auth agent'
         'lxqt-policykit',
-        'unzip',
-        'zip',
-        'openssh', # SSH client
         'network-manager-applet',
         'nm-connection-editor', # Wifi selections
         'xorg-xev',
         'xarchiver', # browse zip files
-        'wget',
         'xclip', # To copy to clipboard from terminal
         'nomacs', # to view images
         'libreoffice-fresh', # to view docs
@@ -349,8 +371,6 @@ def distro():
         'papirus-icon-theme', # Icon theme
         'arc-gtk-theme', # Gtk theme
         'lxappearance', # theme picker
-        'pacman-contrib', # rank mirrors
-        'cronie',
         'deluge', # torrent
         'deluge-gtk',
         'gocryptfs',
@@ -359,11 +379,9 @@ def distro():
         'signal-desktop',
         'openvpn', # personal
         'openconnect',  # work
-        'rsync',
         'simplescreenrecorder',
         'vlc',
         'texlive-most', # Latex
-        'ncdu', # diskspace
         'galculator', # calculator
         'ffmpeg', # screenrecorder
         'xdg-user-dirs',
@@ -371,24 +389,55 @@ def distro():
         'upower', # upower - UPower command line tool, Battery widget
         'redshift', # Sets color temperature of display according to time of day, Blue light widget
     ])
+    _aur([
+        'python38',
+        'lightdm-webkit-theme-aether-git',
+        'awesome-git',
+        'picom-git',
+        'whatsapp-nativefier',
+        'slack-desktop',
+        'teams',
+        'inxi', # Command line system information script for console
+        # 'timeshift',  # Backups
+        'flameshot-git', # Screenshots
+        'zoom',
+        'visual-studio-code-bin',
+        'light-git', #RandR-based backlight control application
+        'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
+        'lua-pam-git', # pam authentication for awesome wm lockscreen
+        'zulip-desktop',
+    ], deps=True)
 
     _run([
         'systemctl enable NetworkManager',
         'systemctl enable avahi-daemon',
         'systemctl enable lightdm',
-        'systemctl enable cronie --now',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
         'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
-        "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
-        '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
-        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash {USER} && passwd {USER})',
-        f'if [ ! -d /media ]; then ln -s /run/media/{USER} /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
+        # Set default lightdm-webkit2-greeter theme to Aether
+        "sudo sed -E -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
+
+        # Set default lightdm greeter to lightdm-webkit2-greeter.
+        "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
+
+        # Unstable if python major version changes.
+        # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
+        "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
+        "sudo systemctl restart systemd-logind",
+        "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
+        f'if [ ! -d /media ]; then ln -s "/run/media/$USER" /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
     ])
+    if not os.path.exists(_path('~/.config/awesome')):
+        _run([
+            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
+        ])
 
     _link({
+        'elmeri': '/var/lib/AccountsService/users/elmeri',
+        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
         'locale.conf': '/etc/locale.conf',
@@ -396,14 +445,43 @@ def distro():
         'environment': '/etc/environment',
     })
 
-    _lineinfile({
-        '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
-        '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
-    })
+def server():
+    '''Setup server.
+    '''
+    _packages([
+        'docker',
+        'docker-compose',
+        'nextcloud',
+        'php-pgsql',
+        'nginx',
+    ])
+
+    _aur([
+        'ethminer-cuda',
+        'python38',
+    ])
+
+    _lineinfile({'/etc/php/php.ini': 'extension=pdo_pgsql'})
+    _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
+
+    odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
+    odoo(**odoo_kwargs)
+    _get_odoo_source(**odoo_kwargs, repo='muk_base', owner='muk-it')
+    _get_odoo_source(**odoo_kwargs, repo='muk_web', owner='muk-it')
+    _get_odoo_source(**odoo_kwargs, repo='auto_backup', owner='Yenthe666')
+    _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
+
+
+    _run([
+        'git clone https://github.com/elmeriniemela/thecodebase.git',
+        'cd thecodebase',
+        'git submodule update --init',
+    ])
+
 
 def secure():
-    """ Install and setup ufw and fail2ban.
-    """
+    ''' Install and setup ufw and fail2ban.
+    '''
     _packages(['ufw', 'fail2ban'])
     _run([
         'sudo systemctl enable fail2ban --now'
@@ -423,15 +501,15 @@ def secure():
     })
 
 def backlight_fix():
-    """ Fix the backlight control on a laptop.
-    """
+    ''' Fix the backlight control on a laptop.
+    '''
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
     ], flags=('-S',))
 
 def swapfile(gigabytes):
-    """ Generate and enable a swapfile
-    """
+    ''' Generate and enable a swapfile
+    '''
     _run([
         f'sudo dd if=/dev/zero of=/swapfile bs=1M count={int(gigabytes) * 1024} status=progress',
         'sudo chmod 600 /swapfile',
@@ -440,57 +518,6 @@ def swapfile(gigabytes):
     ])
     _lineinfile({
         '/etc/fstab': '/swapfile none swap defaults 0 0',
-    })
-
-def apps():
-    '''User space apps, cannot be run as root. Run after distro.
-    '''
-    _aur([
-        'lightdm-webkit-theme-aether-git',
-        'awesome-git',
-        'picom-git',
-        'whatsapp-nativefier',
-        'slack-desktop',
-        'teams',
-        'inxi', # Command line system information script for console
-        # 'timeshift',  # Backups
-        'flameshot-git', # Screenshots
-        'zoom',
-        'visual-studio-code-bin',
-        'light-git', #RandR-based backlight control application
-        'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
-        'lua-pam-git', # pam authentication for awesome wm lockscreen
-        'zulip-desktop',
-    ], deps=True)
-
-    _run([
-        # Set default lightdm-webkit2-greeter theme to Aether
-        "sudo sed -E -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
-
-        # Set default lightdm greeter to lightdm-webkit2-greeter.
-        "sudo sed -E -i 's/^[#]?greeter-session=.*/greeter-session=lightdm-webkit2-greeter/' /etc/lightdm/lightdm.conf",
-
-        # Unstable if python major version changes.
-        # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
-        "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
-        "sudo systemctl restart systemd-logind",
-        "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
-    ])
-    if not os.path.exists(_path('~/.config/awesome')):
-        _run([
-            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
-        ])
-
-    # extensions_dst = _path('~/.vscode-oss/extensions/vscode-extensions-open-in-browser')
-    # if not os.path.exists(extensions_dst):
-    #     _run([
-    #         f'git clone --recursive https://github.com/elmeriniemela/vscode-extensions-open-in-browser.git {extensions_dst}',
-    #         f'npm install --prefix {extensions_dst}',
-    #     ])
-
-    _link({
-        'elmeri': '/var/lib/AccountsService/users/elmeri',
-        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
     })
 
 def dotfiles():
@@ -592,15 +619,15 @@ def password(length=32):
         dependencies=partial(_packages, ['xclip'])
     )
 
-def _get_odoo_path(branch, repo='odoo'):
-    return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
+def _get_odoo_path(branch, odoo_installs_dir, repo):
+    return _path(f'{odoo_installs_dir}/{branch[:-2]}/{repo}')
 
-def odoo_venv(branch):
+def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
     venv_name = 'odoo{}'.format(branch[:-2])
-    odoo_path = _get_odoo_path(branch)
+    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
         if float(branch) <= 10.0:
@@ -666,15 +693,15 @@ def global_odoo_deps(branch):
     except:
         pass
 
-def odoo(branch):
+def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     '''Installs odoo, enterprise and all the dependencies
     '''
 
-    odoo_path = _get_odoo_path(branch, repo='odoo')
+    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
 
-    _get_odoo_source(repo='odoo', branch=branch)
+    _get_odoo_source(branch, odoo_installs_dir, repo='odoo')
     if float(branch) >= 9.0:
-        _get_odoo_source(repo='enterprise', branch=branch)
+        _get_odoo_source(branch, odoo_installs_dir, repo='enterprise')
 
 
     if not os.path.exists(f'{odoo_path}/.odoorc.conf'):
@@ -688,10 +715,10 @@ def odoo(branch):
 
     odoo_venv(branch)
 
-def _get_odoo_source(repo, branch):
+def _get_odoo_source(branch, odoo_installs_dir, repo, owner='odoo'):
     import glob
     from distutils.dir_util import copy_tree
-    odoo_path = _get_odoo_path(branch, repo=repo)
+    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo)
     odoo_base_path = os.path.dirname(odoo_path)
     os.makedirs(odoo_base_path, exist_ok=True)
 
@@ -709,7 +736,7 @@ def _get_odoo_source(repo, branch):
         except:
             pass
 
-    folders = [path for path in glob.glob(_path('~/Code/work/odoo/*/*')) if os.path.isdir(path)]
+    folders = [path for path in glob.glob(_path(f'{odoo_installs_dir}/*/*')) if os.path.isdir(path)]
     print("Checking folders for existing odoo installations:\n", ' \n'.join(folders))
     for full_path in folders:
         name = os.path.basename(full_path)
@@ -723,7 +750,7 @@ def _get_odoo_source(repo, branch):
     else:
         _run([
             f'cd {odoo_base_path}',
-            f'git clone https://github.com/odoo/{repo}.git {odoo_path} -b {branch}',
+            f'git clone https://github.com/{owner}/{repo}.git {odoo_path} -b {branch}',
         ])
 
 def _filter_locals(locals_dict):
@@ -759,6 +786,10 @@ def _print_functions(locals_dict):
         print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
         assert func.__doc__ and func.__doc__.endswith('\n    '), f"Invalid docstring for {fname}: '{func.__doc__}'"
         print("    {}".format(func.__doc__))
+
+
+
+
 
 LOCALS = locals()
 

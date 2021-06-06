@@ -5,3 +5,7 @@ history.txt
 config.json
 cache.json
 *.egg-info
+
+server_files/nginx/ssl/*.key
+server_files/nginx/ssl/*.crt
+server_files/nginx/ssl/*.srl
