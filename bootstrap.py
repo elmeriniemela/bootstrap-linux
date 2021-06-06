@@ -19,7 +19,6 @@ def _quittable():
     except (EOFError, KeyboardInterrupt):
         print("Bye")
 
-
 def _path(path):
     if path.startswith('~/'):
         formatted = os.path.join(os.path.expanduser('~'), path[2:])
@@ -44,7 +43,6 @@ def _pipe(data, command):
         print(stderr_data)
     assert p.returncode == 0
     return stdout_data
-
 
 def _run(commands, dependencies=None, **kwargs):
     for command in commands:
@@ -71,14 +69,12 @@ def _run(commands, dependencies=None, **kwargs):
                 else:
                     raise
 
-
 def _installed_packages():
     return set(subprocess.check_output(
             "pacman -Qqe --groups | awk '{print $1}' && pacman -Qqe",
             shell=True,
             encoding='utf-8',
         ).splitlines())
-
 
 def _packages(list_of_packages, flags=('-S', '--noconfirm')):
     prepend = ''
@@ -118,7 +114,6 @@ def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=False):
         f'yay {flag_str} ' + ' '.join(list_of_packages)
     ], dependencies=_yay if deps else False)
 
-
 def _lineinfile(files_dict):
     prepend = ''
     if os.geteuid() != 0:
@@ -139,7 +134,6 @@ def _link(files_dict):
         if os.path.isfile(dest_path):
             _run([f'{prepend}rm {dest_path}'])
         _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'])
-
 
 class _Monitor():
     def __init__(self, name, width=0, height=0, x=0, y=0, off=False):
@@ -178,7 +172,6 @@ class _Monitor():
 
     def __repr__(self):
         return f'_Monitor(name={self.name!r}, width={self.width!r}, height={self.height!r}, x={self.x!r}, y={self.y!r}, off={self.off!r})'
-
 
 def monitor():
     '''Autoconfigure dual monitor with xrandr
@@ -226,7 +219,6 @@ def monitor():
 
     _run([command])
 
-
 def battery():
     '''Linux tlp install
     '''
@@ -234,7 +226,6 @@ def battery():
     _run([
         'sudo systemctl enable --now tlp',
     ])
-
 
 def mirrors():
     '''Update mirrors
@@ -278,14 +269,12 @@ def update():
     ])
     input("Press enter key to quit.\n")
 
-
 def serial():
     '''Print machine serial number
     '''
     _run([
         'sudo dmidecode -s system-serial-number',
     ], dependencies=partial(_packages, ['dmidecode']))
-
 
 def distro():
     '''Commands needed for empty arch based distro install
@@ -387,6 +376,7 @@ def distro():
         'systemctl enable NetworkManager',
         'systemctl enable avahi-daemon',
         'systemctl enable lightdm',
+        'systemctl enable cronie --now',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
         'locale-gen',
@@ -431,7 +421,6 @@ def secure():
         # THIS CAUSES BOOT PARTITION NOT TO LOAD
         # '/etc/sysctl.d/99-modules-disabled.conf': 'kernel.modules_disabled=1',
     })
-
 
 def backlight_fix():
     """ Fix the backlight control on a laptop.
@@ -504,7 +493,6 @@ def apps():
         'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
     })
 
-
 def dotfiles():
     ''' This setups basic configuration.
         * Generate global bashrc
@@ -572,7 +560,6 @@ def glorious_dotfiles():
         'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
     ])
 
-
 def material_awesome():
     '''Install material-awesome
     '''
@@ -581,8 +568,6 @@ def material_awesome():
     _run([
         'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
     ])
-
-
 
 def add_ssh(filename):
     '''Creates ssh private and public key pair,
@@ -606,8 +591,6 @@ def password(length=32):
         ],
         dependencies=partial(_packages, ['xclip'])
     )
-
-
 
 def _get_odoo_path(branch, repo='odoo'):
     return _path(f'~/Code/work/odoo/{branch[:-2]}/{repo}')
@@ -644,7 +627,6 @@ def odoo_venv(branch):
             f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
         ], dependencies=partial(global_odoo_deps, branch=branch))
 
-
 def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
@@ -672,12 +654,17 @@ def global_odoo_deps(branch):
         _run([
             "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
             'sudo systemctl enable --now postgresql.service',
+        ])
+    except:
+        pass
+
+    try:
+        _run([
             'sudo su - postgres -c "createuser -s $USER"',
             'sudo su - postgres -c "createuser -s root"',
         ])
     except:
         pass
-
 
 def odoo(branch):
     '''Installs odoo, enterprise and all the dependencies
@@ -700,7 +687,6 @@ def odoo(branch):
             )
 
     odoo_venv(branch)
-
 
 def _get_odoo_source(repo, branch):
     import glob
@@ -740,8 +726,6 @@ def _get_odoo_source(repo, branch):
             f'git clone https://github.com/odoo/{repo}.git {odoo_path} -b {branch}',
         ])
 
-
-
 def _filter_locals(locals_dict):
     return {k: v for k, v in locals_dict.items() if \
         callable(v) \
@@ -749,7 +733,6 @@ def _filter_locals(locals_dict):
         and not k.startswith('_') \
         and k != 'main'
     }
-
 
 def _print_functions(locals_dict):
     '''Lists the available functions
@@ -776,7 +759,6 @@ def _print_functions(locals_dict):
         print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
         assert func.__doc__ and func.__doc__.endswith('\n    '), f"Invalid docstring for {fname}: '{func.__doc__}'"
         print("    {}".format(func.__doc__))
-
 
 LOCALS = locals()
 
@@ -808,7 +790,6 @@ def main():
         func(*args.args)
 
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -186,6 +186,16 @@ _venv_completer () {
 
 complete -o nospace -F _venv_completer activate
 
+odoo() {
+    version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
+    if (( version < 10  ));
+    then
+        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
+    else
+        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
+    fi;
+}
+
 
 ssh_clipboard(){
     cat ~/.ssh/$1 | xclip -selection clipboard
@@ -214,15 +224,7 @@ odoo_coverage() {
     coverage html
 }
 
-odoo() {
-    version="$(cut -d'/' -f7 <<<$ODOO_DIR)"
-    if (( version < 10  ));
-    then
-        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
-    else
-        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
-    fi;
-}
+
 
 venv() {
     python3.8 -m venv ~/.venv/$1 ${@:2}
@@ -360,7 +362,7 @@ alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 _bootstrap_linux_completions()
 {
     update_dir
-    n=($(grep -Po "(?<=^def )[^_](.*?)\(" $current_dir/install.py | sed 's/(//'))
+    n=($(grep -Po "(?<=^def )[^_](.*?)\(" $current_dir/bootstrap.py | sed 's/(//'))
     COMPREPLY=()
 
     for i in "${n[@]}"
