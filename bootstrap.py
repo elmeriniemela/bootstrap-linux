@@ -136,6 +136,15 @@ def _link(files_dict):
             _run([f'{prepend}rm {dest_path}'])
         _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'])
 
+def _copy(files_dict):
+    prepend = ''
+    if os.geteuid() != 0:
+        prepend = 'sudo '
+    for fname, dest_path in files_dict.items():
+        if os.path.isfile(dest_path):
+            _run([f'{prepend}rm {dest_path}'])
+        _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
+
 class _Monitor():
     def __init__(self, name, width=0, height=0, x=0, y=0, off=False):
         self.name = name
@@ -308,6 +317,8 @@ def distro():
         'zip',
         'wget',
         'syncthing',
+        'ffmpeg', # screenrecorder, for preview generation
+
     ])
     _run([
         'systemctl enable cronie --now',
@@ -386,7 +397,6 @@ def desktop():
         'vlc',
         'texlive-most', # Latex
         'galculator', # calculator
-        'ffmpeg', # screenrecorder
         'xdg-user-dirs',
         'xfce4-power-manager', # default launch application for battery widget
         'upower', # upower - UPower command line tool, Battery widget
@@ -454,6 +464,7 @@ def server():
         'nextcloud',
         'php-pgsql',
         'nginx',
+        'php-apcu',
     ])
 
     _aur([
@@ -463,6 +474,7 @@ def server():
 
     _lineinfile({'/etc/php/php.ini': 'extension=pdo_pgsql'})
     _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
+    # _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
 
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
     odoo(**odoo_kwargs)
@@ -480,7 +492,8 @@ def server():
         ])
 
     _run([
-        'echo "homeserver" > /etc/hostname',
+        # 'echo "homeserver" > /etc/hostname', # sudo
+        'sudo systemctl enable httpd.service --now',
     ])
 
     _link({
@@ -488,14 +501,17 @@ def server():
     })
 
 
+    secure()
+
+
 def secure():
     ''' Install and setup ufw and fail2ban.
     '''
     _packages(['ufw', 'fail2ban'])
     _run([
-        'sudo systemctl enable fail2ban --now'
-        'sudo systemctl enable ufw --now'
-        'sudo ufw limit 22/tcp',
+        'sudo systemctl enable fail2ban --now',
+        'sudo systemctl enable ufw --now',
+        'sudo ufw allow 22/tcp',
         'sudo ufw allow 80/tcp',
         'sudo ufw allow 443/tcp',
         'sudo ufw default deny incoming',
