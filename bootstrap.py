@@ -481,7 +481,6 @@ def server():
 
     _link({
         'locale.conf': '/etc/locale.conf',
-        'hosts': '/etc/hosts',
     })
 
 

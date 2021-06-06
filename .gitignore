@@ -6,6 +6,6 @@ config.json
 cache.json
 *.egg-info
 
-server_files/nginx/ssl/*.key
-server_files/nginx/ssl/*.crt
-server_files/nginx/ssl/*.srl
+files/server/nginx/ssl/*.key
+files/server/nginx/ssl/*.crt
+files/server/nginx/ssl/*.srl
