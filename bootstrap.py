@@ -467,6 +467,8 @@ def server():
         'php-apcu',
         'php-gd',
         'php-intl',
+        'php-cgi',
+        'php-fpm'
         'nvidia',
     ])
 
@@ -475,9 +477,15 @@ def server():
         'python38',
     ], deps=True)
 
-    _lineinfile({'/etc/php/php.ini': 'extension=gd'})
-    _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
-    _lineinfile({'/etc/php/php.ini': 'extension=pgsql'})
+    php_extensions = [
+        'gd',
+        'pgsql',
+        'pdo_pgsql',
+        'zip',
+        'curl',
+        'intl',
+    ]
+    _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
     # _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
 
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
@@ -499,6 +507,8 @@ def server():
     _run([
         # 'echo "homeserver" > /etc/hostname', # sudo
         # 'sudo systemctl enable httpd.service --now',
+        'sudo systemctl enable nginx --now',
+        'sudo systemctl enable php-fpm --now',
     ])
 
     _link({
