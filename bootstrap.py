@@ -481,16 +481,17 @@ def server():
     # _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
 
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
-    odoo(**odoo_kwargs)
-    _get_odoo_source(**odoo_kwargs, repo='muk_base', owner='muk-it')
-    _get_odoo_source(**odoo_kwargs, repo='muk_web', owner='muk-it')
-    _get_odoo_source(**odoo_kwargs, repo='auto_backup', owner='Yenthe666')
-    _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
+    if not os.path.exists(_path(odoo_kwargs['odoo_installs_dir'])):
+        odoo(**odoo_kwargs)
+        _get_odoo_source(**odoo_kwargs, repo='muk_base', owner='muk-it')
+        _get_odoo_source(**odoo_kwargs, repo='muk_web', owner='muk-it')
+        _get_odoo_source(**odoo_kwargs, repo='auto_backup', owner='Yenthe666')
+        _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
 
 
     if not os.path.exists(_path('~/thecodebase')):
         _run([
-            'git clone https://github.com/elmeriniemela/thecodebase.git',
+            'git clone https://github.com/elmeriniemela/thecodebase.git ~/thecodebase',
             'cd thecodebase',
             'git submodule update --init',
         ])
