@@ -277,7 +277,6 @@ def serial():
         'sudo dmidecode -s system-serial-number',
     ], dependencies=partial(_packages, ['dmidecode']))
 
-
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
@@ -314,13 +313,17 @@ def distro():
         'systemctl enable cronie --now',
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash {USER} && passwd {USER})',
-        "sudo sed -E -i 's/.*%wheel All=(ALL) ALL.*/%wheel All=(ALL) ALL/' /etc/sudoers", # uncomment wheel group
+        "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
+        "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
+        'locale-gen',
     ])
 
     _lineinfile({
         '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
         '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
+        '/etc/sudoers.d/wheel_group': '%wheel ALL=(ALL) ALL',
     })
+
 
 def desktop():
     '''User space apps, cannot be run as root. Run after distro.
@@ -412,9 +415,6 @@ def desktop():
         'systemctl enable NetworkManager',
         'systemctl enable avahi-daemon',
         'systemctl enable lightdm',
-        "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
-        "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
-        'locale-gen',
         'localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" > /etc/hostname',
         # Set default lightdm-webkit2-greeter theme to Aether
@@ -476,7 +476,13 @@ def server():
         'git clone https://github.com/elmeriniemela/thecodebase.git',
         'cd thecodebase',
         'git submodule update --init',
+        'echo "homeserver" > /etc/hostname',
     ])
+
+    _link({
+        'locale.conf': '/etc/locale.conf',
+        'hosts': '/etc/hosts',
+    })
 
 
 def secure():
