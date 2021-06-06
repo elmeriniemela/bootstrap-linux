@@ -510,7 +510,7 @@ def server():
         # 'sudo systemctl enable httpd.service --now',
         'sudo systemctl enable nginx --now',
         'sudo systemctl enable php-fpm --now',
-        f'( crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | crontab -',
+        f'( sudo crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | sudo crontab -',
     ])
 
     _link({
