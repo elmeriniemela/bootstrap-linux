@@ -1,0 +1,14 @@
+[Unit]
+Description=Odoo
+After=network.target
+
+[Service]
+User=elmeri
+Group=elmeri
+ExecStart=/home/elmeri/.venv/odoo13/bin/python odoo-bin --conf .odoorc.conf
+WorkingDirectory=/home/elmeri/Odoo/13/odoo
+Environment="HOME=/home/elmeri"
+Environment="USER=elmeri"
+
+[Install]
+WantedBy=multi-user.target
