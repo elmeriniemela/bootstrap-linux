@@ -513,6 +513,8 @@ def server():
 
     _link({
         'locale.conf': '/etc/locale.conf',
+        'php-fpm/nextcloud.conf' : '/etc/php/php-fpm.d/nextcloud.conf',
+        'php-fpm/override.conf' : '/etc/systemd/system/php-fpm.service.d/override.conf',
     })
 
 
