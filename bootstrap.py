@@ -269,20 +269,29 @@ def serial():
 
 def distro():
     '''Commands needed for empty arch based distro install
-    Post-install dependencies
-        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager vim git python python-pip
+    Post-install dependencie
+        * loadkeys fi
+        * partition table with fdisk
+        * mkfs.fat -F32 /dev/<efi_partition>
+        * mkfs.ext4 /dev/<root_partition>
+        * e2label /dev/<root_partition> arch
+        * fatlabel /dev/<efi_partition> EFI
+        * mount /dev/<root_partition> /mnt
+        * mkdir /mnt/boot
+        * mount /dev/<efi_partition> /mnt/boot
+        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager vim git python python-pip iwd
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
-        * systemctl enable networkmanager
+        * systemctl enable NetworkManager
+        * systemctl enable iwd
         # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
         * grub-mkconfig -o /boot/grub/grub.cfg
         * passwd
     '''
-    USER = 'elmeri'
     _packages([
         'base-devel',
         'openssh', # SSH client
@@ -304,7 +313,6 @@ def distro():
     _run([
         'systemctl enable cronie --now',
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
-        f'grep {USER} /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash {USER} && passwd {USER})',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
         'locale-gen',
