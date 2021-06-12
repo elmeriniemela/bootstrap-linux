@@ -8,6 +8,9 @@ Install instructions:
 * `cd ~/.config/bootstrap-linux`
 * `sudo -H pip install -e .`
 
+For laptop initial setup:
+* `bash <(curl -s https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/bootstrap_laptop.sh)`
+
 Usage instructions:
 
 * `bootstrap-linux` <-- this will start the CLI-interface and print available functions
