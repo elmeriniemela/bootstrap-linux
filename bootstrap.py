@@ -257,6 +257,21 @@ def mirrors():
     ])
 
 
+def fix_t14_ethernet():
+    '''
+    https://forums.lenovo.com/t5/Fedora/I219-V-Ethernet-on-Thinkpad-T14-Intel-Gen2-very-slow%C2%A0/m-p/5077855?page=3#5343294
+
+    The driver in question is the e1000e, and updating it with the intel one will not solve the problem.
+
+    After using ethtool you need to deactivate or unplug the ethernet and re-enable it.
+    '''
+    _run([
+        'sudo ip link set enp0s31f6 mtu 1492',
+        'sudo ethtool -s enp0s31f6 speed 1000 duplex full autoneg off',
+        'sudo ethtool -C enp0s31f6 rx-usecs 768',
+    ], dependencies=partial(_packages, ['ethtool']))
+
+
 def update():
     '''Update the system
     '''
@@ -331,6 +346,9 @@ def distro():
         '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
         '/etc/sudoers.d/wheel_group': '%wheel ALL=(ALL) ALL',
     })
+    _copy({
+        '/etc/vconsole.conf': 'vconsole.conf',
+    })
 
 
 def desktop():
@@ -342,7 +360,6 @@ def desktop():
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
         'networkmanager',
-        'dhcpcd', # is this needed?
         'firefox',
         'veracrypt',
         'sshpass',
@@ -400,6 +417,10 @@ def desktop():
         'xfce4-power-manager', # default launch application for battery widget
         'upower', # upower - UPower command line tool, Battery widget
         'redshift', # Sets color temperature of display according to time of day, Blue light widget
+        'gtk-engine-murrine', # Gtk-WARNING **: Unable to locate theme engine in module_path: "murrine",
+        'gnome-themes-extra', # Gtk-WARNING **: Unable to locate theme engine in module_path: "adwaita",
+        'gtk-engines', # HighContrast GTK2 theme
+        'sof-firmware',
     ])
     _aur([
         'python38',
@@ -419,7 +440,7 @@ def desktop():
         'lua-pam-git', # pam authentication for awesome wm lockscreen
         'zulip-desktop',
     ], deps=True)
-    _enable(['NetworkManager', 'avahi-daemon', 'lightdm', 'dhcpcd'], try_now=False)
+    _enable(['NetworkManager', 'avahi-daemon', 'lightdm'], try_now=False)
     try:
         # This might fail in chroot
         _run(['sudo localectl --no-convert set-x11-keymap fi pc104'])
@@ -438,6 +459,10 @@ def desktop():
         "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
+        # "sudo nvidia-xconfig", # for nvidia
+        "xf86-video-intel",
+        "sudo Xorg :2 -configure",
+        "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
     ])
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
