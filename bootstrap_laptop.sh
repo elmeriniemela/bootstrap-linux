@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-new_user = "elmeri"
+new_user=elmeri
 
 grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash $new_user && passwd $new_user)
 
