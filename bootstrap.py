@@ -11,7 +11,7 @@ from functools import partial
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
 HOME_DIR = os.path.expanduser('~')
-ODOO_INSTALLS_DEFAULT_DIR = '~/Code/work/odoo'
+ODOO_INSTALLS_DEFAULT_DIR = '~/Work'
 
 @contextmanager
 def _quittable():
@@ -683,9 +683,10 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
             ])
 
 
-
+    assert os.path.exists(f'{odoo_path}/requirements.txt')
     _run([
         f'sed "/psycopg2/d;/lxml/d;/greenlet/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
+        f'/home/elmeri/.venv/{venv_name}/bin/pip pip install --upgrade pip',
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
     if float(branch) >= 11.0:
