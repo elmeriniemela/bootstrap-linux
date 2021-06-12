@@ -519,8 +519,8 @@ def secure():
     '''
     _packages(['ufw', 'fail2ban'])
     _run([
-        'sudo systemctl enable fail2ban --now',
-        'sudo systemctl enable ufw --now',
+        'sudo systemctl enable fail2ban',
+        'sudo systemctl enable ufw',
         'sudo ufw allow 22/tcp',
         'sudo ufw allow 80/tcp',
         'sudo ufw allow 443/tcp',
