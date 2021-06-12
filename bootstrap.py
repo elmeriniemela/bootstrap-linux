@@ -244,7 +244,7 @@ def mirrors():
     import re
     print("Updating and ranking mirrors..")
     _run([
-        'sudo reflector --latest 20 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist'
+        'sudo reflector --latest 5 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist'
     ])
 
 

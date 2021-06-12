@@ -1,8 +1,6 @@
 #!/usr/bin/bash
 
 
-pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager dhcpcd vim git python python-pip iwd
-
 new_user=elmeri
 
 grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash $new_user && passwd $new_user)
