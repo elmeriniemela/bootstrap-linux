@@ -45,6 +45,16 @@ def _pipe(data, command):
     assert p.returncode == 0
     return stdout_data
 
+def _enable(services, try_now=True):
+    _run([f'sudo systemctl enable {service}' for service in services])
+    if try_now:
+        try:
+            _run([f'sudo systemctl start {service}' for service in services])
+        except:
+            pass
+
+
+
 def _run(commands, dependencies=None, **kwargs):
     for command in commands:
         print("Running command: ", command)
@@ -94,13 +104,14 @@ def _packages(list_of_packages, flags=('-S', '--noconfirm')):
     ])
 
 def _yay():
-    dst = '/tmp/yay'
-    _run([
-        f'git clone https://aur.archlinux.org/yay.git {dst}',
-        f'cd {dst}',
-        'makepkg -si',
-        f'rm -rf {dst}'
-    ])
+    if not os.path.exists('/usr/bin/yay'):
+        dst = '/tmp/yay'
+        _run([
+            f'git clone https://aur.archlinux.org/yay.git {dst}',
+            f'cd {dst}',
+            'makepkg -si',
+            f'rm -rf {dst}'
+        ])
 
 def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=False):
     if os.geteuid() == 0:
@@ -233,9 +244,7 @@ def battery():
     '''Linux tlp install
     '''
     _packages(['tlp'])
-    _run([
-        'sudo systemctl enable --now tlp',
-    ])
+    _enable(['tlp'])
 
 def mirrors():
     '''Update mirrors
@@ -269,7 +278,7 @@ def serial():
 
 def distro():
     '''Commands needed for empty arch based distro install
-    Post-install dependencie
+    Post-install dependencies
         * loadkeys fi
         * timedatectl set-ntp true
         * partition table with fdisk
@@ -280,14 +289,11 @@ def distro():
         * mount /dev/<root_partition> /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
-        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager dhcpcd vim git python python-pip iwd
+        * pacstrap /mnt base linux linux-firmware archlinux-keyring vim git python python-pip
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
-        * systemctl enable NetworkManager
-        * systemctl enable iwd
-        * systemctl enable dhcpcd
         # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
@@ -312,8 +318,8 @@ def distro():
         'ffmpeg', # screenrecorder, for preview generation
         'reflector',
     ])
+    _enable(['cronie'])
     _run([
-        'systemctl enable cronie',
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
@@ -336,6 +342,7 @@ def desktop():
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
         'networkmanager',
+        'dhcpcd', # is this needed?
         'firefox',
         'veracrypt',
         'sshpass',
@@ -412,12 +419,13 @@ def desktop():
         'lua-pam-git', # pam authentication for awesome wm lockscreen
         'zulip-desktop',
     ], deps=True)
-
+    _enable(['NetworkManager', 'avahi-daemon', 'lightdm', 'dhcpcd'], try_now=False)
+    try:
+        # This might fail in chroot
+        _run(['sudo localectl --no-convert set-x11-keymap fi pc104'])
+    except:
+        pass
     _run([
-        'sudo systemctl enable NetworkManager',
-        'sudo systemctl enable avahi-daemon',
-        'sudo systemctl enable lightdm',
-        'sudo localectl --no-convert set-x11-keymap fi pc104',
         'echo "arch" | sudo tee /etc/hostname',
         # Set default lightdm-webkit2-greeter theme to Aether
         "sudo sed -E -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
@@ -496,11 +504,8 @@ def server():
         ])
 
     ethminer_cron = '* * * * * pgrep ethminer > /dev/null || systemctl start ethminer'
+    _enable(['nginx', 'php-fpm'])
     _run([
-        # 'echo "homeserver" > /etc/hostname', # sudo
-        # 'sudo systemctl enable httpd.service --now',
-        'sudo systemctl enable nginx --now',
-        'sudo systemctl enable php-fpm --now',
         f'( sudo crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | sudo crontab -',
     ])
 
@@ -518,9 +523,8 @@ def secure():
     ''' Install and setup ufw and fail2ban.
     '''
     _packages(['ufw', 'fail2ban'])
+    _enable(['fail2ban', 'ufw'])
     _run([
-        'sudo systemctl enable fail2ban',
-        'sudo systemctl enable ufw',
         'sudo ufw allow 22/tcp',
         'sudo ufw allow 80/tcp',
         'sudo ufw allow 443/tcp',
@@ -715,10 +719,11 @@ def global_odoo_deps(branch):
     try:
         _run([
             "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
-            'sudo systemctl enable --now postgresql.service',
         ])
+        _enable(['postgresql'])
     except:
         pass
+
 
     try:
         _run([
