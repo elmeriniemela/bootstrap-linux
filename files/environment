@@ -11,3 +11,4 @@ CM_DIR=.config/clipmenu/cache
 
 # Same theme for Qt/KDE applications and GTK applications
 QT_QPA_PLATFORMTHEME=gtk2
+VERACRYPT_MOUNT_PREFIX=/run/media/elmeri

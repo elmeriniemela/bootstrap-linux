@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
 
+pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager dhcpcd vim git python python-pip iwd
+
 new_user=elmeri
 
 grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash $new_user && passwd $new_user)
@@ -8,9 +10,8 @@ grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /
 git clone https://github.com/elmeriniemela/bootstrap-linux.git /home/$new_user/.config/bootstrap-linux
 cd /home/$new_user/.config/bootstrap-linux
 pip install -e .
+chown $new_user:$new_user -R /home/$new_user/.config
 
-
-bootstrap-linux mirrors
 bootstrap-linux distro
 bootstrap-linux secure
 bootstrap-linux swapfile 8

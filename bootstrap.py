@@ -271,6 +271,7 @@ def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencie
         * loadkeys fi
+        * timedatectl set-ntp true
         * partition table with fdisk
         * mkfs.fat -F32 /dev/<efi_partition>
         * mkfs.ext4 /dev/<root_partition>
@@ -312,7 +313,7 @@ def distro():
         'reflector',
     ])
     _run([
-        'systemctl enable cronie --now',
+        'systemctl enable cronie',
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
@@ -429,7 +430,6 @@ def desktop():
         "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
-        f'if [ ! -d /media ]; then ln -s "/run/media/$USER" /media; fi' # veracrypt uses /media by default and this line links that folder show mounted filesystems are visible in pcmanfm. Other option would be 'VERACRYPT_MOUNT_PREFIX' env var.
     ])
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
