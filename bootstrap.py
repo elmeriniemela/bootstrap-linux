@@ -244,7 +244,7 @@ def mirrors():
     import re
     print("Updating and ranking mirrors..")
     _run([
-        'reflector --latest 20 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist'
+        'sudo reflector --latest 20 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist'
     ])
 
 
@@ -270,12 +270,12 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
-        * pacstrap /mnt base linux linux-firmware archlinux-keyring dhcpcd vim git python python-pip
+        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager vim git python python-pip
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
-        * systemctl enable dhcpcd
+        * systemctl enable networkmanager
         # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
@@ -372,6 +372,7 @@ def desktop():
         'syncthing',
         'telegram-desktop',
         'signal-desktop',
+        # 'networkmanager-openvpn',
         'openvpn', # personal
         'openconnect',  # work
         'simplescreenrecorder',
