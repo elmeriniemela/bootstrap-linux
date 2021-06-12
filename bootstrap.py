@@ -279,13 +279,14 @@ def distro():
         * mount /dev/<root_partition> /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
-        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager vim git python python-pip iwd
+        * pacstrap /mnt base linux linux-firmware archlinux-keyring networkmanager dhcpcd vim git python python-pip iwd
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
         * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
         * hwclock --systohc
         * systemctl enable NetworkManager
         * systemctl enable iwd
+        * systemctl enable dhcpcd
         # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
         * pacman -S grub efibootmgr intel-ucode
         * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
@@ -412,11 +413,11 @@ def desktop():
     ], deps=True)
 
     _run([
-        'systemctl enable NetworkManager',
-        'systemctl enable avahi-daemon',
-        'systemctl enable lightdm',
-        'localectl --no-convert set-x11-keymap fi pc104',
-        'echo "arch" > /etc/hostname',
+        'sudo systemctl enable NetworkManager',
+        'sudo systemctl enable avahi-daemon',
+        'sudo systemctl enable lightdm',
+        'sudo localectl --no-convert set-x11-keymap fi pc104',
+        'echo "arch" | sudo tee /etc/hostname',
         # Set default lightdm-webkit2-greeter theme to Aether
         "sudo sed -E -i 's/^webkit_theme.*/webkit_theme = lightdm-webkit-theme-aether/' /etc/lightdm/lightdm-webkit2-greeter.conf",
 
