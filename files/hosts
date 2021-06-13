@@ -4,7 +4,6 @@
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
 127.0.1.1       local.thecodebase.tech
-192.168.1.250   elmeri.asuscomm.com   homeserver
 192.168.1.250   odoo.thecodebase.tech
 192.168.1.250   syncthing.thecodebase.tech
 192.168.1.250   ums.thecodebase.tech

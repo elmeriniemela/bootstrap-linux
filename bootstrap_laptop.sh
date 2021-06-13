@@ -13,7 +13,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 passwd
 
-grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill -s /bin/bash $new_user && passwd $new_user)
+grep $new_user /etc/passwd > /dev/null || (useradd -m -G video,wheel,rfkill,systemd-journal -s /bin/bash $new_user && passwd $new_user)
 
 git clone https://github.com/elmeriniemela/bootstrap-linux.git /home/$new_user/.config/bootstrap-linux
 cd /home/$new_user/.config/bootstrap-linux
