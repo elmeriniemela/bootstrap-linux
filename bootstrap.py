@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 from contextlib import contextmanager
+import distutils.spawn
 import re
 import random
 from functools import partial
@@ -277,11 +278,12 @@ def update():
     '''
     mirrors()
     _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
-    _run([
-        'inxi -Fxxxza --no-host',
-        # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
-        # 'sudo modprobe nvidia',
-    ])
+    if distutils.spawn.find_executable("inxi"):
+        _run([
+            'inxi -Fxxxza --no-host',
+            # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
+            # 'sudo modprobe nvidia',
+        ])
     input("Press enter key to quit.\n")
 
 def serial():

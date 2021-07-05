@@ -240,7 +240,7 @@ clean_migrations () {
     python manage.py migrate
 }
 
-alias gitignore="cp /home/elmeri/Code/personal/odoo_manager/odoo_manager/module_template/.gitignore ."
+alias gitignore="cp /home/elmeri/Projects/odoo_manager/odoo_manager/module_template/.gitignore ."
 alias notes="curl https://www.thecodebase.tech/notes"
 alias notes="cat ~/.notes"
 add_note() {
