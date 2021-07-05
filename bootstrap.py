@@ -255,7 +255,7 @@ def mirrors():
     print("Updating and ranking mirrors..")
     _run([
         'sudo reflector --latest 5 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist'
-    ])
+    ], dependencies=partial(_packages, ['reflector']))
 
 
 def fix_t14_ethernet():
