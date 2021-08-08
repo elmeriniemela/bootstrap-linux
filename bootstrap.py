@@ -377,7 +377,6 @@ def desktop():
         'pulseaudio-bluetooth', # bluetoothctl
         'bluez-utils', # bluetoothctl
         'blueman',
-        'clipmenu',
         'pavucontrol',
         'arandr',
         'pcmanfm', # Light filemanager
@@ -429,6 +428,7 @@ def desktop():
         'lightdm-webkit-theme-aether-git',
         'awesome-git',
         'picom-git',
+        'copyq-git',
         'whatsapp-nativefier',
         'slack-desktop',
         'teams',
