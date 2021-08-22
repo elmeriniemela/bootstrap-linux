@@ -30,3 +30,6 @@ Usage instructions:
 * Awesome disable notifications:
     * Do a widget that toggles naughty
     * https://awesomewm.org/doc/api/libraries/naughty.html
+* Application that better handles screen shutdown
+* Firefox Google Meets share screen select sreen
+* Copyq force center of screen and size

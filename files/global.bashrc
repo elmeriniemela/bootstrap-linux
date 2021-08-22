@@ -187,12 +187,10 @@ _venv_completer () {
 complete -o nospace -F _venv_completer activate
 
 odoo() {
-    version="$(cut -d'/' -f5 <<<$ODOO_DIR)"
-    if (( version < 10  ));
-    then
-        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
-    else
+    if [ -f "$ODOO_DIR/odoo-bin" ] ; then
         python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
+    else
+        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
     fi;
 }
 

@@ -669,7 +669,7 @@ def add_ssh(filename):
     '''
     _run(
         [
-            f'ssh-keygeny -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
+            f'ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
         dependencies=partial(_packages, ['xclip'])
@@ -685,18 +685,29 @@ def password(length=32):
         dependencies=partial(_packages, ['xclip'])
     )
 
+def _odoo_version(branch):
+    if branch == 'master':
+        return float('inf')
+    return float(branch)
+
+def _branch_name(branch):
+    if branch.isnumeric():
+        return branch[:-2]
+    return branch
+
 def _get_odoo_path(branch, odoo_installs_dir, repo):
-    return _path(f'{odoo_installs_dir}/{branch[:-2]}/{repo}')
+    return _path(f'{odoo_installs_dir}/{_branch_name(branch)}/{repo}')
+
 
 def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
-    venv_name = 'odoo{}'.format(branch[:-2])
+    venv_name = 'odoo{}'.format(_branch_name(branch))
     odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
 
     if not os.path.isdir(_path('~/.venv/' + venv_name)):
-        if float(branch) <= 10.0:
+        if _odoo_version(branch) <= 10.0:
             _run(
                 [
                     'python2 -m virtualenv -p python2 ~/.venv/{}'.format(venv_name),
@@ -716,7 +727,7 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
         f'/home/elmeri/.venv/{venv_name}/bin/pip pip install --upgrade pip',
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
-    if float(branch) >= 11.0:
+    if _odoo_version(branch) >= 11.0:
         _run([
             f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
         ], dependencies=partial(global_odoo_deps, branch=branch))
@@ -724,15 +735,15 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
 def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
-    if float(branch) >= 11.0:
-        venv_name = 'odoo{}'.format(branch[:-2])
+    if _odoo_version(branch) >= 11.0:
+        venv_name = 'odoo{}'.format(_branch_name(branch))
         _packages([
             'xmlsec',
             'pwgen',
             'libxml2',
             'pkg-config',
         ])
-    if float(branch) < 12.0:
+    if _odoo_version(branch) < 12.0:
         _packages([
             'npm',
         ])
@@ -768,7 +779,7 @@ def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
 
     _get_odoo_source(branch, odoo_installs_dir, repo='odoo')
-    if float(branch) >= 9.0:
+    if _odoo_version(branch) >= 9.0:
         _get_odoo_source(branch, odoo_installs_dir, repo='enterprise')
 
 
@@ -778,7 +789,7 @@ def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
 
         with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
             f_write.write(
-                data.format(odoo_version=branch[:-2])
+                data.format(odoo_version=_branch_name(branch))
             )
 
     odoo_venv(branch)
