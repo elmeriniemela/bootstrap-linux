@@ -362,65 +362,69 @@ def desktop():
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
         'networkmanager',
-        'firefox',
         'veracrypt',
         'sshpass',
         'thunderbird',
-        'bind', # bind-tools
-        'terminator', # Terminal configured to awesome
-        'ttf-bitstream-vera', # Fix vscode fonts
+        'bind',  # bind-tools
+        'terminator',  # Terminal configured to awesome
+        'ttf-bitstream-vera',  # Fix vscode fonts
         'ttf-droid',
         'ttf-roboto',
+        'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
         'alsa-utils',
         'pulseaudio',
         'pulseaudio-alsa',
-        'pulseaudio-bluetooth', # bluetoothctl
-        'bluez-utils', # bluetoothctl
+        'pulseaudio-bluetooth',  # bluetoothctl
+        'bluez-utils',  # bluetoothctl
         'blueman',
         'pavucontrol',
         'arandr',
-        'pcmanfm', # Light filemanager
-        'udisks2', # For easy mount 'udisksctl mount -b /dev/sdb1'. GVFS uses udisks2 for mounting functionality and is the recommended solution for most file managers.
-        'gvfs', # For automount
-        'gvfs-mtp', # Media Transfer Protocol for pcmanfm to automount android devices and browse files
-        'udiskie', # For automount
-        'polkit', # privilege escalation
-        'polkit-gnome', # privilege escalation gui 'auth agent'
+        'pcmanfm',  # Light filemanager
+        # For easy mount 'udisksctl mount -b /dev/sdb1'. GVFS uses udisks2 for mounting functionality and is the recommended solution for most file managers.
+        'udisks2',
+        'gvfs',  # For automount
+        'gvfs-mtp',  # Media Transfer Protocol for pcmanfm to automount android devices and browse files
+        'udiskie',  # For automount
+        'polkit',  # privilege escalation
+        'polkit-gnome',  # privilege escalation gui 'auth agent'
         'lxqt-policykit',
         'network-manager-applet',
-        'nm-connection-editor', # Wifi selections
+        'nm-connection-editor',  # Wifi selections
         'xorg-xev',
-        'xarchiver', # browse zip files
-        'xclip', # To copy to clipboard from terminal
-        'nomacs', # to view images
-        'libreoffice-fresh', # to view docs
-        'rofi', # application launcher
+        'xarchiver',  # browse zip files
+        'xclip',  # To copy to clipboard from terminal
+        'nomacs',  # to view images
+        'libreoffice-fresh',  # to view docs
+        'rofi',  # application launcher
         'rofi-calc',
-        'ntfs-3g', # Read/write implementation of windows filesystem
-        'hicolor-icon-theme', # It is recommended to install the hicolor-icon-theme package as many programs will deposit their icons in /usr/share/icons/hicolor and most other icon themes will inherit icons from the Hicolor icon theme.
-        'papirus-icon-theme', # Icon theme
-        'arc-gtk-theme', # Gtk theme
-        'lxappearance', # theme picker
-        'deluge', # torrent
+        'ntfs-3g',  # Read/write implementation of windows filesystem
+        # It is recommended to install the hicolor-icon-theme package as many programs will deposit their icons in /usr/share/icons/hicolor and most other icon themes will inherit icons from the Hicolor icon theme.
+        'hicolor-icon-theme',
+        'papirus-icon-theme',  # Icon theme
+        'arc-gtk-theme',  # Gtk theme
+        'lxappearance',  # theme picker
+        'deluge',  # torrent
         'deluge-gtk',
         'gocryptfs',
         'syncthing',
         'telegram-desktop',
         'signal-desktop',
         # 'networkmanager-openvpn',
-        'openvpn', # personal
+        'openvpn',  # personal
         'openconnect',  # work
         'simplescreenrecorder',
         'vlc',
-        'texlive-most', # Latex
-        'galculator', # calculator
+        'texlive-most',  # Latex
+        'galculator',  # calculator
         'xdg-user-dirs',
-        'xfce4-power-manager', # default launch application for battery widget
-        'upower', # upower - UPower command line tool, Battery widget
-        'redshift', # Sets color temperature of display according to time of day, Blue light widget
-        'gtk-engine-murrine', # Gtk-WARNING **: Unable to locate theme engine in module_path: "murrine",
-        'gnome-themes-extra', # Gtk-WARNING **: Unable to locate theme engine in module_path: "adwaita",
-        'gtk-engines', # HighContrast GTK2 theme
+        'xfce4-power-manager',  # default launch application for battery widget
+        'upower',  # upower - UPower command line tool, Battery widget
+        'redshift',  # Sets color temperature of display according to time of day, Blue light widget
+        # Gtk-WARNING **: Unable to locate theme engine in module_path: "murrine",
+        'gtk-engine-murrine',
+        # Gtk-WARNING **: Unable to locate theme engine in module_path: "adwaita",
+        'gnome-themes-extra',
+        'gtk-engines',  # HighContrast GTK2 theme
         'sof-firmware',
     ])
     _aur([
@@ -432,17 +436,17 @@ def desktop():
         'whatsapp-nativefier',
         'slack-desktop',
         'teams',
-        'inxi', # Command line system information script for console
+        'inxi',  # Command line system information script for console
         # 'timeshift',  # Backups
-        'flameshot-git', # Screenshots
+        'brave',
+        'flameshot-git',  # Screenshots
         'zoom',
         'visual-studio-code-bin',
-        'light-git', #RandR-based backlight control application
-        'qt5-styleplugins', # Same theme for Qt/KDE applications and GTK applications
-        'lua-pam-git', # pam authentication for awesome wm lockscreen
+        'light-git',  # RandR-based backlight control application
+        'qt5-styleplugins',  # Same theme for Qt/KDE applications and GTK applications
+        'lua-pam-git',  # pam authentication for awesome wm lockscreen
         'zulip-desktop',
     ], deps=True)
-    _enable(['NetworkManager', 'avahi-daemon', 'lightdm'], try_now=False)
     try:
         # This might fail in chroot
         _run(['sudo localectl --no-convert set-x11-keymap fi pc104'])
@@ -736,7 +740,6 @@ def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
     if _odoo_version(branch) >= 11.0:
-        venv_name = 'odoo{}'.format(_branch_name(branch))
         _packages([
             'xmlsec',
             'pwgen',
