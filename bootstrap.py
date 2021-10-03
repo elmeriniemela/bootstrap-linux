@@ -433,7 +433,7 @@ def desktop():
         'awesome-git',
         'picom-git',
         'copyq-git',
-        'whatsapp-nativefier',
+        'whatsapp-for-linux',
         'slack-desktop',
         'teams',
         'inxi',  # Command line system information script for console
