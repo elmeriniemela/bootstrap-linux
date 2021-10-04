@@ -459,6 +459,20 @@ def desktop():
         _run(["xf86-video-intel"]) # for intel
     except:
         pass
+
+    if not os.path.exists(_path('~/.config/awesome')):
+        _run([
+            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
+        ])
+    _link({
+        'elmeri': '/var/lib/AccountsService/users/elmeri',
+        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
+        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
+        'hosts': '/etc/hosts',
+        'locale.conf': '/etc/locale.conf',
+        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
+        'environment': '/etc/environment',
+    })
     _run([
         'echo "arch" | sudo tee /etc/hostname',
         # Set default lightdm-webkit2-greeter theme to Aether
@@ -475,20 +489,6 @@ def desktop():
         "sudo Xorg :2 -configure",
         "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
     ])
-    if not os.path.exists(_path('~/.config/awesome')):
-        _run([
-            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
-        ])
-
-    _link({
-        'elmeri': '/var/lib/AccountsService/users/elmeri',
-        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
-        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
-        'hosts': '/etc/hosts',
-        'locale.conf': '/etc/locale.conf',
-        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
-        'environment': '/etc/environment',
-    })
 
 def server():
     '''Setup server.
