@@ -448,8 +448,15 @@ def desktop():
         'zulip-desktop',
     ], deps=True)
     try:
-        # This might fail in chroot
-        _run(['sudo localectl --no-convert set-x11-keymap fi pc104'])
+        _run(['sudo localectl --no-convert set-x11-keymap fi pc104']) # This might fail in chroot
+    except:
+        pass
+    try:
+        _run(["sudo nvidia-xconfig"]) # for nvidia
+    except:
+        pass
+    try:
+        _run(["xf86-video-intel"]) # for intel
     except:
         pass
     _run([
@@ -465,8 +472,6 @@ def desktop():
         "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
-        # "sudo nvidia-xconfig", # for nvidia
-        "xf86-video-intel",
         "sudo Xorg :2 -configure",
         "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
     ])
