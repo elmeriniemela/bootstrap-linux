@@ -438,7 +438,7 @@ def desktop():
         'teams',
         'inxi',  # Command line system information script for console
         # 'timeshift',  # Backups
-        'brave',
+        'brave-bin',
         'flameshot-git',  # Screenshots
         'zoom',
         'visual-studio-code-bin',
