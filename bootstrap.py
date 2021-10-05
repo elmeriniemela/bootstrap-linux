@@ -56,7 +56,7 @@ def _enable(services, try_now=True):
 
 
 
-def _run(commands, dependencies=None, **kwargs):
+def _run(commands, dependencies=None, ignore_errors=False, **kwargs):
     for command in commands:
         print("Running command: ", command)
         if command.startswith('cd'):
@@ -78,6 +78,8 @@ def _run(commands, dependencies=None, **kwargs):
                     dependencies()
                     # Retry after running dependencies.
                     _run([command], **kwargs)
+                elif ignore_errors:
+                    pass
                 else:
                     raise
 
@@ -146,7 +148,7 @@ def _link(files_dict):
     for fname, dest_path in files_dict.items():
         if os.path.isfile(dest_path):
             _run([f'{prepend}rm {dest_path}'])
-        _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'])
+        _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'], ignore_errors=True)
 
 def _copy(files_dict):
     prepend = ''
@@ -447,18 +449,6 @@ def desktop():
         'lua-pam-git',  # pam authentication for awesome wm lockscreen
         'zulip-desktop',
     ], deps=True)
-    try:
-        _run(['sudo localectl --no-convert set-x11-keymap fi pc104']) # This might fail in chroot
-    except:
-        pass
-    try:
-        _run(["sudo nvidia-xconfig"]) # for nvidia
-    except:
-        pass
-    try:
-        _run(["xf86-video-intel"]) # for intel
-    except:
-        pass
 
     if not os.path.exists(_path('~/.config/awesome')):
         _run([
@@ -488,7 +478,9 @@ def desktop():
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
         "sudo Xorg :2 -configure",
         "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
-    ])
+        'sudo localectl --no-convert set-x11-keymap fi pc104',
+        "sudo nvidia-xconfig",
+    ], ignore_errors=True)
 
 def server():
     '''Setup server.
