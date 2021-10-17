@@ -475,6 +475,11 @@ def desktop():
         'sudo localectl --no-convert set-x11-keymap fi pc104',
         "sudo nvidia-xconfig",
     ], ignore_errors=True)
+    _enable([
+        'NetworkManager',
+        'avahi-daemon',
+        'lightdm',
+    ], try_now=False)
 
 def server():
     '''Setup server.
