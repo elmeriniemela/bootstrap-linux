@@ -299,8 +299,10 @@ def distro():
         * loadkeys fi
         * timedatectl set-ntp true
         * partition table with fdisk
+        * cryptsetup -y -v luksFormat /dev/<root_partition>
+        * cryptsetup open /dev/<root_partition> cryptroot
+        * mkfs.ext4 /dev/mapper/cryptroot
         * mkfs.fat -F32 /dev/<efi_partition>
-        * mkfs.ext4 /dev/<root_partition>
         * e2label /dev/<root_partition> arch
         * fatlabel /dev/<efi_partition> EFI
         * mount /dev/<root_partition> /mnt
@@ -313,7 +315,12 @@ def distro():
         * hwclock --systohc
         # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
         * pacman -S grub efibootmgr intel-ucode
-        * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
+        * Edit /etc/mkinitcpio.conf
+            HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)
+        * mkinitcpio -p linux
+        * Edit /etc/default/grub (get <device-UUID> with blkid)
+            GRUB_CMDLINE_LINUX="cryptdevice=UUID=<device-UUID>:cryptroot root=/dev/mapper/cryptroot"
+        * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=INSTALLED-GRUB-ARCH
         * grub-mkconfig -o /boot/grub/grub.cfg
         * passwd
     '''
