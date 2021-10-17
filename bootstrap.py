@@ -154,7 +154,7 @@ def _copy(files_dict):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
-    for fname, dest_path in files_dict.items():
+    for dest_path, fname in files_dict.items():
         if os.path.isfile(dest_path):
             _run([f'{prepend}rm {dest_path}'])
         _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
