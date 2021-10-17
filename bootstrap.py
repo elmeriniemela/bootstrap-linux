@@ -442,6 +442,7 @@ def desktop():
         'qt5-styleplugins',  # Same theme for Qt/KDE applications and GTK applications
         'lua-pam-git',  # pam authentication for awesome wm lockscreen
         'zulip-desktop',
+        'xidlehook',
     ], deps=True)
 
     if not os.path.exists(_path('~/.config/awesome')):
