@@ -8,6 +8,13 @@ timedatectl set-ntp true
 hwclock --systohc
 # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
 pacman -S grub efibootmgr intel-ucode
+
+sed -i '/^HOOKS/c\HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)' /etc/mkinitcpio.conf
+mkinitcpio -p linux
+
+sed -i '/^GRUB_CMDLINE_LINUX/c\GRUB_CMDLINE_LINUX="cryptdevice=LABEL=arch=:cryptroot root=/dev/mapper/cryptroot"' /etc/default/grub
+
+
 grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 

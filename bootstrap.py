@@ -305,24 +305,13 @@ def distro():
         * mkfs.fat -F32 /dev/<efi_partition>
         * e2label /dev/<root_partition> arch
         * fatlabel /dev/<efi_partition> EFI
-        * mount /dev/<root_partition> /mnt
+        * mount /dev/mapper/cryptroot /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
         * pacstrap /mnt base linux linux-firmware archlinux-keyring vim git python python-pip
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
-        * ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
-        * hwclock --systohc
-        # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
-        * pacman -S grub efibootmgr intel-ucode
-        * Edit /etc/mkinitcpio.conf
-            HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)
-        * mkinitcpio -p linux
-        * Edit /etc/default/grub (get <device-UUID> with blkid)
-            GRUB_CMDLINE_LINUX="cryptdevice=UUID=<device-UUID>:cryptroot root=/dev/mapper/cryptroot"
-        * grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=INSTALLED-GRUB-ARCH
-        * grub-mkconfig -o /boot/grub/grub.cfg
-        * passwd
+        * bash <(curl -s https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/bootstrap_laptop.sh)
     '''
     _packages([
         'base-devel',
@@ -433,7 +422,7 @@ def desktop():
         'gnome-themes-extra',
         'gtk-engines',  # HighContrast GTK2 theme
         'sof-firmware',
-    ])
+    ],  flags=('-S',))
     _aur([
         'python38',
         'lightdm-webkit-theme-aether-git',
