@@ -90,7 +90,7 @@ def _installed_packages():
             encoding='utf-8',
         ).splitlines())
 
-def _packages(list_of_packages, flags=('-S', '--noconfirm')):
+def _packages(list_of_packages, flags=('-S', '--noconfirm', '--needed')):
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
@@ -116,7 +116,7 @@ def _yay():
             f'rm -rf {dst}'
         ])
 
-def _aur(list_of_packages, flags=('-S', '--noconfirm'), deps=False):
+def _aur(list_of_packages, flags=('-S', '--noconfirm', '--needed'), deps=False):
     if os.geteuid() == 0:
         print("Do not run this as root")
         return
@@ -426,7 +426,7 @@ def desktop():
         'gnome-themes-extra',
         'gtk-engines',  # HighContrast GTK2 theme
         'sof-firmware',
-    ],  flags=('-S',))
+    ],  flags=('-S', '--needed'))
     _aur([
         'python38',
         'lightdm-webkit-theme-aether-git',
@@ -446,7 +446,7 @@ def desktop():
         'qt5-styleplugins',  # Same theme for Qt/KDE applications and GTK applications
         'lua-pam-git',  # pam authentication for awesome wm lockscreen
         'zulip-desktop',
-        'xidlehook',
+        'xidlehook-git',
     ], deps=True)
 
     awesome_path = _path('~/.config/awesome')
@@ -578,7 +578,7 @@ def backlight_fix():
     '''
     _packages([
         'acpilight', # https://unix.stackexchange.com/a/507333   (xbacklight is still the correct command)
-    ], flags=('-S',))
+    ], flags=('-S', '--needed'))
 
 def swapfile(gigabytes):
     ''' Generate and enable a swapfile
@@ -660,7 +660,7 @@ def glorious_dotfiles():
         'light-git',
         'nerd-fonts-fantasque-sans-mono',
 
-    ], flags=('-S',))
+    ], flags=('-S', '--needed'))
 
     _run([
         'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
