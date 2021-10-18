@@ -322,7 +322,6 @@ def distro():
         'base-devel',
         'openssh', # SSH client
         'sudo',
-        'pacman-contrib', # rank mirrors
         'cronie',
         'rsync',
         'ncdu', # diskspace
@@ -481,7 +480,6 @@ def desktop():
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
         "sudo Xorg :2 -configure",
         "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
-        'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
         "sudo nvidia-xconfig",
     ], ignore_errors=True)
     _enable([
@@ -489,6 +487,14 @@ def desktop():
         'avahi-daemon',
         'lightdm',
     ], try_now=False)
+
+
+def keymap():
+    _run([
+        'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
+    ])
+
+
 
 def server():
     '''Setup server.
