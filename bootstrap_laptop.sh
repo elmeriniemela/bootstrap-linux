@@ -7,7 +7,7 @@ ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
 timedatectl set-ntp true
 hwclock --systohc
 # For Intel processors, install the intel-ucode package. For AMD processors, install the amd-ucode package.
-pacman -S --needed grub efibootmgr intel-ucode archlinux-keyring vim git python python-pip
+pacman -S grub efibootmgr intel-ucode archlinux-keyring vim git python python-pip
 
 sed -i '/^HOOKS=/c\HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)' /etc/mkinitcpio.conf
 mkinitcpio -p linux
