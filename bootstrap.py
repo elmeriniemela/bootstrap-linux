@@ -296,6 +296,7 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
+        * iwctl --passphrase <passphrase> station wlan0 connect eramies-5G
         * loadkeys fi
         * timedatectl set-ntp true
         * partition table with fdisk
@@ -303,15 +304,15 @@ def distro():
         * cryptsetup open /dev/<root_partition> cryptroot
         * mkfs.ext4 /dev/mapper/cryptroot
         * mkfs.fat -F32 /dev/<efi_partition>
-        * e2label /dev/<root_partition> arch
+        * e2label /dev/mapper/cryptroot arch
         * fatlabel /dev/<efi_partition> EFI
         * mount /dev/mapper/cryptroot /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
-        * pacstrap /mnt base linux linux-firmware archlinux-keyring vim git python python-pip
+        * pacstrap /mnt base linux linux-firmware
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
-        * bash <(curl -s https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/bootstrap_laptop.sh)
+        * bash <(curl -sL https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/bootstrap_laptop.sh)
     '''
     _packages([
         'base-devel',
