@@ -254,7 +254,7 @@ def mirrors():
     '''
     print("Updating and ranking mirrors..")
     _run([
-        'sudo reflector --latest 5 --protocol https --country Finland --sort rate --save /etc/pacman.d/mirrorlist'
+        'sudo reflector --country Finland --sort rate --save /etc/pacman.d/mirrorlist'
     ], dependencies=partial(_packages, ['reflector']))
 
 
@@ -296,11 +296,12 @@ def serial():
 def distro():
     '''Commands needed for empty arch based distro install
     Post-install dependencies
-        * iwctl --passphrase <passphrase> station wlan0 connect eramies-5G
         * loadkeys fi
+        * iwctl --passphrase <passphrase> station wlan0 connect eramies-5G
         * timedatectl set-ntp true
+
         * partition table with fdisk
-        * cryptsetup -y -v luksFormat /dev/<root_partition>
+        * cryptsetup --label=cryptrootpart -y -v luksFormat /dev/<root_partition>
         * cryptsetup open /dev/<root_partition> cryptroot
         * mkfs.ext4 /dev/mapper/cryptroot
         * mkfs.fat -F32 /dev/<efi_partition>
@@ -309,6 +310,8 @@ def distro():
         * mount /dev/mapper/cryptroot /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
+
+        * reflector --country Finland --sort rate --save /etc/pacman.d/mirrorlist
         * pacstrap /mnt base linux linux-firmware
         * genfstab -U /mnt >> /mnt/etc/fstab
         * arch-chroot /mnt
@@ -446,9 +449,11 @@ def desktop():
         'xidlehook',
     ], deps=True)
 
-    if not os.path.exists(_path('~/.config/awesome')):
+    awesome_path = _path('~/.config/awesome')
+    if not os.path.exists(awesome_path):
+        os.makedirs(awesome_path)
         _run([
-            'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git ~/.config/awesome',
+            f'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git {awesome_path}',
         ])
     _link({
         'elmeri': '/var/lib/AccountsService/users/elmeri',
@@ -474,7 +479,7 @@ def desktop():
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
         "sudo Xorg :2 -configure",
         "sudo mv /root/xorg.conf.new /etc/X11/xorg.conf",
-        'sudo localectl --no-convert set-x11-keymap fi pc104',
+        'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
         "sudo nvidia-xconfig",
     ], ignore_errors=True)
     _enable([
