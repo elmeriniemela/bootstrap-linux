@@ -712,9 +712,10 @@ def _odoo_version(branch):
     return float(branch)
 
 def _branch_name(branch):
-    if branch.isnumeric():
-        return branch[:-2]
-    return branch
+    try:
+        return str(int(float(branch)))
+    except:
+        return branch
 
 def _get_odoo_path(branch, odoo_installs_dir, repo):
     return _path(f'{odoo_installs_dir}/{_branch_name(branch)}/{repo}')
@@ -742,7 +743,7 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
             ])
 
 
-    assert os.path.exists(f'{odoo_path}/requirements.txt')
+    assert os.path.exists(f'{odoo_path}/requirements.txt'), f'{odoo_path}/requirements.txt'
     _run([
         f'sed "/psycopg2/d;/lxml/d;/greenlet/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
         f'/home/elmeri/.venv/{venv_name}/bin/pip pip install --upgrade pip',
