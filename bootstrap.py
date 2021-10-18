@@ -310,6 +310,7 @@ def distro():
         * mount /dev/mapper/cryptroot /mnt
         * mkdir /mnt/boot
         * mount /dev/<efi_partition> /mnt/boot
+        * lsblk -o name,size,label,mountpoint,fstype
 
         * reflector --country Finland --sort rate --save /etc/pacman.d/mirrorlist
         * pacstrap /mnt base linux linux-firmware
@@ -557,7 +558,7 @@ def server():
 def secure():
     ''' Install and setup ufw and fail2ban.
     '''
-    _packages(['ufw', 'fail2ban'])
+    _packages(['ufw', 'fail2ban'], flags=('-S', '--needed'))
     _enable(['fail2ban', 'ufw'])
     _run([
         'sudo ufw allow 22/tcp',
