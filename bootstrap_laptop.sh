@@ -15,7 +15,7 @@ mkinitcpio -p linux
 sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"cryptdevice=LABEL=cryptrootpart:cryptroot root=/dev/mapper/cryptroot\"" /etc/default/grub
 
 
-grub-install --target=x86_64-efi --efi-directory=boot --bootloader-id=INSTALLED-ARCH-GRUB
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=INSTALLED-ARCH-GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
 passwd
