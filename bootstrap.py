@@ -452,6 +452,7 @@ def desktop():
     awesome_path = _path('~/.config/awesome')
     if not os.path.exists(awesome_path):
         os.makedirs(awesome_path)
+        os.chdir(awesome_path)
         _run([
             f'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git {awesome_path}',
         ])
