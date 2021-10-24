@@ -69,10 +69,19 @@ if ${use_color} ; then
 		fi
 	fi
 
-	if [[ ${EUID} == 0 ]] ; then
-		PS1='\[\033[01;31m\][\u@\h\[\033[01;36m\] \w\[\033[01;31m\]]\$\[\033[00m\] '
+    if [ "$HOSTNAME" = homeserver ]; then
+        normalcolor='33m'
+        rootcolorrr='36m'
+    else
+        normalcolor='32m'
+        rootcolorrr='31m'
+    fi
+
+
+    if [[ ${EUID} == 0 ]] ; then
+		PS1="\[\e[1;$rootcolorrr\][\u@\h\[\e[1;37m\] \w\[\e[1;$rootcolorrr\]]\$\[\e[00m\] "
 	else
-		PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \w\[\033[01;32m\]]\$\[\033[00m\] '
+		PS1="\[\e[1;$normalcolor\][\u@\h\[\e[1;37m\] \w\[\e[1;$normalcolor\]]\$\[\e[00m\] "
 	fi
 
 	alias ls='ls --color=auto'
