@@ -69,6 +69,7 @@ if ${use_color} ; then
         fi
     fi
 
+    # https://misc.flogisoft.com/bash/tip_colors_and_formatting
     if [ "$HOSTNAME" = homeserver ]; then
         normalcolor='33m'
         rootcolorrr='36m'
