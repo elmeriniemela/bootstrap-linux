@@ -3,13 +3,7 @@
 127.0.0.1       localhost
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
-127.0.1.1       local.thecodebase.tech
-192.168.1.250   odoo.thecodebase.tech
-192.168.1.250   syncthing.thecodebase.tech
-192.168.1.250   ums.thecodebase.tech
-192.168.1.250   www.thecodebase.tech
-192.168.1.250   thecodebase.tech
-192.168.1.250   nextcloud.thecodebase.tech
-192.168.1.250   todo.thecodebase.tech
+127.0.1.1       local.eniemela.fi
+192.168.1.250   eniemela.fi
 95.216.153.191  00003-14-0-all.runbot.sprintit.fi
 95.216.153.191  00002-14-0-all.runbot.sprintit.fi

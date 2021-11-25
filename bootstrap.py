@@ -388,7 +388,7 @@ def desktop():
         'syncthing',
         'telegram-desktop',
         'signal-desktop',
-        # 'networkmanager-openvpn',
+        'networkmanager-openvpn',
         'openvpn',  # personal
         'openconnect',  # work
         'simplescreenrecorder',
