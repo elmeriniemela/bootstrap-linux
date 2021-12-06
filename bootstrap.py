@@ -489,6 +489,7 @@ def server():
         'php-intl',
         'php-cgi',
         'php-fpm',
+        'php-imagick',
         'nvidia',
     ])
 
