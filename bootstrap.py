@@ -490,6 +490,7 @@ def server():
         'php-cgi',
         'php-fpm',
         'php-imagick',
+        'php-apcu',
         'nvidia',
     ])
 
@@ -499,15 +500,27 @@ def server():
     ], deps=True)
 
     php_extensions = [
+        'bcmath',
+        'gmp',
+        'opcache',
         'gd',
         'pgsql',
         'pdo_pgsql',
         'zip',
         'curl',
         'intl',
+        'imagick', # this should be enabled in /etc/php/conf.d/imagick.ini
+        'apcu', # this should be enabled in /etc/php/conf.d/apcu.ini
     ]
+    _lineinfile({'/etc/php/conf.d/apcu.ini': 'extension=apcu.so'})
+    _lineinfile({'/etc/php/conf.d/apcu.ini': 'apc.enable_cli=1'})
+
+    _lineinfile({'/etc/php/conf.d/imagick.ini': 'extension=imagick'})
+
+
     _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
-    # _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
+
+    _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
 
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
     if not os.path.exists(_path(odoo_kwargs['odoo_installs_dir'])):

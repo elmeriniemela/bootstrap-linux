@@ -2,6 +2,7 @@
 $CONFIG = array (
   'datadirectory' => '/mnt/HDD/nextcloud/data/',
   'skeletondirectory' => '',
+  'memcache.local' => '\OC\Memcache\APCu',
   'default_phone_region' => 'FI',
   'logfile' => '/var/log/nextcloud/nextcloud.log',
   'apps_paths' =>
