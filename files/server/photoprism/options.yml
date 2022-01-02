@@ -1,0 +1,21 @@
+# Bound to localhost as reverse proxied by Traefik
+HttpPort: 2342
+HttpHost: 127.0.0.1
+
+SiteUrl: https://photoprism.eniemela.fi
+SiteTitle: "Photoprism"
+
+AdminPassword: redacted
+
+AssetsPath: /var/lib/photoprism/assets
+ConfigPath: /mnt/HDD/photoprism/config
+StoragePath: /mnt/HDD/photoprism/storage
+
+OriginalsPath: /mnt/HDD/photoprism/originals
+ImportPath: /mnt/HDD/photoprism/import
+
+# pacman -S --noconfirm darktable rawtherapee libheif ffmpeg perl-image-exiftool
+DarktableBin: /usr/bin/darktable-cli
+RawtherapeeBin: /usr/bin/rawtherapee-cli
+HeifConvertBin: /usr/bin/heif-convert
+FFmpegBin: /usr/bin/ffmpeg
