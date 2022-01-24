@@ -314,7 +314,10 @@ def distro():
         'ffmpeg', # screenrecorder, for preview generation
         'reflector',
     ])
-    _enable(['cronie'])
+    _enable([
+        'cronie',
+        'systemd-timesyncd',
+    ])
     _run([
         '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
         "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
@@ -785,6 +788,46 @@ def global_odoo_deps(branch):
         ])
     except:
         pass
+
+
+def pgtune():
+    '''pg tune
+
+    # DB Version: 13
+    # OS Type: linux
+    # DB Type: web
+    # Total Memory (RAM): 32 GB
+    # CPUs num: 8
+    # Data Storage: ssd
+    '''
+    postgres_config = {
+        'shared_buffers': '8GB',
+        'effective_cache_size': '24GB',
+        'maintenance_work_mem': '2GB',
+        'checkpoint_completion_target': '0.9',
+        'wal_buffers': '16MB',
+        'default_statistics_target': '100',
+        'random_page_cost': '1.1',
+        'effective_io_concurrency': '200',
+        'work_mem': '10MB',
+        'min_wal_size': '1GB',
+        'max_wal_size': '4GB',
+        'max_worker_processes': '8',
+        'max_parallel_workers_per_gather': '4',
+        'max_parallel_workers': '8',
+        'max_parallel_maintenance_workers': '4',
+    }
+
+    for key, value in postgres_config.items():
+        try:
+            _run([
+                f"""psql postgres -c "ALTER SYSTEM SET {key} = '{value}'" """,
+            ])
+        except:
+            pass
+
+
+
 
 def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     '''Installs odoo, enterprise and all the dependencies
