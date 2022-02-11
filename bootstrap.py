@@ -468,6 +468,7 @@ def desktop():
         'NetworkManager',
         'avahi-daemon',
         'lightdm',
+        'bluetooth',
     ], try_now=False)
 
 
