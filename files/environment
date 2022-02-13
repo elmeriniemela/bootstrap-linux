@@ -4,11 +4,7 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 
-# clipmenu settings
-CM_LAUNCHER=rofi
-CM_HISTLENGTH=15
-CM_DIR=.config/clipmenu/cache
-
-# Same theme for Qt/KDE applications and GTK applications
-QT_QPA_PLATFORMTHEME=gtk2
+QT_QPA_PLATFORMTHEME=qt5ct
+BROWSER=brave
+EDITOR=vim
 VERACRYPT_MOUNT_PREFIX=/run/media/elmeri

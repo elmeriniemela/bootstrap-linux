@@ -438,15 +438,8 @@ def desktop():
         _run([
             f'git clone --recursive https://github.com/elmeriniemela/awesome-floppy.git {awesome_path}',
         ])
-    _link({
-        'elmeri': '/var/lib/AccountsService/users/elmeri',
-        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
-        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
-        'hosts': '/etc/hosts',
-        'locale.conf': '/etc/locale.conf',
-        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
-        'environment': '/etc/environment',
-    })
+
+    link_files()
     _run([
         'echo "arch" | sudo tee /etc/hostname',
         # Set default lightdm-webkit2-greeter theme to Aether
@@ -477,6 +470,17 @@ def keymap():
         'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
     ])
 
+
+def link_files():
+    _link({
+        'elmeri': '/var/lib/AccountsService/users/elmeri',
+        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
+        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
+        'hosts': '/etc/hosts',
+        'locale.conf': '/etc/locale.conf',
+        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
+        'environment': '/etc/environment',
+    })
 
 
 def server():
