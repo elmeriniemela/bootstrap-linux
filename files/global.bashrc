@@ -162,6 +162,7 @@ export HISTTIMEFORMAT="[%F %T] "
 # Change the file location because certain bash sessions truncate .bash_history file upon close.
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
 export HISTFILE=~/.bash_eternal_history
+export HISTIGNORE=' *' # lines starting with ' ' will not be saved to history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
 PROMPT_COMMAND="history -a"
@@ -232,6 +233,33 @@ odoo_coverage() {
     coverage html
 }
 
+
+home_pull(){( set -e # Fail early
+    if [ -z "$1" ]
+    then
+        echo "Specify hostname"
+        return
+    fi
+
+    if [ -z "$2" ]
+    then
+        echo "Specify password"
+        return
+    fi
+
+    # sshpass -p "$2" rsync -avz $1:.config/syncthing/ ~/.config/syncthing
+    # sshpass -p "$2" rsync  -avz $1:.thunderbird/ ~/.thunderbird
+    # sshpass -p "$2" rsync  -avz $1:School/ ~/School
+    # sshpass -p "$2" rsync  -avz $1:Projects/ ~/Projects
+    # sshpass -p "$2" rsync  -avz $1:Videos/ ~/Videos
+    # sshpass -p "$2" rsync  -avz $1:Documents/ ~/Documents
+    # sshpass -p "$2" rsync  -avz $1:.ssh/ ~/.ssh
+    sshpass -p "$2" rsync  -avz $1:VPN/ ~/VPN
+    sshpass -p "$2" rsync  -avz $1:.bash_eternal_history ~/.bash_eternal_history
+    sshpass -p "$2" rsync  -avz $1:.psql_history ~/.psql_history
+    sshpass -p "$2" rsync  -avz $1:.python_history ~/.python_history
+
+)}
 
 
 venv() {
