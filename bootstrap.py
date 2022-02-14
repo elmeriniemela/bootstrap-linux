@@ -475,7 +475,7 @@ def arcolinux():
         f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
     ])
     link_files()
-    _yay([
+    _aur([
         'zulip-desktop-bin',
         'python38',
     ])
@@ -485,7 +485,6 @@ def arcolinux():
         'xautolock',
         'rofi-calc',
         'texlive-most',
-        'plocate',
         'ufw',
     ])
 
