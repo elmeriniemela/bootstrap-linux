@@ -465,6 +465,33 @@ def desktop():
     ], try_now=False)
 
 
+def arcolinux():
+    import shutil
+    awesome_path = _path('~/.config/awesome')
+    shutil.rmtree(awesome_path, ignore_errors=True)
+    os.makedirs(awesome_path)
+    os.chdir(awesome_path)
+    _run([
+        f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
+    ])
+    link_files()
+    _yay([
+        'zulip-desktop-bin',
+        'python38',
+    ])
+
+    _packages([
+        'syncthing',
+        'xautolock',
+        'rofi-calc',
+        'texlive-most',
+        'plocate',
+        'ufw',
+    ])
+
+
+
+
 def keymap():
     _run([
         'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
