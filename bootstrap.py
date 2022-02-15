@@ -276,7 +276,6 @@ def fix_t14_ethernet():
 def update():
     '''Update the system
     '''
-    mirrors()
     _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
     if distutils.spawn.find_executable("inxi"):
         _run([
@@ -466,14 +465,16 @@ def desktop():
 
 
 def arcolinux():
-    import shutil
-    awesome_path = _path('~/.config/awesome')
-    shutil.rmtree(awesome_path, ignore_errors=True)
-    os.makedirs(awesome_path)
-    os.chdir(awesome_path)
-    _run([
-        f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
-    ])
+    if not os.path.exists(_path('~/.config/awesome/.git')):
+        import shutil
+        awesome_path = _path('~/.config/awesome')
+        shutil.rmtree(awesome_path, ignore_errors=True)
+        os.makedirs(awesome_path)
+        os.chdir(awesome_path)
+        _run([
+            f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
+        ])
+
     link_files()
     _aur([
         'zulip-desktop-bin',
@@ -486,6 +487,7 @@ def arcolinux():
         'rofi-calc',
         'texlive-most',
         'ufw',
+        'xfce4-clipman-plugin'
     ])
 
 
@@ -506,6 +508,7 @@ def link_files():
         'locale.conf': '/etc/locale.conf',
         '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
         'environment': '/etc/environment',
+        '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
     })
 
 
@@ -597,6 +600,7 @@ def secure():
         'sudo ufw allow 22/tcp',
         'sudo ufw allow 80/tcp',
         'sudo ufw allow 443/tcp',
+        'sudo ufw allow syncthing',
         'sudo ufw default deny incoming',
         'sudo ufw default allow outgoing',
         'sudo ufw enable',

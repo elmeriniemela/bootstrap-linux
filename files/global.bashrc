@@ -253,11 +253,11 @@ home_pull(){( set -e # Fail early
     sshpass -p "$2" rsync  -avz $1:Projects/ ~/Projects
     sshpass -p "$2" rsync  -avz $1:Videos/ ~/Videos
     sshpass -p "$2" rsync  -avz $1:Documents/ ~/Documents
-    sshpass -p "$2" rsync  -avz $1:.ssh/ ~/.ssh
     sshpass -p "$2" rsync  -avz $1:VPN/ ~/VPN
     sshpass -p "$2" rsync  -avz $1:.bash_eternal_history ~/.bash_eternal_history
     sshpass -p "$2" rsync  -avz $1:.psql_history ~/.psql_history
     sshpass -p "$2" rsync  -avz $1:.python_history ~/.python_history
+    sshpass -p "$2" rsync  -avz $1:.ssh/ ~/.ssh
 
 )}
 
