@@ -240,24 +240,15 @@ home_pull(){( set -e # Fail early
         echo "Specify hostname"
         return
     fi
-
-    if [ -z "$2" ]
-    then
-        echo "Specify password"
-        return
-    fi
-
-    sshpass -p "$2" rsync  -avz $1:.config/syncthing/ ~/.config/syncthing
-    sshpass -p "$2" rsync  -avz $1:.thunderbird/ ~/.thunderbird
-    sshpass -p "$2" rsync  -avz $1:School/ ~/School
-    sshpass -p "$2" rsync  -avz $1:Projects/ ~/Projects
-    sshpass -p "$2" rsync  -avz $1:Videos/ ~/Videos
-    sshpass -p "$2" rsync  -avz $1:Documents/ ~/Documents
-    sshpass -p "$2" rsync  -avz $1:VPN/ ~/VPN
-    sshpass -p "$2" rsync  -avz $1:.bash_eternal_history ~/.bash_eternal_history
-    sshpass -p "$2" rsync  -avz $1:.psql_history ~/.psql_history
-    sshpass -p "$2" rsync  -avz $1:.python_history ~/.python_history
-    sshpass -p "$2" rsync  -avz $1:.ssh/ ~/.ssh
+    rsync  -avz $1:.ssh/ ~/.ssh
+    rsync  -avz $1:.config/syncthing/ ~/.config/syncthing
+    rsync  -avz $1:.thunderbird/ ~/.thunderbird
+    rsync  -avz $1:School/ ~/School
+    rsync  -avz $1:Projects/ ~/Projects
+    rsync  -avz $1:VPN/ ~/VPN
+    rsync  -avz $1:.bash_eternal_history ~/.bash_eternal_history
+    rsync  -avz $1:.psql_history ~/.psql_history
+    rsync  -avz $1:.python_history ~/.python_history
 
 )}
 
