@@ -5,6 +5,7 @@ $CONFIG = array (
   'memcache.local' => '\OC\Memcache\APCu',
   'default_phone_region' => 'FI',
   'logfile' => '/var/log/nextcloud/nextcloud.log',
+  'filesystem_check_changes' => 1,
   'apps_paths' =>
   array (
     0 =>

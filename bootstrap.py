@@ -276,6 +276,7 @@ def fix_t14_ethernet():
 def update():
     '''Update the system
     '''
+    _packages(['archlinux-keyring'])
     _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
     if distutils.spawn.find_executable("inxi"):
         _run([
