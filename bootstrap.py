@@ -478,17 +478,14 @@ def arcolinux():
 
     link_files()
     _aur([
-        'zulip-desktop-bin',
         'python38',
     ])
 
     _packages([
-        'syncthing',
-        'xautolock',
-        'rofi-calc',
-        'texlive-most',
-        'ufw',
-        'xfce4-clipman-plugin'
+        'xfce4-clipman-plugin',
+        'sddm',
+        'awesome',
+        'xfce4-terminal',
     ])
 
 
