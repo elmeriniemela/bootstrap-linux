@@ -486,7 +486,14 @@ def arcolinux():
         'sddm',
         'awesome',
         'xfce4-terminal',
+        'rofi',
+        'rofi-calc',
+        'brave',
+        'udisks2',
     ])
+    _enable([
+        'sddm',
+    ], try_now=True)
 
 
 
