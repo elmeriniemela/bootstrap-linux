@@ -311,7 +311,6 @@ def distro():
         'zip',
         'wget',
         'syncthing',
-        'ffmpeg', # screenrecorder, for preview generation
         'reflector',
     ])
     _enable([
@@ -343,6 +342,7 @@ def desktop():
         'lightdm',
         'lightdm-gtk-greeter',
         'lightdm-gtk-greeter-settings',
+        'ffmpeg', # screenrecorder, for preview generation
         'networkmanager',
         'veracrypt',
         'sshpass',
@@ -490,6 +490,8 @@ def arcolinux():
         'rofi-calc',
         'brave',
         'udisks2',
+        'gvfs',  # For automount
+        'udiskie',  # For automount
     ])
     _enable([
         'sddm',
@@ -539,6 +541,7 @@ def server():
     _aur([
         'ethminer-cuda',
         'python38',
+        'ums',
     ], deps=True)
 
     php_extensions = [
@@ -562,8 +565,6 @@ def server():
 
     _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
 
-    _lineinfile({'/etc/webapps/nextcloud/config/config.php': "'memcache.local' => '\OC\Memcache\APCu',"})
-
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
     if not os.path.exists(_path(odoo_kwargs['odoo_installs_dir'])):
         odoo(**odoo_kwargs)
@@ -573,14 +574,14 @@ def server():
         _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
 
 
-    if not os.path.exists(_path('~/thecodebase')):
-        _run([
-            'git clone https://github.com/elmeriniemela/thecodebase.git ~/thecodebase',
-            'cd thecodebase',
-            'git submodule update --init',
-        ])
+    # if not os.path.exists(_path('~/thecodebase')):
+    #     _run([
+    #         'git clone https://github.com/elmeriniemela/thecodebase.git ~/thecodebase',
+    #         'cd thecodebase',
+    #         'git submodule update --init',
+    #     ])
 
-    ethminer_cron = '* * * * * pgrep ethminer > /dev/null || systemctl start ethminer'
+    ethminer_cron = '* * * * * pgrep ethminer > /dev/null || systemctl is-enabled ethminer.service && systemctl start ethminer'
     _enable(['nginx', 'php-fpm'])
     _run([
         f'( sudo crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | sudo crontab -',
@@ -588,8 +589,10 @@ def server():
 
     _link({
         'locale.conf': '/etc/locale.conf',
+        'server/nextcloud/config.php': '/etc/webapps/nextcloud/config/config.php',
         'server/php-fpm/nextcloud.conf' : '/etc/php/php-fpm.d/nextcloud.conf',
         'server/php-fpm/override.conf' : '/etc/systemd/system/php-fpm.service.d/override.conf',
+        'server/UMS/UMS.conf': '/home/nextcloud/.config/UMS/UMS.conf',
     })
 
 
@@ -886,7 +889,10 @@ def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
 
         with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
             f_write.write(
-                data.format(odoo_version=_branch_name(branch))
+                data.format(
+                    odoo_version=_branch_name(branch),
+                    odoo_installs_dir=odoo_installs_dir,
+                )
             )
 
     odoo_venv(branch)
