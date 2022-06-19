@@ -9,6 +9,9 @@ pacman -S python-pip
 pip install -e .
 chown $new_user:$new_user -R /home/$new_user/.config
 
+pacman -S archlinux-keyring
+pacman -Syyu
+
 bootstrap-linux distro
 bootstrap-linux secure
 bootstrap-linux swapfile 8
