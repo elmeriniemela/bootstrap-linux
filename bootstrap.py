@@ -567,7 +567,7 @@ def server():
 
     odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
     if not os.path.exists(_path(odoo_kwargs['odoo_installs_dir'])):
-        odoo(**odoo_kwargs)
+        odoo(**odoo_kwargs, enterprise=False)
         _get_odoo_source(**odoo_kwargs, repo='muk_base', owner='muk-it')
         _get_odoo_source(**odoo_kwargs, repo='muk_web', owner='muk-it')
         _get_odoo_source(**odoo_kwargs, repo='auto_backup', owner='Yenthe666')
@@ -872,14 +872,14 @@ def pgtune():
 
 
 
-def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
+def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, enterprise=True):
     '''Installs odoo, enterprise and all the dependencies
     '''
 
     odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
 
     _get_odoo_source(branch, odoo_installs_dir, repo='odoo')
-    if _odoo_version(branch) >= 9.0:
+    if _odoo_version(branch) >= 9.0 and enterprise:
         _get_odoo_source(branch, odoo_installs_dir, repo='enterprise')
 
 
