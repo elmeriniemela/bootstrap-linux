@@ -31,6 +31,6 @@ bootstrap-linux distro
 bootstrap-linux secure
 bootstrap-linux swapfile 8
 
-sudo -u $new_user bootstrap-linux desktop
+sudo -u $new_user bootstrap-linux archlaptop
 sudo -u $new_user bootstrap-linux dotfiles
 

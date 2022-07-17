@@ -295,7 +295,7 @@ def serial():
 
 def distro():
     '''
-    Base setup. Use desktop() or server() after this.
+    Base setup. Use archlaptop() or server() after this.
     '''
     _packages([
         'base-devel',
@@ -332,9 +332,10 @@ def distro():
     _copy({
         '/etc/vconsole.conf': 'vconsole.conf',
     })
+    secure()
 
 
-def desktop():
+def archlaptop():
     '''User space apps, cannot be run as root. Run after distro.
     '''
     _packages([
@@ -596,8 +597,6 @@ def server():
     })
 
 
-    secure()
-
 
 def secure():
     ''' Install and setup ufw and fail2ban.
@@ -613,12 +612,6 @@ def secure():
         'sudo ufw default allow outgoing',
         'sudo ufw enable',
     ])
-
-    _lineinfile({
-        # https://forums.whonix.org/t/enforce-kernel-module-software-signature-verification-module-signing-disallow-kernel-module-loading-by-default/7880/11
-        # THIS CAUSES BOOT PARTITION NOT TO LOAD
-        # '/etc/sysctl.d/99-modules-disabled.conf': 'kernel.modules_disabled=1',
-    })
 
 def backlight_fix():
     ''' Fix the backlight control on a laptop.
