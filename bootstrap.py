@@ -604,10 +604,10 @@ def secure():
     _packages(['ufw', 'fail2ban'], flags=('-S', '--needed'))
     _enable(['fail2ban', 'ufw'])
     _run([
-        'sudo ufw allow 22/tcp',
-        'sudo ufw allow 80/tcp',
-        'sudo ufw allow 443/tcp',
-        'sudo ufw allow syncthing',
+        # 'sudo ufw allow 22/tcp',
+        # 'sudo ufw allow 80/tcp',
+        # 'sudo ufw allow 443/tcp',
+        # 'sudo ufw allow syncthing',
         'sudo ufw default deny incoming',
         'sudo ufw default allow outgoing',
         'sudo ufw enable',
