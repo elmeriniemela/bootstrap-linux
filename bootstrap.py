@@ -495,6 +495,7 @@ def arcolinux():
         'gvfs',  # For automount
         'udiskie',  # For automount
         'pavucontrol', # Volume/audio control
+        'archlinux-logout-git', # logout widget
     ])
     _enable([
         'sddm',
