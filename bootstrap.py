@@ -494,6 +494,9 @@ def arcolinux():
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
+        'alsa-utils',
+        'pulseaudio',
+        'pulseaudio-alsa',
         'pavucontrol', # Volume/audio control
         'archlinux-logout-git', # logout widget
     ])
@@ -650,15 +653,12 @@ def dotfiles():
         '/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
     })
 
-    unlink = [
-        _path('~/.bashrc'),
-        _path('~/.bash_profile'),
-    ]
-
-    for path in unlink:
-        if os.path.exists(path):
-            os.unlink(path)
-
+    _run([
+        'rm -f ~/.bashrc',
+        'rm -f ~/.bash_profile',
+        'sudo rm -f /root/.bash_profile',
+        'sudo rm -f /root/.bashrc',
+    ])
 
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
