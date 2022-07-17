@@ -490,9 +490,11 @@ def arcolinux():
         'rofi',
         'rofi-calc',
         'brave',
+        'signal-desktop',
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
+        'pavucontrol', # Volume/audio control
     ])
     _enable([
         'sddm',
