@@ -496,6 +496,7 @@ def arcolinux():
     ])
     _enable([
         'sddm',
+        'syncthing@elmeri',
     ], try_now=True)
 
 
