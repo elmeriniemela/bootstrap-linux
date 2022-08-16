@@ -138,7 +138,7 @@ def _lineinfile(files_dict):
         line = line.replace(r"'", r"\'")
         _run([
             f"{prepend}touch {filename}",
-            f"grep -qxF $'{line}' {filename} || echo $'{line}' | {prepend}tee -a {filename}",
+            f"grep -qxF '{line}' {filename} || echo '{line}' | {prepend}tee -a {filename}",
         ])
 
 def _link(files_dict):
@@ -293,6 +293,13 @@ def serial():
         'sudo dmidecode -s system-serial-number',
     ], dependencies=partial(_packages, ['dmidecode']))
 
+
+def odoo_tests(db_name, modules=None):
+    "Run odoo tests"
+    ODOO_DIR = os.environ['ODOO_DIR']
+    modules = modules or ','.join(os.listdir())
+    _run([f'python {ODOO_DIR}/odoo-bin --conf {ODOO_DIR}/.odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
+
 def distro():
     '''
     Base setup. Use archlaptop() or server() after this.
@@ -329,6 +336,17 @@ def distro():
         '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
         '/etc/sudoers.d/wheel_group': '%wheel ALL=(ALL) ALL',
     })
+
+    # https://archived.forum.manjaro.org/t/entire-system-hangs-when-writing-to-ssd/100585/21
+    # This is a simple tweak to force the Linux kernel using block multi-queue mode, allowing a better usage of the NVME drive
+    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'scsi_mod.use_blk_mq=1'})
+
+    # https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/
+    # Contains the amount of dirty memory at which a process generating disk writes will itself start writeback.
+    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'vm.dirty_background_ratio=5'})
+    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'vm.dirty_ratio=10'})
+
+
     _copy({
         '/etc/vconsole.conf': 'vconsole.conf',
     })
@@ -466,7 +484,20 @@ def archlaptop():
     ], try_now=False)
 
 
+
+def fix_slow_ssd(dev):
+    "https://wiki.debian.org/SSDOptimization#Low-Latency_IO-Scheduler"
+    if os.geteuid() != 0:
+        print("Run as root")
+        return
+    if not dev:
+        raise RuntimeError("Give devince name (for example 'sda' or 'nvme0n1')")
+    _packages(['sysfsutils'])
+    _lineinfile({'/etc/sysfs.conf': f'block/{dev}/queue/scheduler = deadline'})
+    _run([f'echo deadline > /sys/block/{dev}/queue/scheduler'])
+
 def arcolinux():
+    "Setup arcolinux laptop"
     if not os.path.exists(_path('~/.config/awesome/.git')):
         import shutil
         awesome_path = _path('~/.config/awesome')
@@ -639,6 +670,7 @@ def swapfile(gigabytes):
     _lineinfile({
         '/etc/fstab': '/swapfile none swap defaults 0 0',
     })
+    _run(['sudo findmnt --verify --verbose'])
 
 def dotfiles():
     ''' This setups basic configuration.
