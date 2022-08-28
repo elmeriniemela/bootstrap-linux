@@ -603,23 +603,12 @@ def server():
 
     _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
 
-    odoo_kwargs = dict(branch='13.0', odoo_installs_dir='~/Odoo')
-    if not os.path.exists(_path(odoo_kwargs['odoo_installs_dir'])):
-        odoo(**odoo_kwargs, enterprise=False)
-        _get_odoo_source(**odoo_kwargs, repo='muk_base', owner='muk-it')
-        _get_odoo_source(**odoo_kwargs, repo='muk_web', owner='muk-it')
-        _get_odoo_source(**odoo_kwargs, repo='auto_backup', owner='Yenthe666')
-        _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
-
+    odoo_kwargs = dict(branch='15.0', odoo_installs_dir='~/Odoo')
 
     _enable(['nginx', 'php-fpm'])
 
     _link({
         'locale.conf': '/etc/locale.conf',
-        'server/nextcloud/config.php': '/etc/webapps/nextcloud/config/config.php',
-        'server/php-fpm/nextcloud.conf' : '/etc/php/php-fpm.d/nextcloud.conf',
-        'server/php-fpm/override.conf' : '/etc/systemd/system/php-fpm.service.d/override.conf',
-        'server/UMS/UMS.conf': '/home/nextcloud/.config/UMS/UMS.conf',
     })
 
 
