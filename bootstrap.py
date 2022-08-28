@@ -562,9 +562,7 @@ def server():
     '''Setup server.
     '''
     _packages([
-        'docker',
-        'docker-compose',
-        'nextcloud',
+        'php',
         'php-pgsql',
         'nginx',
         'php-apcu',
@@ -574,11 +572,11 @@ def server():
         'php-fpm',
         'php-imagick',
         'php-apcu',
-        'nvidia',
+        'ffmpeg',
+
     ])
 
     _aur([
-        'ethminer-cuda',
         'python38',
         'ums',
     ], deps=True)
@@ -590,11 +588,12 @@ def server():
         'gd',
         'pgsql',
         'pdo_pgsql',
+        'fileinfo', # (highly recommended, enhances file analysis performance; required to set custom theming images or if PHP module imagick with SVG support is installed)
         'zip',
         'curl',
         'intl',
-        'imagick', # this should be enabled in /etc/php/conf.d/imagick.ini
-        'apcu', # this should be enabled in /etc/php/conf.d/apcu.ini
+        # 'imagick', # this should be enabled in /etc/php/conf.d/imagick.ini
+        # 'apcu', # this should be enabled in /etc/php/conf.d/apcu.ini
     ]
     _lineinfile({'/etc/php/conf.d/apcu.ini': 'extension=apcu.so'})
     _lineinfile({'/etc/php/conf.d/apcu.ini': 'apc.enable_cli=1'})
@@ -613,18 +612,7 @@ def server():
         _get_odoo_source(**odoo_kwargs, repo='odoo_addons', owner='elmeriniemela')
 
 
-    # if not os.path.exists(_path('~/thecodebase')):
-    #     _run([
-    #         'git clone https://github.com/elmeriniemela/thecodebase.git ~/thecodebase',
-    #         'cd thecodebase',
-    #         'git submodule update --init',
-    #     ])
-
-    ethminer_cron = '* * * * * pgrep ethminer > /dev/null || systemctl is-enabled ethminer.service && systemctl start ethminer'
     _enable(['nginx', 'php-fpm'])
-    _run([
-        f'( sudo crontab -l | grep -v -F "{ethminer_cron}" ; echo "{ethminer_cron}" ) | sudo crontab -',
-    ])
 
     _link({
         'locale.conf': '/etc/locale.conf',
