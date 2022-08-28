@@ -583,15 +583,15 @@ def server():
 
     php_extensions = [
         'bcmath',
-        'gmp',
-        'opcache',
-        'gd',
-        'pgsql',
-        'pdo_pgsql',
-        'fileinfo', # (highly recommended, enhances file analysis performance; required to set custom theming images or if PHP module imagick with SVG support is installed)
-        'zip',
         'curl',
+        'gd',
+        'gmp',
         'intl',
+        'opcache',
+        'pdo_pgsql',
+        'pgsql',
+        'zip',
+        'fileinfo', # (highly recommended, enhances file analysis performance; required to set custom theming images or if PHP module imagick with SVG support is installed)
         # 'imagick', # this should be enabled in /etc/php/conf.d/imagick.ini
         # 'apcu', # this should be enabled in /etc/php/conf.d/apcu.ini
     ]
@@ -603,7 +603,6 @@ def server():
 
     _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
 
-    odoo_kwargs = dict(branch='15.0', odoo_installs_dir='~/Odoo')
 
     _enable(['nginx', 'php-fpm'])
 
@@ -611,6 +610,7 @@ def server():
         'locale.conf': '/etc/locale.conf',
     })
 
+    odoo_venv(branch='15.0', odoo_installs_dir='/home/elmeri/Odoo')
 
 
 def secure():
