@@ -649,10 +649,8 @@ def swapfile(gigabytes):
     })
     _run(['sudo findmnt --verify --verbose'])
 
-def dotfiles():
-    ''' This setups basic configuration.
-        * Generate global bashrc
-        * Clone dotfiles
+def bashrc():
+    ''' Generate global bashrc
     '''
     if os.geteuid() == 0:
         print("Do not run this as root")
@@ -669,6 +667,12 @@ def dotfiles():
         'sudo rm -f /root/.bashrc',
     ])
 
+def dotfiles():
+    ''' This setups basic configuration.
+        * Generate global bashrc
+        * Clone dotfiles
+    '''
+    bashrc()
     if not os.path.exists(_path('~/.dotfiles')):
         _run([
             'git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',

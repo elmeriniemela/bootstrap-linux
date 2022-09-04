@@ -167,10 +167,13 @@ export HISTIGNORE=' *' # lines starting with ' ' will not be saved to history
 # http://superuser.com/questions/20900/bash-history-loss
 PROMPT_COMMAND="history -a"
 
+[[ -r "/usr/share/bash-completion/completions/git" ]] && . "/usr/share/bash-completion/completions/git"
 
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-[[ -r "/usr/share/bash-completion/completions/git" ]] && . "/usr/share/bash-completion/completions/git"
 __git_complete dotfiles __git_main
+alias server='/usr/bin/git --git-dir=$HOME/.server/ --work-tree=$HOME'
+__git_complete server __git_main
+
 
 activate() {
     if [[ $1 == odoo* ]];
