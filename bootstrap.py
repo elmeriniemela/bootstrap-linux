@@ -575,9 +575,28 @@ def server():
         'php-cgi',
         'php-fpm',
         'php-imagick',
+        'php-fileinfo',
         'php-apcu',
         'ffmpeg',
 
+        'base-devel',
+        'openssh', # SSH client
+        'sudo',
+        'cronie',
+        'rsync',
+        'ncdu', # diskspace
+        'htop',
+        'bash-completion',
+        'tmux',
+        'unzip',
+        'zip',
+        'wget',
+        'syncthing',
+        'reflector',
+    ])
+    _enable([
+        'cronie',
+        'systemd-timesyncd',
     ])
 
     _aur([
