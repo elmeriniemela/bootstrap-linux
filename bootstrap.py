@@ -295,7 +295,8 @@ def serial():
 
 
 def odoo_tests(db_name, modules=None):
-    "Run odoo tests"
+    """Run odoo tests
+    """
     ODOO_DIR = os.environ['ODOO_DIR']
     modules = modules or ','.join(os.listdir())
     _run([f'python {ODOO_DIR}/odoo-bin --conf {ODOO_DIR}/.odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
@@ -486,7 +487,8 @@ def archlaptop():
 
 
 def fix_slow_ssd(dev):
-    "https://wiki.debian.org/SSDOptimization#Low-Latency_IO-Scheduler"
+    """https://wiki.debian.org/SSDOptimization#Low-Latency_IO-Scheduler
+    """
     if os.geteuid() != 0:
         print("Run as root")
         return
@@ -540,12 +542,14 @@ def arcolinux():
 
 
 def keymap():
+    "Finnish keyboard layout"
     _run([
         'sudo localectl --no-convert set-x11-keymap fi pc104', # finnish keyboard layout
     ])
 
 
 def link_files():
+    "Link laptop configuration files"
     _link({
         'elmeri': '/var/lib/AccountsService/users/elmeri',
         'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
@@ -682,6 +686,7 @@ def dotfiles():
         ])
 
 def gitconfig():
+    "Enable ~/.gitconfig"
     _link({
         '.gitconfig': '~/.gitconfig',
     })
@@ -976,8 +981,11 @@ def _print_functions(locals_dict):
         for string_name, parameter in sign.parameters.items():
             params.append(str(parameter))
         print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
-        assert func.__doc__ and func.__doc__.endswith('\n    '), f"Invalid docstring for {fname}: '{func.__doc__}'"
-        print("    {}".format(func.__doc__))
+        doc = func.__doc__
+        assert doc, f"Docstring missing for {fname}: '{doc}'"
+        if not doc.endswith('\n    '):
+            doc += '\n    '
+        print("    {}".format(doc))
 
 
 
