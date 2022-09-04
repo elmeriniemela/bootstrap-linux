@@ -575,7 +575,6 @@ def server():
         'php-cgi',
         'php-fpm',
         'php-imagick',
-        'php-fileinfo',
         'php-apcu',
         'ffmpeg',
 
