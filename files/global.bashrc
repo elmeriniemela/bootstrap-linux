@@ -237,7 +237,8 @@ odoo_coverage() {
 }
 
 
-home_pull(){( set -e # Fail early
+home_pull(){(
+    set -e # Fail early
     if [ -z "$1" ]
     then
         echo "Specify hostname"

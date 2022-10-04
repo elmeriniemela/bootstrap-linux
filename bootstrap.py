@@ -513,6 +513,11 @@ def arcolinux():
     link_files()
     _aur([
         'python38',
+        'zulip-desktop',
+        'flameshot-git',  # Screenshots
+        'brave-bin',
+        'slack-desktop',
+
     ])
 
     _packages([
@@ -532,6 +537,13 @@ def arcolinux():
         'pulseaudio-alsa',
         'pavucontrol', # Volume/audio control
         'archlinux-logout-git', # logout widget
+        'openconnect',  # work
+        'openvpn',  # personal
+        'networkmanager-openvpn',
+        'texlive-most',  # Latex
+        'syncthing',
+        'thunderbird',
+        'veracrypt',
     ])
     _enable([
         'sddm',
