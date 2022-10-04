@@ -4,7 +4,7 @@ I Reinstall my system regularly, so having apps and bash scripts in version cont
 
 Install instructions:
 
-* `bash <(curl -sL https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/bootstrap_laptop.sh)`
+* `bash <(curl -sL https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arcolinux/bootstrap_laptop.sh)`
 
 
 Usage instructions:
@@ -12,7 +12,7 @@ Usage instructions:
 * `bootstrap-linux` <-- this will start the CLI-interface and print available functions
 
 
-![alt text](https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arch/files/bootstrap-linux.png)
+![alt text](https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/arcolinux/files/bootstrap-linux.png)
 
 ### TODO:
 
