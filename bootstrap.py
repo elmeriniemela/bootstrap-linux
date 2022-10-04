@@ -544,6 +544,7 @@ def arcolinux():
         'syncthing',
         'thunderbird',
         'veracrypt',
+        'gocryptfs',
     ])
     _enable([
         'sddm',
