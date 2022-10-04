@@ -7,7 +7,7 @@ cd ~/.config/bootstrap-linux
 sudo pacman -S python-pip
 pip install -e .
 
-bootstrap.py arcolinux
-bootstrap.py dotfiles
-bootstrap.py secure
+python bootstrap.py arcolinux
+python bootstrap.py dotfiles
+python bootstrap.py secure
 
