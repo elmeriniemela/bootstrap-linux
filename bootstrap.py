@@ -528,6 +528,7 @@ def arcolinux():
         'rofi',
         'rofi-calc',
         'brave',
+        'picom',
         'signal-desktop',
         'udisks2',
         'gvfs',  # For automount
