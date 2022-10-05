@@ -832,7 +832,7 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
 
     assert os.path.exists(f'{odoo_path}/requirements.txt'), f'{odoo_path}/requirements.txt'
     _run([
-        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/pyldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
+        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/ldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
         f'/home/elmeri/.venv/{venv_name}/bin/pip install --upgrade pip',
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
