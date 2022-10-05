@@ -297,9 +297,9 @@ def serial():
 def odoo_tests(db_name, modules=None):
     """Run odoo tests
     """
-    ODOO_DIR = os.environ['ODOO_DIR']
+    ODOO_VERSION_DIR = os.environ['ODOO_VERSION_DIR']
     modules = modules or ','.join(os.listdir())
-    _run([f'python {ODOO_DIR}/odoo-bin --conf {ODOO_DIR}/.odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
+    _run([f'python {ODOO_VERSION_DIR}/odoo/odoo-bin --conf {ODOO_VERSION_DIR}/odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
 
 def distro():
     '''
@@ -546,6 +546,7 @@ def arcolinux():
         'thunderbird',
         'veracrypt',
         'gocryptfs',
+        'nomacs',
     ])
     _enable([
         'sddm',
@@ -925,17 +926,18 @@ def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, enterprise=True):
     '''
 
     odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
+    odoo_version_path = os.path.dirname(odoo_path)
 
     _get_odoo_source(branch, odoo_installs_dir, repo='odoo')
     if _odoo_version(branch) >= 9.0 and enterprise:
         _get_odoo_source(branch, odoo_installs_dir, repo='enterprise')
 
 
-    if not os.path.exists(f'{odoo_path}/.odoorc.conf'):
-        with open(f'{FILES_DIR}/.odoorc.conf') as f_read:
+    if not os.path.exists(f'{odoo_version_path}/odoorc.conf'):
+        with open(f'{FILES_DIR}/odoorc.conf') as f_read:
             data = f_read.read()
 
-        with open(f'{odoo_path}/.odoorc.conf', 'w') as f_write:
+        with open(f'{odoo_version_path}/odoorc.conf', 'w') as f_write:
             f_write.write(
                 data.format(
                     odoo_version=_branch_name(branch),

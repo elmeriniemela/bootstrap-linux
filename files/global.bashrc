@@ -179,7 +179,7 @@ activate() {
     if [[ $1 == odoo* ]];
     then
         # ${1:4} removes 'odoo' from odoo12 leaving just the number
-        export ODOO_DIR=$HOME"/Work/${1:4}/odoo"
+        export ODOO_VERSION_DIR=$HOME"/Work/${1:4}"
     fi
     . ~/.venv/$1/bin/activate
 }
@@ -201,10 +201,10 @@ _venv_completer () {
 complete -o nospace -F _venv_completer activate
 
 odoo() {
-    if [ -f "$ODOO_DIR/odoo-bin" ] ; then
-        python $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
+    if [ -f "$ODOO_VERSION_DIR/odoo/odoo-bin" ] ; then
+        python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/odoorc.conf
     else
-        python $ODOO_DIR/odoo.py $* --conf $ODOO_DIR/.odoorc.conf
+        python $ODOO_VERSION_DIR/odoo/odoo.py $* --conf $ODOO_VERSION_DIR/odoorc.conf
     fi;
 }
 
@@ -232,7 +232,7 @@ complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
 
 
 odoo_coverage() {
-    coverage run --source=$PWD $ODOO_DIR/odoo-bin $* --conf $ODOO_DIR/.odoorc.conf
+    coverage run --source=$PWD $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/odoorc.conf
     coverage html
 }
 
