@@ -726,50 +726,6 @@ def gitconfig():
     })
 
 
-def glorious_dotfiles():
-    '''Install the glorious dotfiles
-    '''
-
-    _packages([
-        'acpi',
-        'acpid',
-        'acpi_call',
-        'mpd',
-        'mpc',
-        'maim',
-        'feh',
-        'xclip',
-        'imagemagick',
-        'blueman',
-        'redshift',
-        'xfce4-power-manager',
-        'upower',
-        'noto-fonts-emoji',
-        'xdg-user-dirs',
-        'iproute2',
-        'iw',
-        'ffmpeg',
-    ])
-    _aur([
-        'awesome-git',
-        'picom-git',
-        'light-git',
-        'nerd-fonts-fantasque-sans-mono',
-
-    ], flags=('-S', '--needed'))
-
-    _run([
-        'git clone https://github.com/manilarome/the-glorious-dotfiles.git ~/.config/the-glorious-dotfiles',
-    ])
-
-def material_awesome():
-    '''Install material-awesome
-    '''
-    _packages('rofi xclip gnome-keyring polkit'.split())
-    _aur(['i3lock-fancy-git'])
-    _run([
-        'git clone https://github.com/HikariKnight/material-awesome.git ~/.config/material-awesome',
-    ])
 
 def add_ssh(filename):
     '''Creates ssh private and public key pair,
@@ -809,7 +765,7 @@ def _get_odoo_path(branch, odoo_installs_dir, repo):
     return _path(f'{odoo_installs_dir}/{_branch_name(branch)}/{repo}')
 
 
-def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
+def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False):
     '''Creates odoo venv
     '''
     os.makedirs(_path('~/.venv'), exist_ok=True)
@@ -820,14 +776,15 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
         if _odoo_version(branch) <= 10.0:
             _run(
                 [
-                    'python2 -m virtualenv -p python2 ~/.venv/{}'.format(venv_name),
+                    f'python2 -m virtualenv -p python2 ~/.venv/{venv_name}'
                 ],
                 dependencies=partial(_packages, ['python2', 'python2-virtualenv'])
             )
 
         else:
+            python = python or 'python3.8'
             _run([
-                'python3.8 -m venv ~/.venv/{}'.format(venv_name),
+                f'{python} -m venv ~/.venv/{venv_name}'
             ])
 
 
