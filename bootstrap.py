@@ -535,6 +535,7 @@ def arcolinux():
         'udiskie',  # For automount
         'alsa-utils',
         'pulseaudio',
+        'python-qdarkstyle', # Electrum dark style
         'pulseaudio-alsa',
         'pavucontrol', # Volume/audio control
         'archlinux-logout-git', # logout widget
