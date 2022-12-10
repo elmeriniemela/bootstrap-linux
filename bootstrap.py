@@ -667,7 +667,7 @@ def local_machine():
         'awesome',
         'alacritty',
         'git',
-        'python-pip'
+        'python-pip',
         'ufw',
         'rofi',
         'rofi-calc',
