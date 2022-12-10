@@ -676,7 +676,7 @@ def local_machine():
         'gvfs',
         'udiskie',
         'zbar',
-    ], flags=('-S', '--needed'))
+    ])
 
     dotfiles()
     awesome_arcolinux()
