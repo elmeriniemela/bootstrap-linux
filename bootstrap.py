@@ -681,13 +681,15 @@ def local_machine():
     dotfiles()
     awesome_arcolinux()
 
-    _enable(['ufw'])
+    _enable(['ufw'], try_now=True)
     _run([
         'sudo ufw default deny incoming',
         'sudo ufw default deny outgoing',
         'sudo ufw allow out to 192.168.1.250',
         'sudo ufw enable',
     ])
+    _enable(['sddm'], try_now=True)
+
 
 def secure():
     ''' Install and setup ufw and fail2ban.
