@@ -529,7 +529,7 @@ def arcolinux():
         'xfce4-clipman-plugin',
         'sddm',
         'awesome',
-        'xfce4-terminal',
+        'alacritty',
         'rofi',
         'rofi-calc',
         'brave',
