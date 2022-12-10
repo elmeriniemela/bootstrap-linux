@@ -658,7 +658,7 @@ def server():
 
 
 def local_machine():
-    ''' Machine with only local network connections.
+    ''' Machine with only local network connections. Use with arcolinux d base installation.
     '''
     _packages(['archlinux-keyring'])
     _packages([], flags='-Syyu --noconfirm'.split())
