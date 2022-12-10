@@ -498,8 +498,10 @@ def fix_slow_ssd(dev):
     _lineinfile({'/etc/sysfs.conf': f'block/{dev}/queue/scheduler = deadline'})
     _run([f'echo deadline > /sys/block/{dev}/queue/scheduler'])
 
-def arcolinux():
-    "Setup arcolinux laptop"
+
+def awesome_arcolinux():
+    """ Configure awesome for arcolinux
+    """
     if not os.path.exists(_path('~/.config/awesome/.git')):
         import shutil
         awesome_path = _path('~/.config/awesome')
@@ -510,6 +512,9 @@ def arcolinux():
             f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
         ])
 
+def arcolinux():
+    "Setup arcolinux laptop"
+    awesome_arcolinux()
     link_files()
     _aur([
         'python38',
