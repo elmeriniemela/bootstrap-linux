@@ -656,6 +656,39 @@ def server():
     odoo_venv(branch='15.0', odoo_installs_dir='/home/elmeri/Odoo')
 
 
+
+def local_machine():
+    ''' Machine with only local network connections.
+    '''
+    _packages(['archlinux-keyring'])
+    _packages([], flags='-Syyu --noconfirm'.split())
+    _packages([
+        'sddm',
+        'awesome',
+        'alacritty',
+        'git',
+        'python-pip'
+        'ufw',
+        'rofi',
+        'rofi-calc',
+        'pcmanfm',
+        'udisks2',
+        'gvfs',
+        'udiskie',
+        'zbar',
+    ], flags=('-S', '--needed'))
+
+    dotfiles()
+    awesome_arcolinux()
+
+    _enable(['ufw'])
+    _run([
+        'sudo ufw default deny incoming',
+        'sudo ufw default deny outgoing',
+        'sudo ufw allow out to 192.168.1.250',
+        'sudo ufw enable',
+    ])
+
 def secure():
     ''' Install and setup ufw and fail2ban.
     '''
