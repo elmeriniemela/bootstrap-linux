@@ -522,7 +522,7 @@ def arcolinux():
         'flameshot-git',  # Screenshots
         'brave-bin',
         'slack-desktop',
-
+        'mkinitcpio-openswap', # Hibernate on SWAP for encrypted setup.
     ])
 
     _packages([

@@ -342,6 +342,8 @@ if [ -d "/opt/FlameGraph" ] ; then
     PATH="$PATH:/opt/FlameGraph"
 fi
 
+PATH="~/.local/bin:$PATH"
+
 update_dir() {
     if [ -z "$current_dir" ]
     then
