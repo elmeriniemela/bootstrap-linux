@@ -179,6 +179,12 @@ activate() {
     if [[ $1 == odoo* ]];
     then
         # ${1:4} removes 'odoo' from odoo12 leaving just the number
+        if [ -z "$2" ]
+        then
+            echo "Specify odoo config file i.e. odoorc.conf"
+            return
+        fi
+        export ODOO_CONFIG_FILE=$2
         export ODOO_VERSION_DIR=$HOME"/Work/${1:4}"
     fi
     . ~/.venv/$1/bin/activate
@@ -202,9 +208,9 @@ complete -o nospace -F _venv_completer activate
 
 odoo() {
     if [ -f "$ODOO_VERSION_DIR/odoo/odoo-bin" ] ; then
-        python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/odoorc.conf
+        python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/$ODOO_CONFIG_FILE
     else
-        python $ODOO_VERSION_DIR/odoo/odoo.py $* --conf $ODOO_VERSION_DIR/odoorc.conf
+        python $ODOO_VERSION_DIR/odoo/odoo.py $* --conf $ODOO_VERSION_DIR/$ODOO_CONFIG_FILE
     fi;
 }
 

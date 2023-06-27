@@ -381,11 +381,12 @@ def archlaptop():
         'blueman',
         'pavucontrol',
         'arandr',
-        'pcmanfm',  # Light filemanager
+        'thunar',  # Light filemanager
+        'tumbler', # for thumbnails in thunar
         # For easy mount 'udisksctl mount -b /dev/sdb1'. GVFS uses udisks2 for mounting functionality and is the recommended solution for most file managers.
         'udisks2',
         'gvfs',  # For automount
-        'gvfs-mtp',  # Media Transfer Protocol for pcmanfm to automount android devices and browse files
+        'gvfs-mtp',  # Media Transfer Protocol for filemanager to automount android devices and browse files
         'udiskie',  # For automount
         'polkit',  # privilege escalation
         'polkit-gnome',  # privilege escalation gui 'auth agent'
@@ -542,6 +543,8 @@ def arcolinux():
         'pulseaudio',
         'python-qdarkstyle', # Electrum dark style
         'pulseaudio-alsa',
+        'pulseaudio-bluetooth',
+        'bluez-utils',
         'pavucontrol', # Volume/audio control
         'archlinux-logout-git', # logout widget
         'openconnect',  # work
@@ -631,6 +634,7 @@ def server():
         'gmp',
         'intl',
         'opcache',
+        'sysvsem',
         'pdo_pgsql',
         'pgsql',
         'zip',
@@ -671,7 +675,8 @@ def local_machine():
         'ufw',
         'rofi',
         'rofi-calc',
-        'pcmanfm',
+        'thunar',
+        'tumbler', # for thumbnails in thunar
         'udisks2',
         'gvfs',
         'udiskie',
