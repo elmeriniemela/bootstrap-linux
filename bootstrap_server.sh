@@ -6,7 +6,7 @@ new_user=elmeri
 git clone https://github.com/elmeriniemela/bootstrap-linux.git /home/$new_user/.config/bootstrap-linux
 cd /home/$new_user/.config/bootstrap-linux
 pacman -S python-pip
-pip install -e .
+pip install --break-system-packages -e .
 chown $new_user:$new_user -R /home/$new_user/.config
 
 pacman -S archlinux-keyring
