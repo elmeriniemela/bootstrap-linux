@@ -1,8 +1,13 @@
 # Static table lookup for hostnames.
 # See hosts(5) for details.
 127.0.0.1       localhost
+127.0.0.1       work-laptop
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
 127.0.1.1       local.eniemela.fi
 192.168.1.250   eniemela.fi
 192.168.1.250   odoo16.eniemela.fi
+95.217.199.133  odoo13stagemon.tek.fi
+95.217.199.133  odoo13devmon.tek.fi
+95.217.199.133  odoo15dev.tek.fi
+194.100.213.87  pgmonitor.tek.fi
