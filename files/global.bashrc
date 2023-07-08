@@ -251,7 +251,7 @@ home_pull(){(
         return
     fi
     rsync  -avWPL $1:.ssh/ ~/.ssh
-    rsync  -avWPL $1:.config/syncthing/ ~/.config/syncthing
+    rsync --exclude '*.log' -avWPL $1:.config/syncthing/ ~/.config/syncthing
     rsync --exclude 'lock' -avWPL $1:.thunderbird/ ~/.thunderbird
     rsync  -avWPL $1:School/ ~/School
     rsync  -avWPL $1:Projects/ ~/Projects
