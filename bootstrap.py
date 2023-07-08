@@ -550,7 +550,6 @@ def arcolinux():
         'openconnect',  # work
         'openvpn',  # personal
         'networkmanager-openvpn',
-        'texlive-most',  # Latex
         'syncthing',
         'thunderbird',
         'veracrypt',
