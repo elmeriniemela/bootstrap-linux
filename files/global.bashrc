@@ -260,6 +260,8 @@ home_pull(){(
     rsync  -avWPL $1:.bash_eternal_history ~/.bash_eternal_history
     rsync  -avWPL $1:.psql_history ~/.psql_history
     rsync  -avWPL $1:.python_history ~/.python_history
+    rsync  -avWPL $1:.cert ~/.cert
+    rsync  -avWPL $1:/etc/NetworkManager/system-connections/ /etc/NetworkManager/system-connections
 )}
 
 
