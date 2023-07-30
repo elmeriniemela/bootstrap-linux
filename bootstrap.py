@@ -442,7 +442,7 @@ def archlaptop():
         'inxi',  # Command line system information script for console
         # 'timeshift',  # Backups
         'brave-bin',
-        'flameshot-git',  # Screenshots
+        'flameshot',  # Screenshots
         'zoom',
         'visual-studio-code-bin',
         'light-git',  # RandR-based backlight control application
@@ -471,7 +471,7 @@ def archlaptop():
 
         # Unstable if python major version changes.
         # "sudo sed -E -i 's/^[#]?display-setup-script=.*/display-setup-script=bootstrap-linux monitor/' /etc/lightdm/lightdm.conf",
-        "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
+        # "sudo sed -E -i '/HandlePowerKey/s/.*/HandlePowerKey=ignore/g' /etc/systemd/logind.conf",
         "sudo systemctl restart systemd-logind",
         "xdg-user-dirs-update", # Creating a full suite of localized default user directories within the $HOME directory can be done automatically by running
         "sudo Xorg :2 -configure",
@@ -520,7 +520,7 @@ def arcolinux():
     _aur([
         'python38',
         'zulip-desktop',
-        'flameshot-git',  # Screenshots
+        'flameshot',  # Screenshots
         'brave-bin',
         'slack-desktop',
         'mkinitcpio-openswap', # Hibernate on SWAP for encrypted setup.
