@@ -415,6 +415,9 @@ def archlaptop():
         'networkmanager-openvpn',
         'openvpn',  # personal
         'openconnect',  # work
+        'webkit2gtk', # FOR networkmanager-openconnect-useragent-git
+        'gtk4', # FOR networkmanager-openconnect-useragent-git
+        'libnma-gtk4', # FOR networkmanager-openconnect-useragent-git
         'simplescreenrecorder',
         'vlc',
         'texlive-most',  # Latex
@@ -444,6 +447,7 @@ def archlaptop():
         'brave-bin',
         'flameshot',  # Screenshots
         'zoom',
+        'networkmanager-openconnect-useragent-git', # WORK
         'visual-studio-code-bin',
         'light-git',  # RandR-based backlight control application
         'qt5-styleplugins',  # Same theme for Qt/KDE applications and GTK applications

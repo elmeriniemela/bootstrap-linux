@@ -340,17 +340,12 @@ fullgitstatus() {
 }
 
 
-export VISUAL=vim
-export EDITOR="$VISUAL"
-export FLASK_ENV=development
-export ANSIBLE_DEBUG=0
-
 
 if [ -d "/opt/FlameGraph" ] ; then
     PATH="$PATH:/opt/FlameGraph"
 fi
 
-PATH="~/.local/bin:$PATH"
+PATH="~/.cargo/bin:~/.local/bin:$PATH"
 
 update_dir() {
     if [ -z "$current_dir" ]
@@ -477,3 +472,7 @@ git_export() {
 stty -ixon
 
 export ANDROID_SDK=/home/elmeri/Android/Sdk
+export VISUAL=vim
+export EDITOR=vim
+export FLASK_ENV=development
+export ANSIBLE_DEBUG=0
