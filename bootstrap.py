@@ -420,7 +420,7 @@ def archlaptop():
         'libnma-gtk4', # FOR networkmanager-openconnect-useragent-git
         'simplescreenrecorder',
         'vlc',
-        'texlive-most',  # Latex
+        'texlive',  # Latex
         'galculator',  # calculator
         'xdg-user-dirs',
         'xfce4-power-manager',  # default launch application for battery widget
@@ -783,7 +783,7 @@ def add_ssh(filename):
     '''
     _run(
         [
-            f'ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/{filename}',
+            f'ssh-keygen -t ed25519 -N "" -f ~/.ssh/{filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
         dependencies=partial(_packages, ['xclip'])
@@ -831,7 +831,7 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False)
             )
 
         else:
-            python = python or 'python3.8'
+            python = python or 'python3'
             _run([
                 f'{python} -m venv ~/.venv/{venv_name}'
             ])

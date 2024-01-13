@@ -266,7 +266,7 @@ home_pull(){(
 
 
 venv() {
-    python3.8 -m venv ~/.venv/$1 ${@:2}
+    python3 -m venv ~/.venv/$1 ${@:2}
 }
 
 

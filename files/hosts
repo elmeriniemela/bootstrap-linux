@@ -2,6 +2,8 @@
 # See hosts(5) for details.
 127.0.0.1       localhost
 127.0.0.1       work-laptop
+127.0.0.1       local14
+127.0.0.1       local15
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
 127.0.1.1       local.eniemela.fi
