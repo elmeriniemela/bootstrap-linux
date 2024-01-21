@@ -523,31 +523,18 @@ def arcolinux():
     link_files()
     _aur([
         'python38',
-        'zulip-desktop',
-        'flameshot',  # Screenshots
-        'brave-bin',
-        'slack-desktop',
-        'mkinitcpio-openswap', # Hibernate on SWAP for encrypted setup.
     ])
 
     _packages([
         'xfce4-clipman-plugin',
-        'sddm',
-        'awesome',
-        'alacritty',
         'rofi',
         'rofi-calc',
-        'brave',
         'picom',
         'signal-desktop',
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
-        'alsa-utils',
-        'pulseaudio',
         'python-qdarkstyle', # Electrum dark style
-        'pulseaudio-alsa',
-        'pulseaudio-bluetooth',
         'bluez-utils',
         'pavucontrol', # Volume/audio control
         'archlinux-logout-git', # logout widget
@@ -561,7 +548,6 @@ def arcolinux():
         'nomacs',
     ])
     _enable([
-        'sddm',
         'syncthing@elmeri',
     ], try_now=True)
 
