@@ -545,6 +545,8 @@ def arcolinux():
         'thunderbird',
         'veracrypt',
         'gocryptfs',
+        'tumbler', # thunar image thumbnails
+        'ffmpegthumbnailer', # thunar video thumbnails
         'nomacs',
     ])
     _enable([
@@ -825,7 +827,7 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False)
 
     assert os.path.exists(f'{odoo_path}/requirements.txt'), f'{odoo_path}/requirements.txt'
     _run([
-        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/ldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet',
+        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/gevent/d;/reportlab/d;/ldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet gevent reportlab wheel setuptools',
         f'/home/elmeri/.venv/{venv_name}/bin/pip install --upgrade pip',
     ], dependencies=partial(global_odoo_deps, branch=branch))
 
