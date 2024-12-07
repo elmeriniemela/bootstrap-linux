@@ -434,7 +434,6 @@ def archlaptop():
         'sof-firmware',
     ],  flags=('-S', '--needed'))
     _aur([
-        'python38',
         'lightdm-webkit-theme-aether-git',
         'awesome-git',
         'picom-git',
@@ -519,12 +518,9 @@ def awesome_arcolinux():
 
 def arcolinux():
     "Setup arcolinux laptop"
+    distro()
     awesome_arcolinux()
     link_files()
-    _aur([
-        'python38',
-    ])
-
     _packages([
         'xfce4-clipman-plugin',
         'rofi',
@@ -534,6 +530,7 @@ def arcolinux():
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
+        'pyenv', # https://github.com/pyenv/pyenv?tab=readme-ov-file#install-additional-python-versions
         'python-qdarkstyle', # Electrum dark style
         'bluez-utils',
         'pavucontrol', # Volume/audio control
@@ -614,7 +611,6 @@ def server():
     ])
 
     _aur([
-        'python38',
         'ums',
     ], deps=True)
 

@@ -7,7 +7,6 @@
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
 127.0.1.1       local.eniemela.fi
-192.168.1.250   eniemela.fi
 192.168.1.250   odoo16.eniemela.fi
 95.217.199.133  odoo13stagemon.tek.fi
 95.217.199.133  odoo13devmon.tek.fi
