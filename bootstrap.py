@@ -852,7 +852,7 @@ def global_odoo_deps(branch):
 
 
     _packages(['postgresql'])
-    _aur(['wkhtmltopdf-static'])
+    _aur(['wkhtmltopdf-bin'])
 
     try:
         _run([
