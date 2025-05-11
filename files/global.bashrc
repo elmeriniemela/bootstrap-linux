@@ -297,9 +297,10 @@ add_note() {
 }
 
 rm_submodule() {
-    git submodule deinit -f -- "$1"
-    rm -rf ".git/modules/a/$1"
-    git rm -rf "$1"
+    local git_cmd=${GIT_EXECUTABLE:-git}
+    "$git_cmd" submodule deinit -f -- "$1"
+    rm -rf ".$git_cmd/modules/a/$1"
+    "$git_cmd" rm -rf "$1"
 }
 
 hard_reset_submodules() {
