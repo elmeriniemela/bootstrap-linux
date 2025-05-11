@@ -297,6 +297,8 @@ add_note() {
 }
 
 rm_submodule() {
+    # Enable alias expansion within the function
+    shopt -s expand_aliases
     local git_cmd=${GIT_EXECUTABLE:-git}
     "$git_cmd" submodule deinit -f -- "$1"
     rm -rf ".$git_cmd/modules/a/$1"
