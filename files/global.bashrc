@@ -297,18 +297,12 @@ add_note() {
 }
 
 rm_submodule() {
-    # Enable alias expansion within the function
     git submodule deinit -f -- "$1"
     rm -rf ".git/modules/a/$1"
     git rm -rf "$1"
 }
 
-rm_server_submodule() {
-    # Enable alias expansion within the function
-    git submodule deinit -f -- "$1" --git-dir=$HOME/.server/ --work-tree=$HOME
-    rm -rf ".server/modules/a/$1"
-    git rm -rf "$1" --git-dir=$HOME/.server/ --work-tree=$HOME
-}
+# export MODULE="Odoo/16/odoo" && server submodule deinit -f -- "$MODULE" && rm -rf ".server/modules/a/$MODULE" && server rm -rf "$MODULE"
 
 hard_reset_submodules() {
     git clean -xfdf
