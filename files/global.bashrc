@@ -298,11 +298,16 @@ add_note() {
 
 rm_submodule() {
     # Enable alias expansion within the function
-    shopt -s expand_aliases
-    local git_cmd=${GIT_EXECUTABLE:-git}
-    "$git_cmd" submodule deinit -f -- "$1"
-    rm -rf ".$git_cmd/modules/a/$1"
-    "$git_cmd" rm -rf "$1"
+    git submodule deinit -f -- "$1"
+    rm -rf ".git/modules/a/$1"
+    git rm -rf "$1"
+}
+
+rm_server_submodule() {
+    # Enable alias expansion within the function
+    git submodule deinit -f -- "$1" --git-dir=$HOME/.server/ --work-tree=$HOME
+    rm -rf ".server/modules/a/$1"
+    git rm -rf "$1" --git-dir=$HOME/.server/ --work-tree=$HOME
 }
 
 hard_reset_submodules() {
