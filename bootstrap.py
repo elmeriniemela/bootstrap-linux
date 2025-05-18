@@ -581,6 +581,7 @@ def server():
         'php',
         'php-pgsql',
         'nginx',
+        'nginx-mod-stream', # for electrs
         'php-apcu',
         'php-gd',
         'php-intl',
