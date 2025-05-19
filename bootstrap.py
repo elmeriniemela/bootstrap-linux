@@ -588,7 +588,7 @@ def server():
         'php-cgi',
         'php-fpm',
         'php-imagick',
-        'php-apcu',
+        'php-sodium',
         'ffmpeg',
 
         'base-devel',
@@ -618,13 +618,15 @@ def server():
     php_extensions = [
         'bcmath',
         'curl',
+        'exif',
         'gd',
         'gmp',
         'intl',
         'opcache',
-        'sysvsem',
         'pdo_pgsql',
         'pgsql',
+        'sodium',
+        'sysvsem',
         'zip',
         'fileinfo', # (highly recommended, enhances file analysis performance; required to set custom theming images or if PHP module imagick with SVG support is installed)
         # 'imagick', # this should be enabled in /etc/php/conf.d/imagick.ini
