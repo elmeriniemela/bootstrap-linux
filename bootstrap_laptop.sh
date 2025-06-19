@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+set -e # Fail early
 sudo pacman -S python-pip git python-distutils-extra
 git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstrap-linux
 cd ~/.config/bootstrap-linux

@@ -106,15 +106,29 @@ def _packages(list_of_packages, flags=('-S', '--noconfirm', '--needed')):
         f'{prepend}pacman {flag_str} ' + ' '.join(list_of_packages)
     ])
 
-def _yay():
+def _yay(src=False):
     if not os.path.exists('/usr/bin/yay'):
-        dst = '/tmp/yay'
-        _run([
-            f'git clone https://aur.archlinux.org/yay.git {dst}',
-            f'cd {dst}',
-            'makepkg -si',
-            f'rm -rf {dst}'
-        ])
+        if src:
+            dst = '/tmp/yay'
+            _run([
+                f'git clone https://aur.archlinux.org/yay.git {dst}',
+                f'cd {dst}',
+                'makepkg -si',
+                f'rm -rf {dst}'
+            ])
+        else:
+            # https://aur.chaotic.cx/docs
+            _run([
+                'sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com',
+                'sudo pacman-key --lsign-key 3056513887B78AEB',
+                "sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'",
+                "sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'",
+            ])
+            _lineinfile({'/etc/pacman.conf': '[chaotic-aur]'})
+            _lineinfile({'/etc/pacman.conf': 'Include = /etc/pacman.d/chaotic-mirrorlist'})
+            _packages([], flags='-Syy'.split())
+            _packages(['yay'])
+
 
 def _aur(list_of_packages, flags=('-S', '--noconfirm', '--needed'), deps=False):
     if os.geteuid() == 0:
@@ -301,6 +315,20 @@ def odoo_tests(db_name, modules=None):
     modules = modules or ','.join(os.listdir())
     _run([f'python {ODOO_VERSION_DIR}/odoo/odoo-bin --conf {ODOO_VERSION_DIR}/odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
 
+def aur():
+    '''
+    Install aur packages.
+    '''
+    _aur([
+        'arcolinux-logout',
+        'arc-gtk-theme',
+    ])
+    _packages([
+        'brave-bin',
+        'visual-studio-code-bin'
+    ])
+
+
 def distro():
     '''
     Base setup. Use archlaptop() or server() after this.
@@ -320,6 +348,14 @@ def distro():
         'wget',
         'syncthing',
         'reflector',
+        'ttf-bitstream-vera',  # Fix vscode fonts
+        'ttf-droid',
+        'ttf-roboto',
+        'ttf-dejavu',
+        'ttf-liberation',
+        'noto-fonts',
+        'less',
+        'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
     ])
     _enable([
         'cronie',
@@ -397,6 +433,8 @@ def archinstall():
         'pyenv', # https://github.com/pyenv/pyenv?tab=readme-ov-file#install-additional-python-versions
         'python-qdarkstyle', # Electrum dark style
         'bluez-utils',
+        'blueman',
+        'thunar',
         'pavucontrol', # Volume/audio control
         'openconnect',  # work
         'openvpn',  # personal
@@ -405,8 +443,19 @@ def archinstall():
         'thunderbird',
         'veracrypt',
         'gocryptfs',
+        'adwaita-icon-theme',
+        'adwaita-icon-theme-legacy',
+        'elementary-icon-theme',
+        'hicolor-icon-theme',
+        'papirus-icon-theme',  # Icon theme
         'tumbler', # thunar image thumbnails
         'ffmpegthumbnailer', # thunar video thumbnails
+        'flameshot',
+        'volumeicon',
+        'alsa-utils',
+        'pipewire-alsa',
+        'polkit',  # privilege escalation
+        'polkit-gnome',  # privilege escalation gui 'auth agent'
     ])
     _enable([
         'syncthing@elmeri',
