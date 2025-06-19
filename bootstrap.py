@@ -362,10 +362,10 @@ def distro():
         'systemd-timesyncd',
     ])
     _run([
-        '( crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | crontab -',
-        "sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
-        "sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
-        'locale-gen',
+        '( sudo crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | sudo crontab -',
+        "sudo sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
+        "sudo sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
+        'sudo locale-gen',
     ])
 
     _lineinfile({
@@ -446,9 +446,8 @@ def ui_packages():
         'thunderbird',
         'veracrypt',
         'gocryptfs',
+        'sardi-icons',
         'adwaita-icon-theme',
-        'adwaita-icon-theme-legacy',
-        'elementary-icon-theme',
         'hicolor-icon-theme',
         'papirus-icon-theme',  # Icon theme
         'tumbler', # thunar image thumbnails
@@ -461,6 +460,7 @@ def ui_packages():
         'polkit-gnome',  # privilege escalation gui 'auth agent'
     ])
     _enable([
+        'bluetooth',
         'syncthing@elmeri',
     ], try_now=True)
 
