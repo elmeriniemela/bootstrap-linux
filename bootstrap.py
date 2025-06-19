@@ -377,7 +377,7 @@ def awesome_archinstall():
         os.makedirs(awesome_path)
         os.chdir(awesome_path)
         _run([
-            f'git clone --recursive https://github.com/elmeriniemela/awesome-archinstall.git {awesome_path}',
+            f'git clone --recursive https://github.com/elmeriniemela/awesome-config.git {awesome_path}',
         ])
 
 def archinstall():
