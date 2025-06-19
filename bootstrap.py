@@ -447,9 +447,9 @@ def ui_packages():
         'veracrypt',
         'gocryptfs',
         'sardi-icons',
-        'adwaita-icon-theme',
-        'hicolor-icon-theme',
-        'papirus-icon-theme',  # Icon theme
+        # 'adwaita-icon-theme',
+        # 'hicolor-icon-theme',
+        # 'papirus-icon-theme',  # Icon theme
         'tumbler', # thunar image thumbnails
         'ffmpegthumbnailer', # thunar video thumbnails
         'flameshot',
