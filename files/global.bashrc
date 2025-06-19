@@ -258,7 +258,6 @@ config_pull(){(
     rsync  -avWPL $1:.psql_history ~/.psql_history
     rsync  -avWPL $1:.python_history ~/.python_history
     rsync  -avWPL $1:.cert ~/.cert
-    rsync --exclude '*.log' -avWPL $1:.config/syncthing/ ~/.config/syncthing
     rsync  -avWPL $1:VPN/ ~/VPN
 )}
 
@@ -270,6 +269,7 @@ data_pull(){(
         return
     fi
     rsync --exclude 'lock' -avWPL $1:.thunderbird/ ~/.thunderbird
+    rsync --exclude '*.log' -avWPL $1:.config/syncthing/ ~/.config/syncthing
     rsync  -avWPL $1:School/ ~/School
     rsync  -avWPL $1:Projects/ ~/Projects
     rsync  -avWPL $1:Work/ ~/Work
