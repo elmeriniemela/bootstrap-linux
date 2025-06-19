@@ -367,8 +367,8 @@ def fix_slow_ssd(dev):
     _run([f'echo deadline > /sys/block/{dev}/queue/scheduler'])
 
 
-def awesome_arcolinux():
-    """ Configure awesome for arcolinux
+def awesome_archinstall():
+    """ Configure awesome for archinstall
     """
     if not os.path.exists(_path('~/.config/awesome/.git')):
         import shutil
@@ -377,13 +377,13 @@ def awesome_arcolinux():
         os.makedirs(awesome_path)
         os.chdir(awesome_path)
         _run([
-            f'git clone --recursive https://github.com/elmeriniemela/awesome-arcolinux.git {awesome_path}',
+            f'git clone --recursive https://github.com/elmeriniemela/awesome-archinstall.git {awesome_path}',
         ])
 
-def arcolinux():
-    "Setup arcolinux laptop"
+def archinstall():
+    "Setup archinstall laptop"
     distro()
-    awesome_arcolinux()
+    awesome_archinstall()
     link_files()
     _packages([
         'xfce4-clipman-plugin',
@@ -516,7 +516,7 @@ def server():
 
 
 def local_machine():
-    ''' Machine with only local network connections. Use with arcolinux d base installation.
+    ''' Machine with only local network connections. Use with archinstall d base installation.
     '''
     _packages(['archlinux-keyring'])
     _packages([], flags='-Syyu --noconfirm'.split())
@@ -538,7 +538,7 @@ def local_machine():
     ])
 
     dotfiles()
-    awesome_arcolinux()
+    awesome_archinstall()
 
     _enable(['ufw'], try_now=True)
     _run([
