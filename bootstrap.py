@@ -398,7 +398,6 @@ def archinstall():
         'python-qdarkstyle', # Electrum dark style
         'bluez-utils',
         'pavucontrol', # Volume/audio control
-        'archlinux-logout-git', # logout widget
         'openconnect',  # work
         'openvpn',  # personal
         'networkmanager-openvpn',
@@ -408,7 +407,6 @@ def archinstall():
         'gocryptfs',
         'tumbler', # thunar image thumbnails
         'ffmpegthumbnailer', # thunar video thumbnails
-        'nomacs',
     ])
     _enable([
         'syncthing@elmeri',
