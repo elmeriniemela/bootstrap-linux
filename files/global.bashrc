@@ -246,8 +246,7 @@ odoo_coverage() {
     coverage html
 }
 
-
-home_pull(){(
+config_pull(){(
     set -e # Fail early
     if [ -z "$1" ]
     then
@@ -260,12 +259,20 @@ home_pull(){(
     rsync  -avWPL $1:.python_history ~/.python_history
     rsync  -avWPL $1:.cert ~/.cert
     rsync --exclude '*.log' -avWPL $1:.config/syncthing/ ~/.config/syncthing
+    rsync  -avWPL $1:VPN/ ~/VPN
+)}
+
+data_pull(){(
+    set -e # Fail early
+    if [ -z "$1" ]
+    then
+        echo "Specify hostname"
+        return
+    fi
     rsync --exclude 'lock' -avWPL $1:.thunderbird/ ~/.thunderbird
     rsync  -avWPL $1:School/ ~/School
     rsync  -avWPL $1:Projects/ ~/Projects
-    rsync  -avWPL $1:VPN/ ~/VPN
     rsync  -avWPL $1:Work/ ~/Work
-    rsync  -avWPL $1:system-connections/ ~/system-connections
 )}
 
 

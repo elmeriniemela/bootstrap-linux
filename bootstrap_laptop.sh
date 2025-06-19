@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-sudo pacman -S python-pip git
+sudo pacman -S python-pip git python-distutils-extra
 git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstrap-linux
 cd ~/.config/bootstrap-linux
 sudo pip install --break-system-packages -e .
