@@ -421,6 +421,9 @@ def archinstall():
     distro()
     awesome_archinstall()
     link_files()
+    ui_packages()
+
+def ui_packages():
     _packages([
         'xfce4-clipman-plugin',
         'rofi',
