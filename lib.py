@@ -2,10 +2,6 @@ import subprocess
 import os
 import sys
 from contextlib import contextmanager
-import distutils.spawn
-import re
-import random
-from functools import partial
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')

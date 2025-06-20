@@ -1,4 +1,6 @@
 
+import os
+from functools import partial
 from lib import (
     _path,
     _enable,

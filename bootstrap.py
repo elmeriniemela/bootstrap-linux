@@ -1,13 +1,7 @@
 #!/usr/bin/python3
 
 import subprocess
-import os
 import sys
-from contextlib import contextmanager
-import distutils.spawn
-import re
-import random
-from functools import partial
 
 from lib import (
     _filter_locals,

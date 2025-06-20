@@ -1,4 +1,9 @@
 
+import distutils.spawn
+import subprocess
+import re
+from functools import partial
+
 from lib import (
     _Monitor,
     _path,
