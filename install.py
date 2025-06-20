@@ -131,16 +131,21 @@ def laptop():
         ])
 
     _link({
-        'elmeri': '/var/lib/AccountsService/users/elmeri',
-        'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
+        # 'elmeri': '/var/lib/AccountsService/users/elmeri',
+        # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
         '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
         'environment': '/etc/environment',
         '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
+        'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
     })
+
+    _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
     _run([
-        'sudo usermod -a -G video elmeri'
+        'sudo groupadd -r nopasswdlogin',
+        'sudo usermod -a -G video elmeri',
+        'sudo usermod -a -G nopasswdlogin elmeri',
     ])
 
     _yay() # enable chaotic-aur
@@ -246,6 +251,7 @@ def laptop():
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
         'ib-tws', # Interactive Brokers Trader Workstation for trading.
         'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
+        'catppuccin-sddm-theme-mocha', # Catppuccin for SDDM https://github.com/catppuccin/sddm
     ])
 
     _enable([
