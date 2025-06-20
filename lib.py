@@ -201,3 +201,50 @@ class _Monitor():
 
     def __repr__(self):
         return f'_Monitor(name={self.name!r}, width={self.width!r}, height={self.height!r}, x={self.x!r}, y={self.y!r}, off={self.off!r})'
+
+
+def api(func):
+    func._api = True
+    return func
+
+def _filter_locals(locals_dict):
+    return {k: v for k, v in locals_dict.items() if \
+        callable(v) \
+        and getattr(v, '_api', False) \
+        and not k.startswith('_') \
+        and k != 'main'
+    }
+
+def _print_functions(locals_dict):
+    '''Lists the available functions
+    '''
+    import inspect
+    C = _colors()
+    for fname, func in locals_dict.items():
+        sign = inspect.signature(func)
+        params = []
+        for string_name, parameter in sign.parameters.items():
+            params.append(str(parameter))
+        print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
+        doc = func.__doc__
+        assert doc, f"Docstring missing for {fname}: '{doc}'"
+        if not doc.endswith('\n    '):
+            doc += '\n    '
+        print("    {}".format(doc))
+
+
+
+def _colors():
+    try:
+        import colorama
+        colorama.init()
+        C = {
+            'B': colorama.Fore.BLUE,
+            'Y': colorama.Fore.YELLOW,
+            'R': colorama.Fore.RESET,
+        }
+    except ImportError:
+        print("For color support: $ pip install colorama")
+        from collections import defaultdict
+        C = defaultdict(str)
+    return C

@@ -14,21 +14,30 @@ from lib import (
     _pipe,
     _enable,
     _run,
-    _installed_packages,
     _packages,
     _yay,
     _lineinfile,
     _link,
     _copy,
     _Monitor,
+    _filter_locals,
+    _print_functions,
+    _colors,
+    api,
+)
+
+from odoo import (
+    odoo,
+    odoo_venv,
+    global_odoo_deps,
+    odoo_tests,
 )
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_DIR = os.path.join(CURRENT_DIR, 'files')
 HOME_DIR = os.path.expanduser('~')
-ODOO_INSTALLS_DEFAULT_DIR = '~/Work'
 
-
+@api
 def monitor():
     '''Autoconfigure dual monitor with xrandr
     '''
@@ -75,6 +84,7 @@ def monitor():
 
     _run([command])
 
+@api
 def mirrors():
     '''Update mirrors
     '''
@@ -84,6 +94,7 @@ def mirrors():
     ], dependencies=partial(_packages, ['reflector']))
 
 
+@api
 def fix_t14_ethernet():
     '''
     https://forums.lenovo.com/t5/Fedora/I219-V-Ethernet-on-Thinkpad-T14-Intel-Gen2-very-slow%C2%A0/m-p/5077855?page=3#5343294
@@ -99,6 +110,7 @@ def fix_t14_ethernet():
     ], dependencies=partial(_packages, ['ethtool']))
 
 
+@api
 def update():
     '''Update the system
     '''
@@ -112,6 +124,7 @@ def update():
         ])
     input("Press enter key to quit.\n")
 
+@api
 def serial():
     '''Print machine serial number
     '''
@@ -120,14 +133,7 @@ def serial():
     ], dependencies=partial(_packages, ['dmidecode']))
 
 
-def odoo_tests(db_name, modules=None):
-    """Run odoo tests
-    """
-    ODOO_VERSION_DIR = os.environ['ODOO_VERSION_DIR']
-    modules = modules or ','.join(os.listdir())
-    _run([f'python {ODOO_VERSION_DIR}/odoo/odoo-bin --conf {ODOO_VERSION_DIR}/odoorc.conf -d {db_name} -i {modules} --test-tags={modules} --stop-after-init'])
-
-
+@api
 def distro():
     '''
     Base setup. Use archlaptop() or server() after this.
@@ -148,6 +154,7 @@ def distro():
         'wget',
         'syncthing',
         'reflector',
+        'python-colorama', # color support for this app
         'rate-mirrors-bin', # Tool for ranking and selecting Arch Linux mirrors.
         'ttf-anonymous-pro', # Monospaced font for programming and terminals.
         'ttf-bitstream-vera', # Classic sans-serif and serif font family.
@@ -227,6 +234,7 @@ def distro():
     secure()
 
 
+@api
 def awesome_archinstall():
     """ Configure awesome for archinstall
     """
@@ -240,6 +248,7 @@ def awesome_archinstall():
             f'git clone --recursive https://github.com/elmeriniemela/awesome-config.git {awesome_path}',
         ])
 
+@api
 def archinstall():
     "Setup archinstall laptop"
     distro()
@@ -247,6 +256,7 @@ def archinstall():
     link_files()
     ui_packages()
 
+@api
 def ui_packages():
     "Packages for UI installation"
     _yay() # enable chaotic-aur
@@ -364,6 +374,7 @@ def ui_packages():
     ], try_now=True)
 
 
+@api
 def keymap():
     "Finnish keyboard layout"
     _run([
@@ -371,6 +382,7 @@ def keymap():
     ])
 
 
+@api
 def link_files():
     "Link laptop configuration files"
     _link({
@@ -388,6 +400,7 @@ def link_files():
     ])
 
 
+@api
 def server():
     '''Setup server.
     '''
@@ -459,10 +472,9 @@ def server():
         'locale.conf': '/etc/locale.conf',
     })
 
-    odoo_venv(branch='15.0', odoo_installs_dir='/home/elmeri/Odoo')
 
 
-
+@api
 def ufw_local():
     ''' Machine with only local network connections. Use with archinstall d base installation.
     '''
@@ -475,6 +487,7 @@ def ufw_local():
     ])
 
 
+@api
 def secure():
     ''' Install and setup ufw and fail2ban.
     '''
@@ -491,6 +504,7 @@ def secure():
         'sudo ufw enable',
     ])
 
+@api
 def swapfile(gigabytes):
     ''' Generate and enable a swapfile
     '''
@@ -505,6 +519,7 @@ def swapfile(gigabytes):
     })
     _run(['sudo findmnt --verify --verbose'])
 
+@api
 def bashrc():
     ''' Generate global bashrc
     '''
@@ -523,6 +538,7 @@ def bashrc():
         'sudo rm -f /root/.bashrc',
     ])
 
+@api
 def dotfiles():
     ''' This setups basic configuration.
         * Generate global bashrc
@@ -537,6 +553,7 @@ def dotfiles():
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
         ])
 
+@api
 def gitconfig():
     "Enable ~/.gitconfig"
     _link({
@@ -545,6 +562,7 @@ def gitconfig():
 
 
 
+@api
 def add_ssh(filename):
     '''Creates ssh private and public key pair,
     adds it to ~/.ssh/config,
@@ -558,6 +576,7 @@ def add_ssh(filename):
         dependencies=partial(_packages, ['xclip'])
     )
 
+@api
 def password(length=32):
     '''Generate secure password and copy to clipboard
     '''
@@ -568,95 +587,9 @@ def password(length=32):
         dependencies=partial(_packages, ['xclip'])
     )
 
-def _odoo_version(branch):
-    if branch == 'master':
-        return float('inf')
-    return float(branch)
-
-def _branch_name(branch):
-    try:
-        return str(int(float(branch)))
-    except:
-        return branch
-
-def _get_odoo_path(branch, odoo_installs_dir, repo):
-    return _path(f'{odoo_installs_dir}/{_branch_name(branch)}/{repo}')
 
 
-def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False):
-    '''Creates odoo venv
-    '''
-    os.makedirs(_path('~/.venv'), exist_ok=True)
-    venv_name = 'odoo{}'.format(_branch_name(branch))
-    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
-
-    if not os.path.isdir(_path('~/.venv/' + venv_name)):
-        if _odoo_version(branch) <= 10.0:
-            _run(
-                [
-                    f'python2 -m virtualenv -p python2 ~/.venv/{venv_name}'
-                ],
-                dependencies=partial(_packages, ['python2', 'python2-virtualenv'])
-            )
-
-        else:
-            python = python or 'python3'
-            _run([
-                f'{python} -m venv ~/.venv/{venv_name}'
-            ])
-
-
-    assert os.path.exists(f'{odoo_path}/requirements.txt'), f'{odoo_path}/requirements.txt'
-    _run([
-        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/gevent/d;/reportlab/d;/ldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet gevent reportlab wheel setuptools',
-        f'/home/elmeri/.venv/{venv_name}/bin/pip install --upgrade pip',
-    ], dependencies=partial(global_odoo_deps, branch=branch))
-
-    if _odoo_version(branch) >= 11.0:
-        _run([
-            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
-        ], dependencies=partial(global_odoo_deps, branch=branch))
-
-def global_odoo_deps(branch):
-    '''Installs odoo deps
-    '''
-    if _odoo_version(branch) >= 11.0:
-        _packages([
-            'xmlsec',
-            'pwgen',
-            'libxml2',
-            'pkg-config',
-        ])
-    if _odoo_version(branch) < 12.0:
-        _packages([
-            'npm',
-        ])
-        _run([
-            'sudo npm install --global less@3.0.1 less-plugin-clean-css',
-        ])
-
-
-    _packages(['postgresql'])
-    _aur(['wkhtmltopdf-bin'])
-
-    try:
-        _run([
-            "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
-        ])
-        _enable(['postgresql'])
-    except:
-        pass
-
-
-    try:
-        _run([
-            'sudo su - postgres -c "createuser -s $USER"',
-            'sudo su - postgres -c "createuser -s root"',
-        ])
-    except:
-        pass
-
-
+@api
 def pgtune():
     '''pg tune
 
@@ -693,114 +626,6 @@ def pgtune():
         except:
             pass
 
-
-
-
-def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, enterprise=True):
-    '''Installs odoo, enterprise and all the dependencies
-    '''
-
-    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
-    odoo_version_path = os.path.dirname(odoo_path)
-
-    _get_odoo_source(branch, odoo_installs_dir, repo='odoo')
-    if _odoo_version(branch) >= 9.0 and enterprise:
-        _get_odoo_source(branch, odoo_installs_dir, repo='enterprise')
-
-
-    if not os.path.exists(f'{odoo_version_path}/odoorc.conf'):
-        with open(f'{FILES_DIR}/odoorc.conf') as f_read:
-            data = f_read.read()
-
-        with open(f'{odoo_version_path}/odoorc.conf', 'w') as f_write:
-            f_write.write(
-                data.format(
-                    odoo_version=_branch_name(branch),
-                    odoo_installs_dir=odoo_installs_dir,
-                )
-            )
-
-    odoo_venv(branch)
-
-def _get_odoo_source(branch, odoo_installs_dir, repo, owner='odoo'):
-    import glob
-    from distutils.dir_util import copy_tree
-    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo)
-    odoo_base_path = os.path.dirname(odoo_path)
-    os.makedirs(odoo_base_path, exist_ok=True)
-
-    cleaning_args = [
-        f'cd {odoo_path}',
-        f'git reset --hard',
-        f'git checkout {branch}',
-        f'git pull',
-    ]
-    if os.path.isdir(odoo_path):
-        try:
-            _run(cleaning_args)
-            print(f"Latest pull done.. exiting now")
-            return
-        except:
-            pass
-
-    folders = [path for path in glob.glob(_path(f'{odoo_installs_dir}/*/*')) if os.path.isdir(path)]
-    print("Checking folders for existing odoo installations:\n", ' \n'.join(folders))
-    for full_path in folders:
-        name = os.path.basename(full_path)
-        if name == repo:
-            print(f"Found existing '{repo}' installation at {full_path}")
-            print("Copying the installation is faster than cloning..")
-            copy_tree(full_path, odoo_path)
-            _run(cleaning_args)
-            _run(['git clean -xfdf'])
-            break
-    else:
-        _run([
-            f'cd {odoo_base_path}',
-            f'git clone https://github.com/{owner}/{repo}.git {odoo_path} -b {branch}',
-        ])
-
-def _filter_locals(locals_dict):
-    return {k: v for k, v in locals_dict.items() if \
-        callable(v) \
-        and v.__module__ == __name__ \
-        and not k.startswith('_') \
-        and k != 'main'
-    }
-
-def _print_functions(locals_dict):
-    '''Lists the available functions
-    '''
-    import inspect
-    C = _colors()
-    for fname, func in locals_dict.items():
-        sign = inspect.signature(func)
-        params = []
-        for string_name, parameter in sign.parameters.items():
-            params.append(str(parameter))
-        print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
-        doc = func.__doc__
-        assert doc, f"Docstring missing for {fname}: '{doc}'"
-        if not doc.endswith('\n    '):
-            doc += '\n    '
-        print("    {}".format(doc))
-
-
-
-def _colors():
-    try:
-        import colorama
-        colorama.init()
-        C = {
-            'B': colorama.Fore.BLUE,
-            'Y': colorama.Fore.YELLOW,
-            'R': colorama.Fore.RESET,
-        }
-    except ImportError:
-        print("For color support: $ pip install colorama")
-        from collections import defaultdict
-        C = defaultdict(str)
-    return C
 
 
 LOCALS = locals()
