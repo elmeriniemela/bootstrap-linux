@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+set -e # Fail early
 
 new_user=elmeri
 

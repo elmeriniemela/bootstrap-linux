@@ -4,7 +4,7 @@ from lib import (
     _enable,
     _run,
     _packages,
-    _yay,
+    _aur,
     api,
 )
 

@@ -7,7 +7,8 @@ git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstr
 cd ~/.config/bootstrap-linux
 sudo pip install --break-system-packages --editable .
 
-python bootstrap.py archinstall
+python bootstrap.py distro
+python bootstrap.py laptop
 python bootstrap.py dotfiles
 python bootstrap.py secure
 
