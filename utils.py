@@ -134,7 +134,7 @@ def password(length=32):
     '''
     _run(
         [
-            f'< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
+            f'< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
         ],
         dependencies=partial(_packages, ['xclip'])
     )
