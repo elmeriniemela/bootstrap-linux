@@ -54,8 +54,6 @@ def _enable(services, try_now=True):
         except:
             pass
 
-
-
 def _run(commands, dependencies=None, ignore_errors=False, **kwargs):
     for command in commands:
         print("Running command: ", command)
@@ -667,7 +665,7 @@ def all_packages():
         'findutils', # GNU utilities for searching files (find, xargs).
         'firefox', # Mozilla Firefox web browser.
         'flac', # Free Lossless Audio Codec library.
-        'flameshot-git', # Screenshot tool with annotation features.
+        # 'flameshot-git', # Screenshot tool with annotation features.
         'flex', # Fast lexical analyzer generator.
         'fluidsynth', # Software synthesizer for MIDI playback.
         'fontconfig', # Library for configuring and managing fonts.
@@ -1574,7 +1572,7 @@ def all_packages():
         'usbutils', # Utilities for listing and managing USB devices.
         'util-linux', # Essential Linux utilities (mount, fdisk, etc.).
         'util-linux-libs', # Libraries for util-linux utilities.
-        'v4l-utils-git', # Video4Linux utilities for webcams and TV tuners.
+        # 'v4l-utils-git', # Video4Linux utilities for webcams and TV tuners.
         'vapoursynth', # Video processing framework for scripting.
         'ventoy-bin', # Tool for creating bootable USB drives with multiple ISOs.
         'veracrypt', # Disk encryption software with cross-platform support.
@@ -1694,7 +1692,7 @@ def all_packages():
         'xxhash', # Fast non-cryptographic hash algorithm library.
         'xz', # Compression library and tools for XZ and LZMA formats.
         'yad', # GUI dialog tool for shell scripts (Yet Another Dialog).
-        'yay-git', # AUR helper for managing Arch User Repository packages.
+        # 'yay-git', # AUR helper for managing Arch User Repository packages.
         'yt-dlp', # Tool for downloading videos from YouTube and other sites.
         'zbar', # Library for reading barcodes and QR codes.
         'zeromq', # High-performance messaging library for distributed systems.
@@ -2147,19 +2145,7 @@ def _print_functions(locals_dict):
     '''Lists the available functions
     '''
     import inspect
-    try:
-        import colorama
-        colorama.init()
-        C = {
-            'B': colorama.Fore.BLUE,
-            'Y': colorama.Fore.YELLOW,
-            'R': colorama.Fore.RESET,
-        }
-    except ImportError:
-        print("For color support: $ pip install colorama")
-        from collections import defaultdict
-        C = defaultdict(str)
-
+    C = _colors()
     for fname, func in locals_dict.items():
         sign = inspect.signature(func)
         params = []
@@ -2174,6 +2160,20 @@ def _print_functions(locals_dict):
 
 
 
+def _colors():
+    try:
+        import colorama
+        colorama.init()
+        C = {
+            'B': colorama.Fore.BLUE,
+            'Y': colorama.Fore.YELLOW,
+            'R': colorama.Fore.RESET,
+        }
+    except ImportError:
+        print("For color support: $ pip install colorama")
+        from collections import defaultdict
+        C = defaultdict(str)
+    return C
 
 
 LOCALS = locals()
