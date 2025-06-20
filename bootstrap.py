@@ -697,7 +697,7 @@ def all_packages():
         'gimp', # GNU Image Manipulation Program for image editing.
         'git', # Version control system for tracking code changes.
         'git-lfs', # Git extension for versioning large files.
-        'gksu', # Graphical frontend for running commands as root (deprecated).
+        # 'gksu', # Graphical frontend for running commands as root (deprecated).
         'glib2', # Core library for GNOME and GTK applications.
         'glibc', # GNU C Library for system calls and basic functions.
         'glibmm', # C++ bindings for GLib.
@@ -891,7 +891,7 @@ def all_packages():
         'libgexiv2', # Library for handling image metadata (EXIF, IPTC).
         'libgirepository', # Library for GObject introspection data.
         'libgit2', # Library for Git version control operations.
-        'libgksu', # Library for graphical privilege escalation (deprecated).
+        # 'libgksu', # Library for graphical privilege escalation (deprecated).
         'libglvnd', # Vendor-neutral OpenGL dispatch library.
         'libgme', # Library for video game music file emulation.
         'libgnomekbd', # GNOME keyboard layout library.
@@ -1727,6 +1727,9 @@ def link_files():
         'environment': '/etc/environment',
         '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
     })
+    _run([
+        'sudo usermod -a -G video elmeri'
+    ])
 
 
 def server():
