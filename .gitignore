@@ -5,6 +5,7 @@ history.txt
 config.json
 cache.json
 *.egg-info
+.pdm-build
 
 files/server/nginx/ssl/*.key
 files/server/nginx/ssl/*.crt
