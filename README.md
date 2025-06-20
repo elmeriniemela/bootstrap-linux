@@ -2,6 +2,11 @@
 
 I Reinstall my system regularly, so having apps and bash scripts in version control is very useful.
 
+Archinstall
+* `loadkeys fi`
+* `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
+* `archinstall`
+
 Install instructions:
 
 * `bash <(curl -sL https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/archinstall/bootstrap_laptop.sh)`

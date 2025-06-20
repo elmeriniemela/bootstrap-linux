@@ -781,7 +781,7 @@ def all_packages():
         # 'imath', # Math library for 3D graphics and animation.
         # 'imlib2', # Image loading and rendering library.
         # 'inetutils', # GNU network utilities (ftp, telnet, etc.).
-        'intel-ucode', # Microcode updates for Intel CPUs.
+        # 'intel-ucode', # Microcode updates for Intel CPUs.
         'inxi', # System information tool for hardware and software details.
         # 'iproute2', # Advanced networking tools for Linux (ip, tc, etc.).
         # 'iptables', # Firewall and packet filtering tools.
