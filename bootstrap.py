@@ -2202,10 +2202,15 @@ def main():
     args = parser.parse_args()
 
     func = LOCALS[args.function]
+    retcode = 0
     with _quittable():
-        func(*args.args)
+        try:
+            func(*args.args)
+        except subprocess.CalledProcessError as error:
+            print("EXIT without traceback after subprocess.CalledProcessError.")
+            retcode = 1
 
-    return 0
+    return retcode
 
 if __name__ == '__main__':
     sys.exit(main())
