@@ -423,6 +423,7 @@ def archinstall():
 
 def ui_packages():
     "Packages for UI installation"
+
     _packages([
         'xfce4-clipman-plugin',
         'rofi',
@@ -468,6 +469,7 @@ def ui_packages():
 
 def all_packages():
     "All packages from previous install"
+    _yay()
     _aur([
         # 'a52dec', # Library for decoding ATSC A/52 (AC-3) audio streams.
         # 'aalib', # Library for creating ASCII art from images and videos.
