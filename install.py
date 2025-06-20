@@ -1,6 +1,12 @@
 
+import os
+import shutil
+
 from lib import (
     _path,
+    _link,
+    _lineinfile,
+    _copy,
     _enable,
     _run,
     _packages,
@@ -106,14 +112,16 @@ def distro():
     _copy({
         '/etc/vconsole.conf': 'vconsole.conf',
     })
-    secure()
+
+    _link({
+        'locale.conf': '/etc/locale.conf',
+    })
 
 
 @api
 def laptop():
     "Setup archinstall laptop"
     if not os.path.exists(_path('~/.config/awesome/.git')):
-        import shutil
         awesome_path = _path('~/.config/awesome')
         shutil.rmtree(awesome_path, ignore_errors=True)
         os.makedirs(awesome_path)
@@ -127,7 +135,6 @@ def laptop():
         'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
-        'locale.conf': '/etc/locale.conf',
         '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
         'environment': '/etc/environment',
         '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
@@ -211,8 +218,6 @@ def laptop():
         'nm-connection-editor', # GUI for editing NetworkManager connections.
         'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
-        'ib-tws', # Interactive Brokers Trader Workstation for trading.
-        'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
         'laptop-detect', # Tool to detect if the system is a laptop.
         'inxi', # System information tool for hardware and software details.
         'lxappearance-gtk3', # GUI for customizing GTK themes and appearance.
@@ -239,6 +244,8 @@ def laptop():
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
         'archlinux-tweak-tool-git', # Tool for tweaking and configuring Arch Linux settings.
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
+        'ib-tws', # Interactive Brokers Trader Workstation for trading.
+        'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
     ])
 
     _enable([
@@ -299,9 +306,7 @@ def server():
 
     _enable(['nginx', 'php-fpm'])
 
-    _link({
-        'locale.conf': '/etc/locale.conf',
-    })
+
 
 
 

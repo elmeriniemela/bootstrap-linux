@@ -71,13 +71,9 @@ def mirrors():
 
 @api
 def fix_t14_ethernet():
+    ''' The driver in question is the e1000e, and updating it with the intel one will not solve the problem. After using ethtool you need to deactivate or unplug the ethernet and re-enable it.
     '''
-    https://forums.lenovo.com/t5/Fedora/I219-V-Ethernet-on-Thinkpad-T14-Intel-Gen2-very-slow%C2%A0/m-p/5077855?page=3#5343294
-
-    The driver in question is the e1000e, and updating it with the intel one will not solve the problem.
-
-    After using ethtool you need to deactivate or unplug the ethernet and re-enable it.
-    '''
+    # https://forums.lenovo.com/t5/Fedora/I219-V-Ethernet-on-Thinkpad-T14-Intel-Gen2-very-slow%C2%A0/m-p/5077855?page=3#5343294
     _run([
         'sudo ip link set enp0s31f6 mtu 1492',
         'sudo ethtool -s enp0s31f6 speed 1000 duplex full autoneg off',
@@ -117,9 +113,7 @@ def keymap():
 
 @api
 def add_ssh(filename):
-    '''Creates ssh private and public key pair,
-    adds it to ~/.ssh/config,
-    and copies the public key to clipboard
+    '''Creates ssh private and public key pair, adds it to ~/.ssh/config, and copies the public key to clipboard
     '''
     _run(
         [

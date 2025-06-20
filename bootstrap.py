@@ -12,6 +12,8 @@ from functools import partial
 from lib import (
     _filter_locals,
     _print_functions,
+    _quittable,
+    _autocmp,
 )
 
 from odoo import (
@@ -48,7 +50,8 @@ from install import (
     server,
 )
 
-LOCALS = locals()
+LOCALS = _filter_locals(locals())
+_autocmp(LOCALS)
 
 def main():
     if sys.version_info[0] < 3:
@@ -58,8 +61,6 @@ def main():
     import argparse
 
     global LOCALS
-    LOCALS = _filter_locals(LOCALS)
-
     if len(sys.argv) == 1:
         _print_functions(LOCALS)
 

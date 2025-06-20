@@ -411,7 +411,7 @@ alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 _bootstrap_linux_completions()
 {
     update_dir
-    n=($(grep -Po "(?<=^def )[^_](.*?)\(" $current_dir/bootstrap.py | sed 's/(//'))
+    readarray -t n < $current_dir/files/autocomplete
     COMPREPLY=()
 
     for i in "${n[@]}"

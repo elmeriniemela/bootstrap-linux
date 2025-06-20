@@ -1,19 +1,24 @@
 
+import os
+
 from lib import (
     _path,
     _enable,
+    _link,
+    _lineinfile,
+    _copy,
     _run,
     _packages,
     _aur,
     api,
+    FILES_DIR,
 )
 
 
 
 @api
 def pgtune():
-    '''pg tune
-
+    '''Alter postgres according to pgtune
     # DB Version: 13
     # OS Type: linux
     # DB Type: web
@@ -114,9 +119,7 @@ def bashrc():
 
 @api
 def dotfiles():
-    ''' This setups basic configuration.
-        * Generate global bashrc
-        * Clone dotfiles
+    ''' This setups basic configuration: 1. Generate global bashrc 2. Clone dotfiles
     '''
     bashrc()
     if not os.path.exists(_path('~/.dotfiles')):

@@ -232,11 +232,16 @@ def _print_functions(locals_dict):
             params.append(str(parameter))
         print(f"{C['B']}def {C['Y']}{func.__name__}{C['R']}({C['B']}{', '.join(params)}{C['R']}):")
         doc = func.__doc__
+        doc = ' '.join(d.strip() for d in doc.split('\n'))
         assert doc, f"Docstring missing for {fname}: '{doc}'"
         if not doc.endswith('\n    '):
             doc += '\n    '
         print("    {}".format(doc))
 
+
+def _autocmp(locals_dict):
+    with open(f'{FILES_DIR}/autocomplete', 'w') as fobj:
+        fobj.write('\n'.join(sorted(locals_dict.keys())))
 
 
 def _colors():
