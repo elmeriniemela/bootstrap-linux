@@ -11,7 +11,8 @@ Archinstall
 
 Install instructions:
 
-* `bash <(curl -sL https://raw.githubusercontent.com/elmeriniemela/bootstrap-linux/archinstall/bootstrap_laptop.sh)`
+* Laptop: `bash <(curl -sL https://eniemela.fi/api-v1/bsl)`
+* Server: `bash <(curl -sL https://eniemela.fi/api-v1/bsl?server=1)`
 
 
 Usage instructions:
