@@ -163,8 +163,8 @@ def laptop():
         'thunar-archive-plugin', # Archive support for Thunar file manager.
         'thunar-volman', # Volume management plugin for Thunar.
         'pavucontrol', # Volume/audio control
-        'openconnect',  # work
-        'openvpn',  # personal
+        'openconnect',  # work vpn
+        'openvpn',  # personal vpn
         'syncthing',
         'thunderbird',
         'veracrypt',

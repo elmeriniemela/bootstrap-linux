@@ -48,9 +48,6 @@ from install import (
     server,
 )
 
-
-
-
 LOCALS = locals()
 
 def main():
