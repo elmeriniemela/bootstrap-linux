@@ -1,0 +1,24 @@
+[project]
+name = "bootstrap-linux"
+version = "1.0"
+description = "Wrapper to install default apps on Linux enviroments"
+authors = [
+    {name = "Elmeri Niemelä", email = "niemela.elmeri@gmail.com"},
+    {name = "Elmeri Niemela"},
+]
+dependencies = [
+    "setuptools>=80.9.0",
+]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = {text = "GNU GPLv3"}
+
+
+[project.scripts]
+bootstrap-linux = "bootstrap:main"
+[tool.pdm]
+distribution = false
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
