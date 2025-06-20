@@ -37,48 +37,6 @@ def distro():
         'reflector',
         'python-colorama', # color support for this app
         'rate-mirrors-bin', # Tool for ranking and selecting Arch Linux mirrors.
-        'ttf-anonymous-pro', # Monospaced font for programming and terminals.
-        'ttf-bitstream-vera', # Classic sans-serif and serif font family.
-        'ttf-caladea', # Serif font similar to Cambria.
-        'ttf-carlito', # Sans-serif font similar to Calibri.
-        'ttf-cascadia-code', # Monospaced font for coding with ligatures.
-        'ttf-cormorant', # Elegant serif font family.
-        'ttf-croscore', # Chrome OS core fonts (Arimo, Tinos, Cousine).
-        'ttf-dejavu', # Versatile font family with broad language support.
-        'ttf-droid', # Android’s Droid font family.
-        'ttf-eurof', # Eurofurence font for stylized text.
-        'ttf-fantasque-sans-mono', # Monospaced font with a quirky design.
-        'ttf-fira-code', # Monospaced font with programming ligatures.
-        'ttf-fira-mono', # Monospaced font for coding and terminals.
-        'ttf-fira-sans', # Sans-serif font with modern design.
-        'ttf-font-awesome', # Iconic font for scalable vector icons.
-        'ttf-hack', # Monospaced font optimized for coding.
-        'ttf-hactor', # Stylized font for creative projects.
-        'ttf-hellvetica', # Helvetica-inspired font with unique style.
-        'ttf-ibm-plex', # IBM’s versatile font family for various styles.
-        'ttf-inconsolata', # Monospaced font for coding and terminals.
-        'ttf-iosevka-nerd', # Iosevka font with Nerd Fonts symbols.
-        'ttf-jetbrains-mono', # Monospaced font for developers by JetBrains.
-        'ttf-jetbrains-mono-nerd', # JetBrains Mono with Nerd Fonts symbols.
-        'ttf-joypixels', # Color emoji font for modern applications.
-        'ttf-lato', # Modern sans-serif font family.
-        'ttf-liberation', # Free alternative to Microsoft fonts (Arial, Times, etc.).
-        'ttf-linux-libertine', # High-quality serif font family.
-        'ttf-linux-libertine-g', # Graphite-enabled version of Linux Libertine.
-        'ttf-mac-fonts', # Apple’s macOS fonts for Linux.
-        'ttf-meslo-nerd-font-powerlevel10k', # Meslo font with Nerd Fonts for Powerlevel10k.
-        'ttf-monofur', # Monospaced font with a retro style.
-        'ttf-ms-fonts', # Microsoft core fonts (Arial, Times New Roman, etc.).
-        'ttf-nerd-fonts-symbols', # Symbol-only Nerd Fonts for icons.
-        'ttf-nerd-fonts-symbols-common', # Common symbols for Nerd Fonts.
-        'ttf-nerd-fonts-symbols-mono', # Monospaced Nerd Fonts symbols.
-        'ttf-opensans', # Clean sans-serif font by Google.
-        'ttf-roboto', # Google’s Roboto font family for modern interfaces.
-        'ttf-roboto-mono', # Monospaced version of Roboto for coding.
-        'ttf-sourcecodepro-nerd', # Source Code Pro with Nerd Fonts symbols.
-        'ttf-ubuntu-font-family', # Ubuntu’s default font family.
-        'noto-fonts',
-        'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
         'curl', # Command-line tool and library for transferring data via URLs.
         'less',
     ])
@@ -242,6 +200,48 @@ def laptop():
         'yt-dlp', # Tool for downloading videos from YouTube and other sites.
         'zbar', # Library for reading barcodes and QR codes.
         'zoom', # Video conferencing application.
+        'ttf-anonymous-pro', # Monospaced font for programming and terminals.
+        'ttf-bitstream-vera', # Classic sans-serif and serif font family.
+        'ttf-caladea', # Serif font similar to Cambria.
+        'ttf-carlito', # Sans-serif font similar to Calibri.
+        'ttf-cascadia-code', # Monospaced font for coding with ligatures.
+        'ttf-cormorant', # Elegant serif font family.
+        'ttf-croscore', # Chrome OS core fonts (Arimo, Tinos, Cousine).
+        'ttf-dejavu', # Versatile font family with broad language support.
+        'ttf-droid', # Android’s Droid font family.
+        'ttf-eurof', # Eurofurence font for stylized text.
+        'ttf-fantasque-sans-mono', # Monospaced font with a quirky design.
+        'ttf-fira-code', # Monospaced font with programming ligatures.
+        'ttf-fira-mono', # Monospaced font for coding and terminals.
+        'ttf-fira-sans', # Sans-serif font with modern design.
+        'ttf-font-awesome', # Iconic font for scalable vector icons.
+        'ttf-hack', # Monospaced font optimized for coding.
+        'ttf-hactor', # Stylized font for creative projects.
+        'ttf-hellvetica', # Helvetica-inspired font with unique style.
+        'ttf-ibm-plex', # IBM’s versatile font family for various styles.
+        'ttf-inconsolata', # Monospaced font for coding and terminals.
+        'ttf-iosevka-nerd', # Iosevka font with Nerd Fonts symbols.
+        'ttf-jetbrains-mono', # Monospaced font for developers by JetBrains.
+        'ttf-jetbrains-mono-nerd', # JetBrains Mono with Nerd Fonts symbols.
+        'ttf-joypixels', # Color emoji font for modern applications.
+        'ttf-lato', # Modern sans-serif font family.
+        'ttf-liberation', # Free alternative to Microsoft fonts (Arial, Times, etc.).
+        'ttf-linux-libertine', # High-quality serif font family.
+        'ttf-linux-libertine-g', # Graphite-enabled version of Linux Libertine.
+        'ttf-mac-fonts', # Apple’s macOS fonts for Linux.
+        'ttf-meslo-nerd-font-powerlevel10k', # Meslo font with Nerd Fonts for Powerlevel10k.
+        'ttf-monofur', # Monospaced font with a retro style.
+        'ttf-ms-fonts', # Microsoft core fonts (Arial, Times New Roman, etc.).
+        'ttf-nerd-fonts-symbols', # Symbol-only Nerd Fonts for icons.
+        'ttf-nerd-fonts-symbols-common', # Common symbols for Nerd Fonts.
+        'ttf-nerd-fonts-symbols-mono', # Monospaced Nerd Fonts symbols.
+        'ttf-opensans', # Clean sans-serif font by Google.
+        'ttf-roboto', # Google’s Roboto font family for modern interfaces.
+        'ttf-roboto-mono', # Monospaced version of Roboto for coding.
+        'ttf-sourcecodepro-nerd', # Source Code Pro with Nerd Fonts symbols.
+        'ttf-ubuntu-font-family', # Ubuntu’s default font family.
+        'noto-fonts',
+        'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
     ])
 
     _aur([
