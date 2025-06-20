@@ -434,7 +434,10 @@ def ui_packages():
         'udiskie',  # For automount
         # 'pyenv', # https://github.com/pyenv/pyenv?tab=readme-ov-file#install-additional-python-versions
         'python-qdarkstyle', # Electrum dark style
-        'bluez-utils',
+        'bluez', # Bluetooth protocol stack for Linux.
+        'bluez-libs', # Libraries for Bluetooth functionality.
+        'bluez-tools', # Additional tools for managing Bluetooth devices.
+        'bluez-utils', # Utilities for interacting with Bluetooth devices.
         # 'blueman',
         'thunar',
         'pavucontrol', # Volume/audio control

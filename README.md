@@ -6,6 +6,8 @@ Archinstall
 * `loadkeys fi`
 * `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
 * `archinstall`
+* After install, setup network
+* `nmcli device wifi connect "<SSID>" password "<password>"`
 
 Install instructions:
 
