@@ -15,7 +15,7 @@ pacman -Syyu
 
 bootstrap-linux distro
 bootstrap-linux secure
-bootstrap-linux swapfile 8
+bootstrap-linux swapfile
 
 sudo -u $new_user bootstrap-linux server
 sudo -u $new_user bootstrap-linux dotfiles

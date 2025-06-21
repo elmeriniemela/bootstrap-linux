@@ -11,4 +11,5 @@ python bootstrap.py distro
 python bootstrap.py laptop
 python bootstrap.py dotfiles
 python bootstrap.py secure
+python bootstrap.py swapfile
 

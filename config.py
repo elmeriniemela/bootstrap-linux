@@ -1,5 +1,6 @@
 
 import os
+import subprocess
 
 from lib import (
     _path,
@@ -84,9 +85,16 @@ def secure():
     ])
 
 @api
-def swapfile(gigabytes):
+def swapfile(gigabytes=False):
     ''' Generate and enable a swapfile
     '''
+    if not gigabytes:
+        kilobytes = int(subprocess.check_output("grep MemTotal /proc/meminfo | tr -s ' ' | cut -d ' ' -f2", shell=True, encoding='utf-8'))
+        gigabytes = int(kilobytes/(1024*1024))
+        if gigabytes % 2 != 0:
+            gigabytes += 1
+
+    print(f"Create swapfile of {gigabytes}Gb")
     _run([
         f'sudo dd if=/dev/zero of=/swapfile bs=1M count={int(gigabytes) * 1024} status=progress',
         'sudo chmod 600 /swapfile',
