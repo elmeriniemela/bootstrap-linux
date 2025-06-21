@@ -7,7 +7,9 @@ from lib import (
     _run,
     _packages,
     _aur,
+    _link,
     api,
+    FILES_DIR,
 )
 
 ODOO_INSTALLS_DEFAULT_DIR = '~/Work'
@@ -32,15 +34,17 @@ def _get_odoo_path(branch, odoo_installs_dir, repo):
 def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False):
     '''Creates odoo venv
     '''
-    os.makedirs(_path('~/.venv'), exist_ok=True)
     venv_name = 'odoo{}'.format(_branch_name(branch))
-    odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo='odoo')
+    venv_home = _path('~/.venv')
+    venv_dir = _path('~/.venv/' + venv_name)
+    os.makedirs(venv_home, exist_ok=True)
+    extra_requirements = _get_odoo_path(branch, odoo_installs_dir, repo='requirements.txt')
 
-    if not os.path.isdir(_path('~/.venv/' + venv_name)):
+    if not os.path.isdir(venv_dir):
         if _odoo_version(branch) <= 10.0:
             _run(
                 [
-                    f'python2 -m virtualenv -p python2 ~/.venv/{venv_name}'
+                    f'python2 -m virtualenv --system-site-packages -p python2 {venv_dir}'
                 ],
                 dependencies=partial(_packages, ['python2', 'python2-virtualenv'])
             )
@@ -48,20 +52,15 @@ def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False)
         else:
             python = python or 'python3'
             _run([
-                f'{python} -m venv ~/.venv/{venv_name}'
+                f'{python} -m venv --system-site-packages {venv_dir}'
             ])
 
+        _run([f'{venv_dir}/bin/pip install dicttoxml num2words ofxparse python-stdnum rlPyCairo'], dependencies=partial(global_odoo_deps, branch=branch))
 
-    assert os.path.exists(f'{odoo_path}/requirements.txt'), f'{odoo_path}/requirements.txt'
-    _run([
-        f'sed "/psycopg2/d;/lxml/d;/greenlet/d;/gevent/d;/reportlab/d;/ldap/d" {odoo_path}/requirements.txt | /home/elmeri/.venv/{venv_name}/bin/pip install -r /dev/stdin psycopg2 lxml greenlet gevent reportlab wheel setuptools',
-        f'/home/elmeri/.venv/{venv_name}/bin/pip install --upgrade pip',
-    ], dependencies=partial(global_odoo_deps, branch=branch))
-
-    if _odoo_version(branch) >= 11.0:
-        _run([
-            f'/home/elmeri/.venv/{venv_name}/bin/pip install zeep cryptography xmlsec signxml py3o.template py3o.formats'
-        ], dependencies=partial(global_odoo_deps, branch=branch))
+        if os.path.isfile(extra_requirements):
+            _run([
+                f'{venv_dir}/bin/pip install -r {extra_requirements}'
+            ])
 
 @api
 def global_odoo_deps(branch):
@@ -83,17 +82,84 @@ def global_odoo_deps(branch):
         ])
 
 
+    _packages([
+        'python-gevent',
+        'python-wheel',
+        'python-paramiko',
+        'python-cryptography',
+        'python-openpyxl',
+        'python-numpy',
+        'python-pandas',
+        'python-xmltodict',
+        'python-magic',
+        'python-odfpy',
+        'python-pdfminer',
+        'python-pip',
+        'python-phonenumbers',
+        'python-ldap',
+        'python-qrcode',
+        # 'python-renderpm',
+        'python-setuptools',
+        'python-slugify',
+        'python-vobject',
+        'python-watchdog',
+        'python-xlrd',
+        'python-xlwt',
+        'python-babel',
+        'python-chardet',
+        'python-dateutil',
+        'python-decorator',
+        'python-docutils',
+        'python-freezegun',
+        'python-geoip2',
+        'python-pillow',
+        'python-jinja',
+        'python-libsass',
+        'python-lxml',
+        'python-xmlsec',
+        'python-passlib',
+        'python-polib',
+        'python-psutil',
+        'python-psycopg2',
+        'python-pydot',
+        'python-pyopenssl',
+        'python-pypdf2',
+        'python-rjsmin',
+        'python-reportlab',
+        'python-requests',
+        'python-pytz',
+        'python-werkzeug',
+        'python-xlsxwriter',
+        'python-zeep',
+    ])
+
+    _aur([
+        # 'python-dicttoxml',
+        # 'python-num2words',
+        # 'python-ofxparse',
+        # 'python-stdnum',
+
+    ])
+
     _packages(['postgresql'])
     _aur(['wkhtmltopdf-bin'])
+    _link({'postgresql.service': '/usr/lib/systemd/system/postgresql.service'})
+    _run([
+        "sudo systemctl daemon-reload",
+        "sudo mkdir -p /home/postgres/data",
+        "sudo chown -R postgres:postgres /home/postgres",
+        "sudo usermod -d /home/postgres postgres",
+        "sudo chmod o+w /var/run",
+    ])
 
     try:
         _run([
-            "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data/'",
+            "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/home/postgres/data/'",
         ])
-        _enable(['postgresql'])
     except:
         pass
 
+    _enable(['postgresql'])
 
     try:
         _run([
