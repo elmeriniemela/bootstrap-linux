@@ -39,6 +39,7 @@ def distro():
         'rate-mirrors-bin', # Tool for ranking and selecting Arch Linux mirrors.
         'curl', # Command-line tool and library for transferring data via URLs.
         'less',
+        'plocate',
     ])
     _enable([
         'cronie',
@@ -135,7 +136,6 @@ def laptop():
         'pavucontrol', # Volume/audio control
         'openconnect',  # work vpn
         'openvpn',  # personal vpn
-        'syncthing',
         'thunderbird',
         'veracrypt',
         'ventoy-bin', # Tool for creating bootable USB drives with multiple ISOs.

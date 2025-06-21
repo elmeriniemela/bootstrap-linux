@@ -2,11 +2,11 @@
 
 set -e # Fail early
 
-new_user=elmeri
+sudo pacman -S python-pip git python-distutils-extra
 
+new_user=elmeri
 git clone https://github.com/elmeriniemela/bootstrap-linux.git /home/$new_user/.config/bootstrap-linux
 cd /home/$new_user/.config/bootstrap-linux
-pacman -S python-pip
 pip install --break-system-packages -e .
 chown $new_user:$new_user -R /home/$new_user/.config
 
