@@ -31,7 +31,7 @@ def _get_odoo_path(branch, odoo_installs_dir, repo):
 
 
 @api
-def odoo_venv(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, python=False):
+def odoo_venv(branch, python=False, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR):
     '''Creates odoo venv
     '''
     venv_name = 'odoo{}'.format(_branch_name(branch))
@@ -133,13 +133,12 @@ def global_odoo_deps(branch):
         'python-zeep',
     ])
 
-    _aur([
+    # _aur([
         # 'python-dicttoxml',
         # 'python-num2words',
         # 'python-ofxparse',
         # 'python-stdnum',
-
-    ])
+    # ])
 
     _packages(['postgresql'])
     _aur(['wkhtmltopdf-bin'])
