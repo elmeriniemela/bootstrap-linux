@@ -265,6 +265,7 @@ def laptop():
         'bluetooth',
         'syncthing@elmeri',
         'tlp',
+        'upower',
     ], try_now=True)
 
 
