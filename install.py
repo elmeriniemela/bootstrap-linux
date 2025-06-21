@@ -40,6 +40,7 @@ def distro():
         'curl', # Command-line tool and library for transferring data via URLs.
         'less',
         'plocate',
+        'man-db',
     ])
     _enable([
         'cronie',
@@ -92,20 +93,25 @@ def laptop():
     _link({
         # 'elmeri': '/var/lib/AccountsService/users/elmeri',
         # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
+        # '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
         '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
         'environment': '/etc/environment',
-        '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
+        'UPower.conf': '/etc/UPower/UPower.conf',
         'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
     })
 
     _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
-    _run([
-        'sudo groupadd -r nopasswdlogin',
-        'sudo usermod -a -G video elmeri',
-        'sudo usermod -a -G nopasswdlogin elmeri',
-    ])
+    try:
+        _run([
+            'sudo udevadm control --reload-rules',
+            'sudo groupadd -r nopasswdlogin',
+            'sudo usermod -a -G video elmeri',
+            'sudo usermod -a -G nopasswdlogin elmeri',
+        ])
+    except:
+        pass
 
     _yay() # enable chaotic-aur
     _packages([
