@@ -183,7 +183,6 @@ def laptop():
         'networkmanager-qt5', # Qt5 bindings for NetworkManager.
         'networkmanager-vpnc', # VPNC plugin for NetworkManager.
         'nm-connection-editor', # GUI for editing NetworkManager connections.
-        'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
         'laptop-detect', # Tool to detect if the system is a laptop.
         'inxi', # System information tool for hardware and software details.
@@ -220,14 +219,11 @@ def laptop():
         'ttf-fira-sans', # Sans-serif font with modern design.
         'ttf-font-awesome', # Iconic font for scalable vector icons.
         'ttf-hack', # Monospaced font optimized for coding.
-        'ttf-hactor', # Stylized font for creative projects.
-        'ttf-hellvetica', # Helvetica-inspired font with unique style.
         'ttf-ibm-plex', # IBM’s versatile font family for various styles.
         'ttf-inconsolata', # Monospaced font for coding and terminals.
         'ttf-iosevka-nerd', # Iosevka font with Nerd Fonts symbols.
         'ttf-jetbrains-mono', # Monospaced font for developers by JetBrains.
         'ttf-jetbrains-mono-nerd', # JetBrains Mono with Nerd Fonts symbols.
-        'ttf-joypixels', # Color emoji font for modern applications.
         'ttf-lato', # Modern sans-serif font family.
         'ttf-liberation', # Free alternative to Microsoft fonts (Arial, Times, etc.).
         'ttf-linux-libertine', # High-quality serif font family.
@@ -257,6 +253,7 @@ def laptop():
     ])
 
     _aur([
+        'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'xautolock', # An automatic X screen-locker/screen-saver
         'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
         'arc-gtk-theme', # Flat GTK theme with customizable colors.
