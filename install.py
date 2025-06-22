@@ -36,7 +36,6 @@ def distro():
         'syncthing',
         'reflector',
         'python-colorama', # color support for this app
-        'rate-mirrors-bin', # Tool for ranking and selecting Arch Linux mirrors.
         'curl', # Command-line tool and library for transferring data via URLs.
         'less',
         'plocate',
