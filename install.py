@@ -251,6 +251,9 @@ def laptop():
         'dunst', # A highly configurable and lightweight notification daemon.
         'qtile',
         'feh',
+        'xorg-xkill', # Kill a client by its X resource modKey + Escape
+        'xfce4-taskmanager', # CTRL+SHIFT+ESC
+        'nomacs', # nomacs is a free, open source image viewer
     ])
 
     _aur([
