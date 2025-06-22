@@ -261,7 +261,6 @@ def laptop():
         'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
         'arc-gtk-theme', # Flat GTK theme with customizable colors.
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
-        'archlinux-tweak-tool-git', # Tool for tweaking and configuring Arch Linux settings.
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
         'ib-tws', # Interactive Brokers Trader Workstation for trading.
         'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
