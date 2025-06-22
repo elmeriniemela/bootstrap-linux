@@ -171,7 +171,7 @@ def laptop():
         'pipewire-session-manager', # Session manager for PipeWire.
         'pipewire-zeroconf', # Zeroconf (mDNS) support for PipeWire.
         'polkit',  # privilege escalation
-        'polkit-gnome',  # privilege escalation gui 'auth agent'
+        'lxsession-gtk3',  # privilege escalation gui 'auth agent'
         'postgresql', # PostgreSQL database server.
         'postgresql-libs', # Libraries for PostgreSQL client applications.
         'postgresql-old-upgrade', # Tools for upgrading older PostgreSQL databases.
