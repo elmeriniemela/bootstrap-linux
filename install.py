@@ -155,7 +155,6 @@ def laptop():
         'fontconfig', # Library for configuring and managing fonts.
         'font-manager', # GUI for managing and previewing fonts.
         'git-lfs', # Git extension for versioning large files.
-        'volumeicon',
         'alsa-card-profiles', # ALSA configuration profiles for sound cards.
         'alsa-firmware', # Firmware files for ALSA-supported sound hardware.
         'alsa-lib', # Core library for Advanced Linux Sound Architecture (ALSA).
@@ -248,9 +247,15 @@ def laptop():
         'ttf-ubuntu-font-family', # Ubuntu’s default font family.
         'noto-fonts',
         'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
+        'discord',
+        'dunst', # A highly configurable and lightweight notification daemon.
+        'qtile',
+        'feh',
     ])
 
     _aur([
+        'xautolock', # An automatic X screen-locker/screen-saver
+        'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
         'arc-gtk-theme', # Flat GTK theme with customizable colors.
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
         'archlinux-tweak-tool-git', # Tool for tweaking and configuring Arch Linux settings.
