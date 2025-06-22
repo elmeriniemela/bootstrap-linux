@@ -254,6 +254,7 @@ def laptop():
         'xorg-xkill', # Kill a client by its X resource modKey + Escape
         'xfce4-taskmanager', # CTRL+SHIFT+ESC
         'nomacs', # nomacs is a free, open source image viewer
+        'gparted', # graphical partition tool
     ])
 
     _aur([
