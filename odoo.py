@@ -55,12 +55,12 @@ def odoo_venv(branch, python=False, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR)
                 f'{python} -m venv --system-site-packages {venv_dir}'
             ])
 
-        _run([f'{venv_dir}/bin/pip install dicttoxml num2words ofxparse python-stdnum rlPyCairo'], dependencies=partial(global_odoo_deps, branch=branch))
+    _run([f'{venv_dir}/bin/pip install dicttoxml num2words ofxparse python-stdnum rlPyCairo'], dependencies=partial(global_odoo_deps, branch=branch))
 
-        if os.path.isfile(extra_requirements):
-            _run([
-                f'{venv_dir}/bin/pip install -r {extra_requirements}'
-            ])
+    if os.path.isfile(extra_requirements):
+        _run([
+            f'{venv_dir}/bin/pip install -r {extra_requirements}'
+        ])
 
 @api
 def global_odoo_deps(branch):

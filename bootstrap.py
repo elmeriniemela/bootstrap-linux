@@ -76,6 +76,9 @@ def main():
         except subprocess.CalledProcessError as error:
             print("EXIT without traceback after subprocess.CalledProcessError.")
             retcode = 1
+        except TypeError as error:
+            print(f"TypeError: {error.args[0]}")
+            _print_functions({args.function: func})
 
     return retcode
 

@@ -255,6 +255,7 @@ def laptop():
         'xfce4-taskmanager', # CTRL+SHIFT+ESC
         'nomacs', # nomacs is a free, open source image viewer
         'gparted', # graphical partition tool
+        'libsecp256k1', # bitcoin library for odoo development
     ])
 
     _aur([
