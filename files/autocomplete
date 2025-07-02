@@ -7,6 +7,7 @@ gitconfig
 global_odoo_deps
 keymap
 laptop
+local_ufw
 mirrors
 monitor
 odoo
@@ -18,5 +19,4 @@ secure
 serial
 server
 swapfile
-ufw_local
 update

@@ -30,7 +30,7 @@ from utils import (
 
 from config import (
     pgtune,
-    ufw_local,
+    local_ufw,
     secure,
     swapfile,
     bashrc,

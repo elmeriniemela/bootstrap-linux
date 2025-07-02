@@ -55,7 +55,7 @@ def pgtune():
 
 
 @api
-def ufw_local():
+def local_ufw():
     ''' Machine with only local network connections. Use with archinstall d base installation.
     '''
     _enable(['ufw'], try_now=True)
