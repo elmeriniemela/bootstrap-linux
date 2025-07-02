@@ -154,7 +154,7 @@ def _link(files_dict):
     for fname, dest_path in files_dict.items():
         if os.path.isfile(dest_path):
             _run([f'{prepend}rm {dest_path}'])
-        _run([f'{prepend}ln {os.path.join(FILES_DIR, fname)} {dest_path}'], ignore_errors=True)
+        _run([f'{prepend}ln -s {os.path.join(FILES_DIR, fname)} {dest_path}'], ignore_errors=True)
 
 def _copy(files_dict):
     prepend = ''

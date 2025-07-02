@@ -89,6 +89,11 @@ def laptop():
             f'git clone --recursive https://github.com/elmeriniemela/awesome-config.git {awesome_path}',
         ])
 
+
+    _run([
+        'sudo mkdir -p /etc/sddm.conf.d/',
+    ])
+
     _link({
         # 'elmeri': '/var/lib/AccountsService/users/elmeri',
         # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
@@ -258,6 +263,7 @@ def laptop():
         'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
         'arc-gtk-theme', # Flat GTK theme with customizable colors.
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
+        'arcolinux-logout',
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
         'ib-tws', # Interactive Brokers Trader Workstation for trading.
         'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
@@ -271,6 +277,20 @@ def laptop():
         'tlp',
         'upower',
     ], try_now=True)
+
+
+@api
+def nvidia_prime():
+    # https://wiki.archlinux.org/title/PRIME#PRIME_render_offload
+    _packages([
+        'nvidia-prime',
+        'mesa-utils',
+        'vulkan-tools',
+    ])
+    _aur([
+        'nvidia-prime-rtd3pm', # Configure your discrete NVIDIA GPU to power down when not in use.
+    ])
+    # cat /sys/bus/pci/devices/0000:03:00.0/power/runtime_status
 
 
 @api

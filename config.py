@@ -94,17 +94,21 @@ def swapfile(gigabytes=False):
         if gigabytes % 2 != 0:
             gigabytes += 1
 
-    print(f"Create swapfile of {gigabytes}Gb")
-    _run([
-        f'sudo dd if=/dev/zero of=/swapfile bs=1M count={int(gigabytes) * 1024} status=progress',
-        'sudo chmod 600 /swapfile',
-        'sudo mkswap /swapfile',
-        'sudo swapon /swapfile',
-    ])
-    _lineinfile({
-        '/etc/fstab': '/swapfile none swap defaults 0 0',
-    })
-    _run(['sudo findmnt --verify --verbose'])
+    dst = '/home/swapfile'
+    if not os.path.isfile(dst):
+        print(f"Create swapfile of {gigabytes}Gb")
+        _run([
+            f'sudo dd if=/dev/zero of={dst} bs=1M count={int(gigabytes) * 1024} status=progress',
+            f'sudo chmod 600 {dst}',
+            f'sudo mkswap {dst}',
+            f'sudo swapon {dst}',
+        ])
+        _lineinfile({
+            '/etc/fstab': f'{dst} none swap defaults 0 0',
+        })
+        _run(['sudo findmnt --verify --verbose'])
+    else:
+        print("Swapfile already exists")
 
 @api
 def bashrc():
