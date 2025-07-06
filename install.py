@@ -69,7 +69,7 @@ def distro():
 
 
     _copy({
-        '/etc/vconsole.conf': 'vconsole.conf',
+        'vconsole.conf': '/etc/vconsole.conf',
     })
 
     _link({

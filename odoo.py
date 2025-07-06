@@ -8,6 +8,7 @@ from lib import (
     _packages,
     _aur,
     _link,
+    _copy,
     api,
     FILES_DIR,
 )
@@ -142,7 +143,11 @@ def global_odoo_deps(branch):
 
     _packages(['postgresql'])
     _aur(['wkhtmltopdf-bin'])
-    _link({'postgresql.service': '/usr/lib/systemd/system/postgresql.service'})
+
+    _run([
+        'sudo mkdir -p /etc/systemd/system/postgresql.service.d/'
+    ])
+    _copy({'postgresql.service': '/etc/systemd/system/postgresql.service.d/override.conf'})
     _run([
         "sudo systemctl daemon-reload",
         "sudo mkdir -p /home/postgres/data",
