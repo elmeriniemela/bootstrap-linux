@@ -253,12 +253,12 @@ config_pull(){(
         echo "Specify hostname"
         return
     fi
-    rsync -avWPL $1:.ssh/ ~/.ssh
-    rsync -avWPL $1:.bash_eternal_history ~/.bash_eternal_history
-    rsync -avWPL $1:.psql_history ~/.psql_history
-    rsync -avWPL $1:.python_history ~/.python_history
-    rsync -avWPL $1:.cert ~/.cert
-    rsync -avWPL $1:VPN/ ~/VPN
+    rsync -avWPL "$1".ssh/ ~/.ssh
+    rsync -avWPL "$1".bash_eternal_history ~/.bash_eternal_history
+    rsync -avWPL "$1".psql_history ~/.psql_history
+    rsync -avWPL "$1".python_history ~/.python_history
+    rsync -avWPL "$1".cert ~/.cert
+    rsync -avWPL "$1"VPN/ ~/VPN
 )}
 
 data_pull(){(
@@ -268,11 +268,11 @@ data_pull(){(
         echo "Specify hostname"
         return
     fi
-    rsync --exclude 'lock' -avWPL $1:.thunderbird/ ~/.thunderbird
-    rsync --exclude '*.log' -avWPL $1:.config/syncthing/ ~/.config/syncthing
-    rsync -avWPL $1:School/ ~/School
-    rsync -avWPL $1:Projects/ ~/Projects
-    rsync -avWPL $1:Work/ ~/Work
+    rsync --exclude 'lock' -avWPL "$1".thunderbird/ ~/.thunderbird
+    rsync --exclude '*.log' -avWPL "$1".config/syncthing/ ~/.config/syncthing
+    rsync -avWPL "$1"School/ ~/School
+    rsync -avWPL "$1"Projects/ ~/Projects
+    rsync -avWPL "$1"Work/ ~/Work
 )}
 
 
@@ -287,7 +287,7 @@ config_push(){(
     rsync -avWPL ~/.bash_eternal_history $1/.bash_eternal_history
     rsync -avWPL ~/.psql_history $1/.psql_history
     rsync -avWPL ~/.python_history $1/.python_history
-    rsync -avWPL ~/.cert $1/.cert
+    rsync -avWPL ~/.cert/ $1/.cert
     rsync -avWPL ~/VPN/ $1/VPN
 )}
 

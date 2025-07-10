@@ -40,6 +40,7 @@ def distro():
         'less',
         'plocate',
         'man-db',
+        'dnsutils',
     ])
     _enable([
         'cronie',
@@ -70,9 +71,6 @@ def distro():
 
     _copy({
         'vconsole.conf': '/etc/vconsole.conf',
-    })
-
-    _link({
         'locale.conf': '/etc/locale.conf',
     })
 
@@ -256,6 +254,7 @@ def laptop():
         'nomacs', # nomacs is a free, open source image viewer
         'gparted', # graphical partition tool
         'libsecp256k1', # bitcoin library for odoo development
+        'libreoffice-fresh',
     ])
 
     _aur([
