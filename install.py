@@ -231,7 +231,6 @@ def laptop():
         'ttf-liberation', # Free alternative to Microsoft fonts (Arial, Times, etc.).
         'ttf-linux-libertine', # High-quality serif font family.
         'ttf-linux-libertine-g', # Graphite-enabled version of Linux Libertine.
-        'ttf-mac-fonts', # Apple’s macOS fonts for Linux.
         'ttf-monofur', # Monospaced font with a retro style.
         'ttf-ms-fonts', # Microsoft core fonts (Arial, Times New Roman, etc.).
         'ttf-nerd-fonts-symbols', # Symbol-only Nerd Fonts for icons.
