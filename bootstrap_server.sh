@@ -2,21 +2,15 @@
 
 set -e # Fail early
 
-sudo pacman -S python-pip git python-distutils-extra
+sudo pacman -S python-pip git python-distutils-extra --needed
 
-new_user=elmeri
-git clone https://github.com/elmeriniemela/bootstrap-linux.git /home/$new_user/.config/bootstrap-linux
-cd /home/$new_user/.config/bootstrap-linux
-pip install --break-system-packages -e .
-chown $new_user:$new_user -R /home/$new_user/.config
+git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstrap-linux || cd ~/.config/bootstrap-linux && git pull
+cd ~/.config/bootstrap-linux
+sudo pip install --break-system-packages --editable .
 
-pacman -S archlinux-keyring
-pacman -Syyu
-
-bootstrap-linux distro
-bootstrap-linux secure
-bootstrap-linux swapfile
-
-sudo -u $new_user bootstrap-linux server
-sudo -u $new_user bootstrap-linux dotfiles
+python bootstrap.py distro
+python bootstrap.py server
+python bootstrap.py dotfiles
+python bootstrap.py secure
+python bootstrap.py swapfile 16
 
