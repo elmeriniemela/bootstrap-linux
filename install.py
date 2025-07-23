@@ -42,6 +42,7 @@ def distro():
         'man-db',
         'dnsutils',
     ])
+    _yay() # enable chaotic-aur
     _enable([
         'cronie',
         'systemd-timesyncd',
@@ -115,7 +116,6 @@ def laptop():
     except:
         pass
 
-    _yay() # enable chaotic-aur
     _packages([
         'alacritty', # Fast, GPU-accelerated terminal emulator written in Rust.
         'awesome', # Highly configurable, lightweight window manager.
@@ -340,8 +340,4 @@ def server():
 
 
     _enable(['nginx', 'php-fpm'])
-
-
-
-
 
