@@ -1,6 +1,7 @@
 # Linux Enviroment install scripts
 
 Archinstall
+* NOTE: You might need to *temporarily* disable secure boot, otherwise EFI partition is not done correctly. 
 * `loadkeys fi`
 * `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
 * `archinstall`
