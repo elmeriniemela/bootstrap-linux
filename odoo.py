@@ -146,7 +146,10 @@ def global_odoo_deps(branch):
 
 
 
+@api
 def postgresql():
+    '''Base postgresql setup to /home/postgres
+    '''
     _packages(['postgresql'])
     _run([
         'sudo mkdir -p /etc/systemd/system/postgresql.service.d/'

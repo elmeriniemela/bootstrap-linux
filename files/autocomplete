@@ -15,6 +15,7 @@ odoo_tests
 odoo_venv
 password
 pgtune
+postgresql
 secure
 serial
 server

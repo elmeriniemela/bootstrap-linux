@@ -13,6 +13,7 @@ from lib import (
 from odoo import (
     odoo,
     odoo_venv,
+    postgresql,
     global_odoo_deps,
     odoo_tests,
 )
