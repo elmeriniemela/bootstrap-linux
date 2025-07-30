@@ -44,6 +44,8 @@ def distro():
         'vim',
         'certbot',
         'certbot-dns-cloudflare',
+        'composer',
+        'npm',
     ])
     _yay() # enable chaotic-aur
     _enable([

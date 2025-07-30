@@ -141,9 +141,13 @@ def global_odoo_deps(branch):
         # 'python-stdnum',
     # ])
 
-    _packages(['postgresql'])
     _aur(['wkhtmltopdf-bin'])
+    postgresql()
 
+
+
+def postgresql():
+    _packages(['postgresql'])
     _run([
         'sudo mkdir -p /etc/systemd/system/postgresql.service.d/'
     ])
