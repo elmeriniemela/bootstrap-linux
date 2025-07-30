@@ -340,7 +340,9 @@ def server():
 
     _lineinfile({'/etc/php/conf.d/imagick.ini': 'extension=imagick'})
 
-
+    _run([
+        'chmod 755 /home/elmeri' # nextcloud needs this.
+    ])
     _run([f"sudo sed -i 's/;extension={ext}/extension={ext}/g' /etc/php/php.ini" for ext in php_extensions])
 
 
