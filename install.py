@@ -41,6 +41,9 @@ def distro():
         'plocate',
         'man-db',
         'dnsutils',
+        'vim',
+        'certbot',
+        'certbot-dns-cloudflare',
     ])
     _yay() # enable chaotic-aur
     _enable([
