@@ -117,6 +117,7 @@ def global_odoo_deps(branch):
         'python-jinja',
         'python-libsass',
         'python-lxml',
+        'python-lxml-html-clean',
         'python-xmlsec',
         'python-passlib',
         'python-polib',
@@ -132,6 +133,8 @@ def global_odoo_deps(branch):
         'python-werkzeug',
         'python-xlsxwriter',
         'python-zeep',
+        'python-cbor2',
+        'python-asn1crypto',
     ])
 
     # _aur([
