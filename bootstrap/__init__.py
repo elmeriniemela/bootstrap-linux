@@ -3,14 +3,14 @@
 import subprocess
 import sys
 
-from lib import (
+from .lib import (
     _filter_locals,
     _print_functions,
     _quittable,
     _autocmp,
 )
 
-from odoo import (
+from .odoo import (
     odoo,
     odoo_venv,
     postgresql,
@@ -18,7 +18,7 @@ from odoo import (
     odoo_tests,
 )
 
-from utils import (
+from .utils import (
     monitor,
     mirrors,
     fix_t14_ethernet,
@@ -29,7 +29,7 @@ from utils import (
     password,
 )
 
-from config import (
+from .config import (
     pgtune,
     local_ufw,
     secure,
@@ -39,7 +39,7 @@ from config import (
     gitconfig,
 )
 
-from install import (
+from .install import (
     distro,
     laptop,
     server,

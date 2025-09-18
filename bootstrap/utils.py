@@ -4,7 +4,7 @@ import subprocess
 import re
 from functools import partial
 
-from lib import (
+from .lib import (
     _Monitor,
     _path,
     _enable,

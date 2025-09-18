@@ -1,7 +1,7 @@
 
 import os
 from functools import partial
-from lib import (
+from .lib import (
     _path,
     _enable,
     _run,

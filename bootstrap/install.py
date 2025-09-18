@@ -2,7 +2,7 @@
 import os
 import shutil
 
-from lib import (
+from .lib import (
     _path,
     _link,
     _lineinfile,
@@ -258,6 +258,7 @@ def laptop():
         'gparted', # graphical partition tool
         'libsecp256k1', # bitcoin library for odoo development
         'libreoffice-fresh',
+        'vlc-plugin-ffmpeg',
     ])
 
     _aur([

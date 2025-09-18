@@ -4,7 +4,7 @@ import sys
 from contextlib import contextmanager
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-FILES_DIR = os.path.join(CURRENT_DIR, 'files')
+FILES_DIR = os.path.join(os.path.dirname(CURRENT_DIR), 'files')
 HOME_DIR = os.path.expanduser('~')
 
 

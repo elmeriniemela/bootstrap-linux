@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-from lib import (
+from .lib import (
     _path,
     _enable,
     _link,
