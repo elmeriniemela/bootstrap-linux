@@ -67,6 +67,9 @@ def odoo_venv(branch, python=False, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR)
 def global_odoo_deps(branch):
     '''Installs odoo deps
     '''
+    _packages([
+        'npm',
+    ])
     if _odoo_version(branch) >= 11.0:
         _packages([
             'xmlsec',
@@ -75,12 +78,13 @@ def global_odoo_deps(branch):
             'pkg-config',
         ])
     if _odoo_version(branch) < 12.0:
-        _packages([
-            'npm',
-        ])
         _run([
             'sudo npm install --global less@3.0.1 less-plugin-clean-css',
         ])
+
+    _run([
+        'sudo npm install --global rtlcss',
+    ])
 
 
     _packages([
