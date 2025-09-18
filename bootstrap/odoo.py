@@ -139,6 +139,7 @@ def global_odoo_deps(branch):
         'python-zeep',
         'python-cbor2',
         'python-asn1crypto',
+        'python-google-auth',
     ])
 
     # _aur([
@@ -186,6 +187,10 @@ def postgresql():
         ])
     except:
         pass
+
+    _aur([
+        "pgvector",
+    ])
 
 
 @api
