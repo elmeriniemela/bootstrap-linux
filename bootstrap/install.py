@@ -129,6 +129,7 @@ def laptop():
         'cloc', # Counts lines of code in various programming languages.
         'default-cursors', # Default cursor set for X11 environments.
         'xfce4-clipman-plugin',
+        'xdg-utils', # xdg-open command for opening file with default app
         'rofi',
         'rofi-calc',
         'picom',

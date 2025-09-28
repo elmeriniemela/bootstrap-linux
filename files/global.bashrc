@@ -241,11 +241,6 @@ _ssh_clipboard_completer () {
 complete -o nospace -F _ssh_clipboard_completer ssh_clipboard
 
 
-odoo_coverage() {
-    coverage run --source=$PWD $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/odoorc.conf
-    coverage html
-}
-
 config_pull(){(
     set -e # Fail early
     if [ -z "$1" ]
@@ -312,24 +307,6 @@ venv() {
 }
 
 
-clean_migrations () {
-    find . -path "*/migrations/*.py" -not -name "__init__.py" -not -name "content_*.py" -delete
-    find . -path "*/migrations/*.pyc"  -delete
-    dropdb thecodebase
-    createdb thecodebase
-    python manage.py makemigrations
-    python manage.py migrate
-}
-
-alias gitignore="cp /home/elmeri/Projects/odoo_manager/odoo_manager/module_template/.gitignore ."
-alias notes="curl https://www.thecodebase.tech/notes"
-alias notes="cat ~/.notes"
-add_note() {
-    data=$(printf 'note=%s' "$1")
-    TOKEN="eyJ1aWQiOjEsInRpbWUiOiIyMDE5LTA1LTAyIDE0OjQ5OjI0LjE2MDMxMCJ9.ehnllVNGn2App8Hz8WiuKkohqFs"
-    curl -u "$TOKEN":unused -X POST --data-urlencode "$data" https://www.thecodebase.tech/add_note/
-}
-
 add_note() {
     echo """$*""" >> ~/.notes
 }
@@ -351,37 +328,8 @@ hard_reset_submodules() {
 }
 
 
-task_commit() {
-    current_task="20215"
-    git commit -m "[$current_task] $1"
-}
-
-
-
-bitbucket_commit() {
-    if [ -z "$1" ]
-    then
-        echo "Specify branch name"
-    else
-        gitignore
-        git init
-        git checkout -b $1
-        git add .
-        git commit -m "Initial commit"
-        module_name=${PWD##*/}
-        git remote add origin git@bitbucket.org:sprintit/$module_name.git
-        git push -u origin $1
-    fi
-
-}
-
 
 alias cls="tput reset && clear"
-
-
-fullgitstatus() {
-    find . -type d -name '.git' | while read dir ; do sh -c "cd $dir/../ && echo -e \"\nGIT STATUS IN ${dir//\.git/}\" && git status -s" ; done
-}
 
 
 
@@ -406,36 +354,6 @@ update_dir() {
 }
 
 
-fix_origin() {
-    REPO_URL=`git remote -v | grep -m1 '^origin' | awk '{ print $2 }'`
-    NEW_URL="${REPO_URL/thecodebasesite/elmeriniemela}"
-    echo "Changing repo url from "
-    echo "  '$REPO_URL'"
-    echo "      to "
-    echo "  '$NEW_URL'"
-    echo ""
-
-    CHANGE_CMD="git remote set-url origin $NEW_URL"
-    `$CHANGE_CMD`
-
-    echo "Success"
-}
-
-ssh_origin() {
-    update_dir
-    bash $current_dir/ssh_origin.sh
-}
-
-https_origin() {
-    update_dir
-    bash $current_dir/https_origin.sh
-}
-
-npm-upgrade() {
-    update_dir
-    bash $current_dir/npm-upgrade.sh
-}
-
 alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
 alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
 
@@ -455,61 +373,6 @@ _bootstrap_linux_completions()
 
 complete -F _bootstrap_linux_completions bootstrap-linux
 
-pull() {
-    for d in */ ; do
-        folder="$(basename $d)"
-        echo $folder
-        if [ -d "$folder" ]; then
-            cd $folder
-            bash /home/elmeri/.config/bootstrap-linux/ssh_origin.sh
-            git pull && git submodule update --init
-            cd ..
-        fi
-    done
-
-}
-
-add_access_file() {
-    if [ -z "$1" ]; then
-        echo "Specify model name (i.e partner_blocking_wizard)"
-    else
-        mkdir -p security
-        if [ ! -f security/ir.model.access.csv ]; then
-            echo "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink" > security/ir.model.access.csv
-        fi
-
-        rule="access_$1,access_$1,model_$1,base.group_user,1,1,1,1"
-
-        if grep -q "$rule" security/ir.model.access.csv ; then
-            echo "$rule exists"
-        else
-            echo "$rule" >> security/ir.model.access.csv
-        fi
-
-        if grep -q "security/ir.model.access.csv" __manifest__.py ; then
-            echo "security/ir.model.access.csv in __manifest__.py exists"
-        else
-            sed -i "/.*data.*:.*\[/a\ \ \ \ \ \ \ \ 'security/ir.model.access.csv'," __manifest__.py
-        fi
-    fi
-}
-
-
-git_export() {
-    if [ -z "$1" ]; then
-        echo "Specify module name (i.e web_widget_colorpicker)"
-    elif [ -z "$2" ]; then
-        echo "Specify branch name (i.e 12.0)"
-    else
-        git init
-        echo "*.pyc" >> .gitignore
-        git checkout -b $2
-        git add .
-        git -c user.email="niemela.elmeri@gmail.com" -c user.name="Elmeri Niemelä" commit -m "Inital Commit"
-        git remote add origin https://bitbucket.org/sprintit/$1.git
-        git push --set-upstream origin $2
-    fi
-}
 
 [ -r /usr/bin/neofetch ] &&  /usr/bin/neofetch --disable gpu
 
