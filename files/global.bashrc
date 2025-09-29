@@ -330,7 +330,7 @@ hard_reset_submodules() {
 
 
 alias cls="tput reset && clear"
-
+alias gitignore="cp /home/elmeri/Projects/odoo_manager/odoo_manager/module_template/.gitignore ."
 
 
 if [ -d "/opt/FlameGraph" ] ; then
