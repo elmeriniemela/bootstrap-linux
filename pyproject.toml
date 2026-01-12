@@ -9,7 +9,7 @@ authors = [
 dependencies = [
     "setuptools>=80.9.0",
 ]
-requires-python = "==3.13.*"
+requires-python = "==3.*"
 readme = "README.md"
 license = {text = "GNU GPLv3"}
 

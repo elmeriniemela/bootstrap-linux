@@ -7,11 +7,6 @@
     ff = only
 [init]
     defaultBranch = master
-[filter "lfs"]
-    process = git-lfs filter-process
-    required = true
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
 [advice]
     addIgnoredFile = false
 [url "git@bitbucket.org:"]
@@ -20,3 +15,8 @@
     insteadOf = https://github.com/
 [core]
 	commentChar = ";"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -16,7 +16,7 @@ from .lib import (
 
 
 @api
-def monitor():
+def monitor(reverse=0):
     '''Autoconfigure dual monitor with xrandr
     '''
 
@@ -45,7 +45,7 @@ def monitor():
 
     if len(connected_monitors) == 2:
         # Sort with ASC
-        connected_monitors.sort()
+        connected_monitors.sort(reverse=bool(int(reverse)))
         below, above = connected_monitors
         below.primary = True
 
@@ -129,12 +129,12 @@ def add_ssh(filename):
     )
 
 @api
-def password(length=32):
-    '''Generate secure password and copy to clipboard
+def password(length=26):
+    '''Generate secure password and copy to clipboard. Alphabet is a-z (26) + 0-9 (10) = 36. By default generates a PW with at least 128 bits of entropy (36**26 > 2**128).
     '''
     _run(
         [
-            f'< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c{length} | xclip -selection clipboard',
+            f'< /dev/random tr -dc a-z0-9 | head -c{length} | xclip -selection clipboard',
         ],
         dependencies=partial(_packages, ['xclip'])
     )
