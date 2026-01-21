@@ -267,7 +267,7 @@ data_pull(){(
     rsync --exclude '*.log' -avWPL "$1".config/syncthing/ ~/.config/syncthing
     rsync -avWPL "$1"School/ ~/School
     rsync -avWPL "$1"Projects/ ~/Projects
-    rsync -avWPL "$1"Work/ ~/Work
+    rsync --exclude 'odoo-dbs' -avWPL "$1"Work/ ~/Work
 )}
 
 
@@ -297,7 +297,7 @@ data_push(){(
     rsync --exclude '*.log' -avWPL ~/.config/syncthing/ $1/.config/syncthing
     rsync -avWPL ~/School/ $1/School
     rsync -avWPL ~/Projects/ $1/Projects
-    rsync -avWPL ~/Work/ $1/Work
+    rsync --exclude 'odoo-dbs' -avWPL ~/Work/ $1/Work
 )}
 
 
