@@ -4,8 +4,16 @@ set -e # Fail early
 
 sudo pacman -S python-pip git python-distutils-extra --needed
 
-git clone https://github.com/elmeriniemela/bootstrap-linux.git ~/.config/bootstrap-linux || cd ~/.config/bootstrap-linux && git pull
-cd ~/.config/bootstrap-linux
+BSL_INSTALL_DIR=~/.config/bootstrap-linux
+
+if [ -d "$BSL_INSTALL_DIR" ];
+then
+    cd $BSL_INSTALL_DIR && git pull
+else
+    git clone https://github.com/elmeriniemela/bootstrap-linux.git $BSL_INSTALL_DIR
+fi
+
+cd $BSL_INSTALL_DIR
 sudo pip install --break-system-packages --editable .
 
 bootstrap-linux distro

@@ -131,6 +131,7 @@ def laptop():
         'xfce4-clipman-plugin',
         'xdg-utils', # xdg-open command for opening file with default app
         'rofi',
+        'tlp',
         'rofi-calc',
         'picom',
         'signal-desktop',
