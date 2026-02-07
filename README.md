@@ -3,6 +3,7 @@
 Archinstall
 * NOTE: You might need to *temporarily* disable secure boot, otherwise EFI partition is not done correctly. 
 * `loadkeys fi`
+* `iwctl station list`
 * `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
 * `archinstall`
 * After install, setup network
