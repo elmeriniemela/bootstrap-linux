@@ -265,7 +265,7 @@ def laptop():
         'blueberry', # Bluetooth configuration tool with a GUI.
         'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'xautolock', # An automatic X screen-locker/screen-saver
-        'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
+        # 'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
         'arc-gtk-theme', # Flat GTK theme with customizable colors.
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
         'arcolinux-logout',
