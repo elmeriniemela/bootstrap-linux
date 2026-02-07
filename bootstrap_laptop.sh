@@ -11,5 +11,5 @@ bootstrap-linux distro
 bootstrap-linux laptop
 bootstrap-linux dotfiles
 bootstrap-linux secure
-bootstrap-linux swapfile
+# bootstrap-linux swapfile
 
