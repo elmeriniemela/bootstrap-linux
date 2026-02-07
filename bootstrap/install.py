@@ -143,7 +143,6 @@ def laptop():
         'bluez-libs', # Libraries for Bluetooth functionality.
         'bluez-tools', # Additional tools for managing Bluetooth devices.
         'bluez-utils', # Utilities for interacting with Bluetooth devices.
-        'blueberry', # Bluetooth configuration tool with a GUI.
         'thunar',
         'thunar-archive-plugin', # Archive support for Thunar file manager.
         'thunar-volman', # Volume management plugin for Thunar.
@@ -263,6 +262,7 @@ def laptop():
     ])
 
     _aur([
+        'blueberry', # Bluetooth configuration tool with a GUI.
         'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'xautolock', # An automatic X screen-locker/screen-saver
         'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
