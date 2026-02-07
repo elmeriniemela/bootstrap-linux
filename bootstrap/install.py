@@ -270,8 +270,8 @@ def laptop():
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
         'arcolinux-logout',
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
-        'ib-tws', # Interactive Brokers Trader Workstation for trading.
-        'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
+        # 'ib-tws', # Interactive Brokers Trader Workstation for trading.
+        # 'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
         'catppuccin-sddm-theme-mocha', # Catppuccin for SDDM https://github.com/catppuccin/sddm
     ])
 
