@@ -179,7 +179,7 @@ def laptop():
         'pipewire-session-manager', # Session manager for PipeWire.
         'pipewire-zeroconf', # Zeroconf (mDNS) support for PipeWire.
         'polkit',  # privilege escalation
-        'lxsession-gtk3',  # privilege escalation gui 'auth agent'
+        'lxsession',  # privilege escalation gui 'auth agent'
         'postgresql', # PostgreSQL database server.
         'postgresql-libs', # Libraries for PostgreSQL client applications.
         'postgresql-old-upgrade', # Tools for upgrading older PostgreSQL databases.
@@ -195,7 +195,7 @@ def laptop():
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
         'laptop-detect', # Tool to detect if the system is a laptop.
         'inxi', # System information tool for hardware and software details.
-        'lxappearance-gtk3', # GUI for customizing GTK themes and appearance.
+        'lxappearance', # GUI for customizing GTK themes and appearance.
         'nordvpn-bin', # NordVPN client for secure VPN connections.
         'tlp', # Power management tool for laptops.
         'upower', # Power management and battery monitoring daemon.
