@@ -6,7 +6,7 @@ This is an **Odoo addon module**. Do not improvise when using the bash commands 
 
 ### Running Automated Tests
 ```bash
-source activate odoo19 test.conf && odoo --test-enable -u $ODOO_MODULE --stop-after-init --http-port=0
+source activate odoo19 test.conf && odoo --test-enable -u $ODOO_MODULE --stop-after-init --http-port=0 --test-tags=$ODOO_MODULE
 # ALWAYS report the amount of tests after the command finishes (odoo tells it in the logs)
 ```
 
