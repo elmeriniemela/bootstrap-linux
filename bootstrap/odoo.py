@@ -13,7 +13,7 @@ from .lib import (
     FILES_DIR,
 )
 
-ODOO_INSTALLS_DEFAULT_DIR = '~/Work'
+ODOO_INSTALLS_DEFAULT_DIR = '~/Odoo'
 
 
 def _odoo_version(branch):
