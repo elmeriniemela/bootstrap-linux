@@ -147,9 +147,9 @@ def _lineinfile(files_dict):
             f"grep -qxF '{line}' {filename} || echo '{line}' | {prepend}tee -a {filename}",
         ])
 
-def _link(files_dict):
+def _link(files_dict, allow_sudo=True):
     prepend = ''
-    if os.geteuid() != 0:
+    if os.geteuid() != 0 and allow_sudo:
         prepend = 'sudo '
     for fname, dest_path in files_dict.items():
         if os.path.isfile(dest_path):

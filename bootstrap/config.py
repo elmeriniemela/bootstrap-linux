@@ -150,3 +150,12 @@ def gitconfig():
         '.gitconfig': '~/.gitconfig',
     })
 
+
+
+@api
+def link_agentmd():
+    "Enable AGENTS.md"
+    _link({
+        'skills/AGENTS.md': f'{os.getcwd()}/AGENTS.md',
+    }, allow_sudo=False)
+

@@ -7,6 +7,7 @@ gitconfig
 global_odoo_deps
 keymap
 laptop
+link_agentmd
 local_ufw
 mirrors
 monitor

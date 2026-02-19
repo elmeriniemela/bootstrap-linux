@@ -37,6 +37,7 @@ from .config import (
     bashrc,
     dotfiles,
     gitconfig,
+    link_agentmd,
 )
 
 from .install import (
