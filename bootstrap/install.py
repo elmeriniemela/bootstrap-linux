@@ -46,6 +46,8 @@ def distro():
         'certbot-dns-cloudflare',
         'composer',
         'npm',
+        'ripgrep',
+        'jq',
     ])
     _yay() # enable chaotic-aur
     _enable([
