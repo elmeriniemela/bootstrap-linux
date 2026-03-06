@@ -189,7 +189,7 @@ activate() {
             return
         fi
         export ODOO_CONFIG_FILE=$2
-        export ODOO_VERSION_DIR=$HOME"/Odoo/${1:4}"
+        export ODOO_VERSION_DIR=$HOME"/Odoo/src/${1:4}"
     fi
     . ~/.venv/$1/bin/activate
 }

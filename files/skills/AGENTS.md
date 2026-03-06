@@ -1,6 +1,6 @@
 ## Project Overview
 
-This is an **Odoo addon module** in Odoo version is 19. Odoo core can be found from ~/Odoo/19/odoo/ and ~/Odoo/19/enterprise/
+This is an **Odoo addon module** in Odoo version is 19. Odoo core can be found from ~/Odoo/src/19/odoo/ and ~/Odoo/src/19/enterprise/
 
 ### Rules for developement
 * Do not improvise when using the bash tools listed in this file, they are designed to work as is.
