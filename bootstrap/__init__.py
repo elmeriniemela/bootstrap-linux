@@ -10,44 +10,12 @@ from .lib import (
     _autocmp,
 )
 
-from .odoo import (
-    odoo,
-    odoo_venv,
-    postgresql,
-    global_odoo_deps,
-    odoo_tests,
-)
+from . import odoo, utils, config, install
 
-from .utils import (
-    monitor,
-    mirrors,
-    fix_t14_ethernet,
-    update,
-    serial,
-    keymap,
-    add_ssh,
-    password,
-)
+LOCALS = {}
+for module in (odoo, utils, config, install):
+    LOCALS.update(_filter_locals(vars(module)))
 
-from .config import (
-    pgtune,
-    local_ufw,
-    secure,
-    swapfile,
-    bashrc,
-    dotfiles,
-    gitconfig,
-    link_agentmd,
-)
-
-from .install import (
-    distro,
-    laptop,
-    server,
-    latex,
-)
-
-LOCALS = _filter_locals(locals())
 _autocmp(LOCALS)
 
 def main():

@@ -12,6 +12,7 @@ link_agentmd
 local_ufw
 mirrors
 monitor
+nvidia_prime
 odoo
 odoo_tests
 odoo_venv
