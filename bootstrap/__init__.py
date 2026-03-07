@@ -44,6 +44,7 @@ from .install import (
     distro,
     laptop,
     server,
+    latex,
 )
 
 LOCALS = _filter_locals(locals())

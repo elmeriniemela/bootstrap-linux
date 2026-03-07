@@ -302,6 +302,22 @@ def nvidia_prime():
 
 
 @api
+def latex():
+    _packages([
+        'texlive-basic',
+        'texlive-latex',
+        'texlive-binextra',
+        'texlive-latexrecommended',
+        'texlive-fontsrecommended',
+        'texlive-fontsextra',
+        'texlive-xetex',
+        'texlive-luatex',
+        'texlive-latexextra',
+        'texlive-pictures',
+        'texlive-bibtexextra',
+    ])
+
+@api
 def server():
     '''Setup server.
     '''
