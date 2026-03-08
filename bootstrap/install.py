@@ -289,6 +289,7 @@ def laptop():
 
 @api
 def nvidia_prime():
+    "Install nvidia prime"
     # https://wiki.archlinux.org/title/PRIME#PRIME_render_offload
     _packages([
         'nvidia-prime',
@@ -303,6 +304,7 @@ def nvidia_prime():
 
 @api
 def latex():
+    "Install latex"
     _packages([
         'texlive-basic',
         'texlive-latex',
