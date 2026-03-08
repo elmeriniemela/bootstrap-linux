@@ -120,6 +120,3 @@ bootstrap-linux: error: the following arguments are required: function
 * Application that better handles screen shutdown
 * Firefox Google Meets share screen select sreen
 * Copyq force center of screen and size
-
-## Output of `bootstrap-linux`
-
