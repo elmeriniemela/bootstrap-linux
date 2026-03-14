@@ -20,28 +20,30 @@ from .lib import (
 @api
 def pgtune():
     '''Alter postgres according to pgtune
-    # DB Version: 13
+    # DB Version: 18
     # OS Type: linux
-    # DB Type: web
-    # Total Memory (RAM): 32 GB
-    # CPUs num: 8
+    # DB Type: oltp
+    # Total Memory (RAM): 64 GB
+    # CPUs num: 14
     # Data Storage: ssd
+
     '''
     postgres_config = {
-        'shared_buffers': '8GB',
-        'effective_cache_size': '24GB',
+        'shared_buffers': '16GB',
+        'effective_cache_size': '48GB',
         'maintenance_work_mem': '2GB',
         'checkpoint_completion_target': '0.9',
         'wal_buffers': '16MB',
         'default_statistics_target': '100',
         'random_page_cost': '1.1',
         'effective_io_concurrency': '200',
-        'work_mem': '10MB',
-        'min_wal_size': '1GB',
-        'max_wal_size': '4GB',
-        'max_worker_processes': '8',
+        'work_mem': '100MB',
+        'huge_pages': 'try',
+        'min_wal_size': '2GB',
+        'max_wal_size': '8GB',
+        'max_worker_processes': '14',
         'max_parallel_workers_per_gather': '4',
-        'max_parallel_workers': '8',
+        'max_parallel_workers': '14',
         'max_parallel_maintenance_workers': '4',
         'log_min_duration_statement': '100',
     }
