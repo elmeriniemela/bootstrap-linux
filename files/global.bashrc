@@ -188,8 +188,7 @@ activate() {
             echo "Specify odoo config file i.e. odoorc.conf"
             return
         fi
-        export ODOO_CONFIG_FILE=$2
-        export ODOO_VERSION_DIR=$HOME"/Odoo/src/${1:4}"
+        export ODOO_CONFIG_FILE=$HOME"/Odoo/src/${1:4}/$2"
     fi
     . ~/.venv/$1/bin/activate
 }
@@ -209,14 +208,6 @@ _venv_completer () {
 }
 
 complete -o nospace -F _venv_completer activate
-
-odoo() {
-    if [ -f "$ODOO_VERSION_DIR/odoo/odoo-bin" ] ; then
-        python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_VERSION_DIR/$ODOO_CONFIG_FILE
-    else
-        python $ODOO_VERSION_DIR/odoo/odoo.py $* --conf $ODOO_VERSION_DIR/$ODOO_CONFIG_FILE
-    fi;
-}
 
 
 ssh_clipboard(){

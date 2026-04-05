@@ -26,6 +26,7 @@ def distro():
         'rsync',
         'ncdu', # diskspace
         'htop',
+        'openvpn',  # personal vpn
         'bash-completion',
         'tmux',
         'unrar', # Tool for extracting RAR archives.
@@ -151,7 +152,6 @@ def laptop():
         'thunar-volman', # Volume management plugin for Thunar.
         'pavucontrol', # Volume/audio control
         'openconnect',  # work vpn
-        'openvpn',  # personal vpn
         'thunderbird',
         'veracrypt',
         'ventoy-bin', # Tool for creating bootable USB drives with multiple ISOs.
@@ -198,7 +198,6 @@ def laptop():
         'laptop-detect', # Tool to detect if the system is a laptop.
         'inxi', # System information tool for hardware and software details.
         'lxappearance', # GUI for customizing GTK themes and appearance.
-        'nordvpn-bin', # NordVPN client for secure VPN connections.
         'tlp', # Power management tool for laptops.
         'upower', # Power management and battery monitoring daemon.
         'visual-studio-code-bin', # Microsoft’s Visual Studio Code editor (binary).
