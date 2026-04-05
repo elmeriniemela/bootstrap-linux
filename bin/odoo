@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_NAME="bodoo"
+SCRIPT_NAME="odoo"
 
 show_help() {
   cat <<EOF
 Usage:
-  ${SCRIPT_NAME} [function] [optional args...]
+  ${SCRIPT_NAME} [function] [args...]
   ${SCRIPT_NAME} [odoo-bin args...]
   ${SCRIPT_NAME} --help
 
 Description:
-  Script for running Odoo locally via AI agents. It assumes the current working directory is an Odoo module.
-  - function: optional, chooses a non-server branch.
-
   This is **Odoo version ${ODOO_VERSION}**. Odoo core code can be found from ~/Odoo/src/${ODOO_VERSION}/odoo/ and ~/Odoo/src/${ODOO_VERSION}/enterprise/.
+  The script is for running Odoo locally via AI agents. It assumes the current working directory is an Odoo module.
+  - function: optional, chooses a non-server branch.
 
 Supported functions:
   upgrade
@@ -66,7 +65,7 @@ ensure_odoo_config() {
         echo "Error: odoorc.conf does not exist in any parent dir." >&2
         exit 1
     else
-        echo "Using $ODOO_CONFIG_FILE..."
+        echo "Using custom ODOO_CONFIG_FILE=$ODOO_CONFIG_FILE..."
     fi
 }
 
@@ -78,27 +77,21 @@ run_server() {
     fi
 }
 run_upgrade() {
-    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0
+    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http
 }
 run_dropdb() {
     dropdb $ODOO_DATABASE 2>/dev/null || :
 }
 run_install() {
     echo "Install $ODOO_MODULE"
-    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=en_US -i $ODOO_MODULE --stop-after-init --http-port=0
+    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=en_US -i $ODOO_MODULE --stop-after-init --no-http
 }
 run_tests() {
-    local use_coverage=1 arg
-    local -a args=()
-    for arg in "$@"; do [[ "$arg" == "--no-coverage" ]] && use_coverage=0 || args+=("$arg"); done
-
-    set -- "${args[@]}" --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0 --test-enable --test-tags=$ODOO_MODULE
-
-    if (( use_coverage )); then
-        $ODOO_VENV/python -m coverage run --omit=__manifest__.py --source="$PWD" "$ODOO_VERSION_DIR/odoo/odoo-bin" "$@"
-        $ODOO_VENV/python -m coverage report -m
+    if [[ " $* " == *" --no-coverage "* ]]; then
+        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http --test-enable --test-tags=$ODOO_MODULE
     else
-        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin "$@"
+        $ODOO_VENV/python -m coverage run --omit=__manifest__.py --source="$PWD" "$ODOO_VERSION_DIR/odoo/odoo-bin" --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http --test-enable --test-tags=$ODOO_MODULE
+        $ODOO_VENV/python -m coverage report -m
     fi
 }
 run_translate() {
@@ -121,56 +114,34 @@ run_translate() {
     mv "i18n/$1.po.tmp" "i18n/$1.po"
 }
 
-
-
-# Set ODOO_VERSION first
 ensure_odoo_env
 ensure_odoo_config
 
-
-export ODOO_FUNCTION=""
-if [[ $# -gt 0 ]]; then
-  case "$1" in
-    --help|-h|help)
-      show_help
-      exit 0
-      ;;
-    upgrade|install|dropdb|tests|translate)
-      export ODOO_FUNCTION="$1"
-      shift
-      ;;
-    *)
-      # No function selected: default to server and pass all args through.
-      ;;
-  esac
-fi
-
-case "${ODOO_FUNCTION}" in
+case "${1-}" in
   upgrade)
+    shift
     run_upgrade "$@"
     ;;
   install)
+    shift
     run_install "$@"
     ;;
   dropdb)
+    shift
     run_dropdb "$@"
     ;;
   tests)
+    shift
     run_tests "$@"
     ;;
   translate)
+    shift
     run_translate "$@"
     ;;
-  --help|-h|help)
+  --help)
     show_help
-    ;;
-  "")
-    run_server "$@"
     ;;
   *)
-    echo "Error: unknown function '${ODOO_FUNCTION}'."
-    echo
-    show_help
-    exit 1
+    run_server "$@"
     ;;
 esac
