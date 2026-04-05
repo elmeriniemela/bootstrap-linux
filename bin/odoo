@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_NAME="odoo"
-
 show_help() {
   cat <<EOF
 Usage:
-  ${SCRIPT_NAME} [function] [args...]
-  ${SCRIPT_NAME} [odoo-bin args...]
-  ${SCRIPT_NAME} --help
+  $ odoo [function] [args...]
+  $ odoo [odoo-bin args...]
+  $ odoo --help
 
 Description:
   This is **Odoo version ${ODOO_VERSION}**. Odoo core code can be found from ~/Odoo/src/${ODOO_VERSION}/odoo/ and ~/Odoo/src/${ODOO_VERSION}/enterprise/.
@@ -70,10 +68,14 @@ ensure_odoo_config() {
 }
 
 run_server() {
-    if [ -n "${ODOO_DATABASE:-}" ]; then
-        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$"
+    if [[ -z "${1:-}" || "$1" == @(server|shell|neutralize|obfuscate|populate) ]]; then
+        if [ -n "${ODOO_DATABASE:-}" ]; then
+            $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$"
+        else
+            $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE
+        fi
     else
-        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE
+        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $*
     fi
 }
 run_upgrade() {
