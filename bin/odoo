@@ -9,7 +9,7 @@ Usage:
   $ odoo --help
 
 Description:
-  This is **Odoo version ${ODOO_VERSION}**. Odoo core code can be found from ~/Odoo/src/${ODOO_VERSION}/odoo/ and ~/Odoo/src/${ODOO_VERSION}/enterprise/.
+  **Odoo version ${ODOO_VERSION}**. Odoo core code can be found from ~/Odoo/src/${ODOO_VERSION}/odoo/ and ~/Odoo/src/${ODOO_VERSION}/enterprise/.
   The script is for running Odoo locally via AI agents. It assumes the current working directory is an Odoo module.
   - function: optional, chooses a non-server branch.
 
