@@ -15,6 +15,6 @@ This is an **Odoo addon module**. Check the Odoo help/environment information wi
 ### Odoo bash tools using the (odoo) helper:
 * Run the automated tests: `odoo tests`. Note! ALWAYS report the amount of tests after the command finishes (odoo tells it in the logs). If the count is zero, try `odoo install` to install the module first.
 * Export Finnish translations: `odoo translate fi`. Note! Never edit the `msgid` values directly, they should always be exported from Odoo. And do not change existing translations if the term is already translated. NOTE2: If HTML code is being exported to the *.po file, add `t-if="True"` to the html element, this way Odoo will not export the HTML node.
-* For manual testing with browser, first start the server `odoo --http-port=9999`, then navigate to http://127.0.0.1:9999/web/login and login as admin:admin
+* For manual testing with browser, first start the server `odoo server --http-port=9999`, then navigate to http://127.0.0.1:9999/web/login and login as admin:admin
 * To run arbitrary python code in odoo shell: `odoo shell`
 

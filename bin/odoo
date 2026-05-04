@@ -68,7 +68,7 @@ ensure_odoo_config() {
 }
 
 run_server() {
-    if [[ -z "${1:-}" || "$1" == @(server|shell|neutralize|obfuscate|populate) ]]; then
+    if [[ -z "${1:-}" || "$1" == @(server|shell|neutralize|obfuscate|populate|-u|-i) || "$1" == --* ]]; then
         if [ -n "${ODOO_DATABASE:-}" ]; then
             $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin $* --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$"
         else
@@ -79,20 +79,20 @@ run_server() {
     fi
 }
 run_upgrade() {
-    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http
+    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0
 }
 run_dropdb() {
     dropdb $ODOO_DATABASE 2>/dev/null || :
 }
 run_install() {
     echo "Install $ODOO_MODULE"
-    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=en_US -i $ODOO_MODULE --stop-after-init --no-http
+    $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=fi_FI,en_US -i $ODOO_MODULE --stop-after-init --http-port=0
 }
 run_tests() {
     if [[ " $* " == *" --no-coverage "* ]]; then
-        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http --test-enable --test-tags=$ODOO_MODULE
+        $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0 --test-enable --test-tags=$ODOO_MODULE
     else
-        $ODOO_VENV/python -m coverage run --omit=__manifest__.py --source="$PWD" "$ODOO_VERSION_DIR/odoo/odoo-bin" --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --no-http --test-enable --test-tags=$ODOO_MODULE
+        $ODOO_VENV/python -m coverage run --omit=__manifest__.py --source="$PWD" "$ODOO_VERSION_DIR/odoo/odoo-bin" --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0 --test-enable --test-tags=$ODOO_MODULE
         $ODOO_VENV/python -m coverage report -m
     fi
 }
