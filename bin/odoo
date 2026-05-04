@@ -63,7 +63,7 @@ ensure_odoo_config() {
         echo "Error: odoorc.conf does not exist in any parent dir." >&2
         exit 1
     else
-        echo "Using custom ODOO_CONFIG_FILE=$ODOO_CONFIG_FILE..."
+        echo "Using custom ODOO_CONFIG_FILE = $ODOO_CONFIG_FILE"
     fi
 }
 

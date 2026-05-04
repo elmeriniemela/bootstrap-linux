@@ -157,7 +157,7 @@ def gitconfig():
 @api
 def link_agentmd():
     "Enable AGENTS.md"
-    _link({
-        'skills/AGENTS.md': f'{os.getcwd()}/AGENTS.md',
-    }, allow_sudo=False)
+    _link({'skills/AGENTS.md': f'{os.getcwd()}/AGENTS.md'}, allow_sudo=False)
+    _link({'skills/AGENTS.md': f'{os.getcwd()}/GEMINI.md'}, allow_sudo=False)
+    _link({'skills/AGENTS.md': f'{os.getcwd()}/CLAUDE.md'}, allow_sudo=False)
 
