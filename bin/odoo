@@ -51,7 +51,9 @@ ensure_odoo_config() {
             if [[ -f "$dir/odoorc.conf" ]]; then
                 export ODOO_CONFIG_FILE="$dir/odoorc.conf"
                 export ODOO_MODULE="$(basename "$PWD")"
-                export ODOO_DATABASE="$ODOO_VERSION-$ODOO_MODULE"
+                export ODOO_DB_ID="$(tmux display-message -p "#S:#{pane_index}" | sha256sum | cut -c1-12)"
+                export ODOO_DATABASE="$ODOO_VERSION-$ODOO_MODULE-$ODOO_DB_ID"
+                echo "Using Odoo DB: $ODOO_DATABASE"
                 if [[ ! -f "__manifest__.py" ]]; then
                     echo "Error: __manifest__.py does not exist. $ODOO_MODULE is not an odoo module." >&2
                     exit 1
