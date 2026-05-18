@@ -81,6 +81,7 @@ run_server() {
     fi
 }
 run_upgrade() {
+    ensure_module_installed
     $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0
 }
 run_dropdb() {
@@ -90,7 +91,25 @@ run_install() {
     echo "Install $ODOO_MODULE"
     $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=fi_FI,en_US -i $ODOO_MODULE --stop-after-init --http-port=0
 }
+ensure_module_installed() {
+    local db_name_sql=${ODOO_DATABASE//\'/\'\'}
+    local module_name_sql=${ODOO_MODULE//\'/\'\'}
+    local db_exists
+    local module_state
+
+    db_exists="$(psql -X -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$db_name_sql'" 2>/dev/null || true)"
+    if [[ "$db_exists" != "1" ]]; then
+        run_install
+        return 0
+    fi
+
+    module_state="$(psql -X -d "$ODOO_DATABASE" -tAc "SELECT state FROM ir_module_module WHERE name = '$module_name_sql' LIMIT 1" 2>/dev/null || true)"
+    if [[ "$module_state" != "installed" ]]; then
+        run_install
+    fi
+}
 run_tests() {
+    ensure_module_installed
     if [[ " $* " == *" --no-coverage "* ]]; then
         $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" -u $ODOO_MODULE --stop-after-init --http-port=0 --test-enable --test-tags=$ODOO_MODULE
     else
