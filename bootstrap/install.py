@@ -138,7 +138,7 @@ def laptop():
         'rofi-calc',
         'picom',
         'signal-desktop',
-        'slack-desktop', # Slack client for team communication.
+        # 'slack-desktop', # Slack client for team communication.
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
@@ -196,7 +196,7 @@ def laptop():
         'nm-connection-editor', # GUI for editing NetworkManager connections.
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
         'laptop-detect', # Tool to detect if the system is a laptop.
-        'inxi', # System information tool for hardware and software details.
+        # 'inxi', # System information tool for hardware and software details.
         'lxappearance', # GUI for customizing GTK themes and appearance.
         'tlp', # Power management tool for laptops.
         'upower', # Power management and battery monitoring daemon.
