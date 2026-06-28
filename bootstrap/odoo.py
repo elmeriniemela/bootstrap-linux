@@ -142,13 +142,6 @@ def global_odoo_deps(branch):
         'python-google-auth',
     ])
 
-    # _aur([
-        # 'python-dicttoxml',
-        # 'python-num2words',
-        # 'python-ofxparse',
-        # 'python-stdnum',
-    # ])
-
     _aur(['wkhtmltopdf-bin'])
     postgresql()
 
@@ -187,10 +180,6 @@ def postgresql():
         ])
     except:
         pass
-
-    _aur([
-        "pgvector",
-    ])
 
 
 @api

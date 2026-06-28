@@ -261,20 +261,16 @@ def laptop():
         'libsecp256k1', # bitcoin library for odoo development
         'libreoffice-fresh',
         'vlc-plugin-ffmpeg',
+        'breeze-gtk', # dark gtk theme
     ])
 
     _aur([
         'blueberry', # Bluetooth configuration tool with a GUI.
         'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
         'xautolock', # An automatic X screen-locker/screen-saver
-        # 'aarchup', # Fork of archup a small and lightweight update-notifier for archlinux.
-        'arc-gtk-theme', # Flat GTK theme with customizable colors.
         'archlinux-logout-git', # Custom logout scripts for Arch Linux.
         'arcolinux-logout',
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
-        # 'ib-tws', # Interactive Brokers Trader Workstation for trading.
-        # 'ib-tws-debug', # Debug version of Interactive Brokers Trader Workstation.
-        'catppuccin-sddm-theme-mocha', # Catppuccin for SDDM https://github.com/catppuccin/sddm
     ])
 
     _enable([
