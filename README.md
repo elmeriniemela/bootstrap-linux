@@ -6,6 +6,7 @@ Archinstall
 * `iwctl station list`
 * `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
 * `archinstall`
+* `cp .zsh_history /mnt/home/elmeri`
 * Do not copy the network configuration from ISO, instead install NetworkManager. After install, setup network
 * `nmcli device wifi connect "<SSID>" password "<password>"`
 
