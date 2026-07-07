@@ -176,7 +176,7 @@ def laptop():
         'pipewire', # Multimedia server for audio and video handling.
         'pipewire-alsa', # ALSA compatibility for PipeWire.
         'pipewire-audio', # Audio processing components for PipeWire.
-        'pipewire-jack', # JACK compatibility for PipeWire.
+        # 'pipewire-jack', # JACK compatibility for PipeWire.
         'pipewire-pulse', # PulseAudio compatibility for PipeWire.
         'pipewire-session-manager', # Session manager for PipeWire.
         'pipewire-zeroconf', # Zeroconf (mDNS) support for PipeWire.
