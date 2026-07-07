@@ -191,7 +191,7 @@ def laptop():
         'networkmanager-openconnect', # OpenConnect VPN plugin for NetworkManager.
         'networkmanager-openvpn', # OpenVPN plugin for NetworkManager.
         'networkmanager-pptp', # PPTP VPN plugin for NetworkManager.
-        'networkmanager-qt5', # Qt5 bindings for NetworkManager.
+        # 'networkmanager-qt5', # Qt5 bindings for NetworkManager.
         'networkmanager-vpnc', # VPNC plugin for NetworkManager.
         'nm-connection-editor', # GUI for editing NetworkManager connections.
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
