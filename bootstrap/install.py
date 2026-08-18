@@ -343,7 +343,6 @@ def server():
         'gd',
         'gmp',
         'intl',
-        'opcache',
         'pdo_pgsql',
         'pgsql',
         'sodium',

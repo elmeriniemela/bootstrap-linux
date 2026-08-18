@@ -1,6 +1,7 @@
 [user]
     email = niemela.elmeri@gmail.com
     name = Elmeri Niemelä
+	signingkey = 768CC30FB1ACCD851E1F900055C4B0EA25D7162C!
 [credential]
     helper = store
 [pull]
@@ -20,3 +21,9 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[gpg]
+	format = openpgp
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true

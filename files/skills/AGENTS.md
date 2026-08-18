@@ -11,7 +11,7 @@ This is an **Odoo addon module**. Check the Odoo help/environment information wi
 * Tests should NOT assert translatable terms such as display names or other UI strings, as they loading an Odoo db with another language can cause issues with the test.
 * Avoid mocks/patches in tests unless it's an API/external call. If it can't be asserted/covered without mocking/patching don't assert it.
 * This is a greenfield project, no need to keep backwards compatibility.
-* Avoid custom CSS, use bootstrap classes when ever possible.
+* Do not define global variables. Use system parameters or static methods linked to a model instead, as these can be accessed more easily with Odoo's inheritance system.
 
 ### Odoo bash tools using the (odoo) helper:
 
