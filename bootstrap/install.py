@@ -281,6 +281,10 @@ def laptop():
         'upower',
     ], try_now=True)
 
+    _run([
+        'systemctl --user enable --now ssh-agent.service', # no sudo! https://wiki.archlinux.org/title/SSH_keys#Start_ssh-agent_with_systemd_user
+    ])
+
 
 @api
 def nvidia_prime():

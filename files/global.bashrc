@@ -375,3 +375,4 @@ export VISUAL=vim
 export EDITOR=vim
 export FLASK_ENV=development
 export ANSIBLE_DEBUG=0
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"

@@ -122,7 +122,7 @@ def add_ssh(filename):
     '''
     _run(
         [
-            f'ssh-keygen -t ed25519 -N "" -f ~/.ssh/{filename}',
+            f'ssh-keygen -t ed25519 -f ~/.ssh/{filename} -C {filename}',
             f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
         ],
         dependencies=partial(_packages, ['xclip'])
