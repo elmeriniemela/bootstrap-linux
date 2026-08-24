@@ -119,7 +119,7 @@ def global_odoo_deps(branch):
         'python-geoip2',
         'python-pillow',
         'python-jinja',
-        'python-libsass',
+        # 'python-libsass',
         'python-lxml',
         'python-lxml-html-clean',
         'python-xmlsec',
@@ -140,6 +140,7 @@ def global_odoo_deps(branch):
         'python-cbor2',
         'python-asn1crypto',
         'python-google-auth',
+        'pgvector',
     ])
 
     _aur(['wkhtmltopdf-bin'])
