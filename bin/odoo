@@ -26,9 +26,8 @@ Supported functions:
   translate <lang>
 
 Default behavior:
-  Runs the Odoo server (run_server) when no function is selected.
-
-Optional args are passed into odoo-bin, unless the function specifies a separate meaning for them.
+  Runs the Odoo server (odoo-bin) when no function is selected.
+  Unlike the other functions, this accepts optional arguments supported by odoo.
 EOF
 }
 
