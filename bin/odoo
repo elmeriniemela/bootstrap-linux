@@ -8,10 +8,15 @@ Usage:
   $ odoo [odoo-bin args...]
   $ odoo --help
 
-Description:
-  **Odoo version ${ODOO_VERSION}**. Odoo core code can be found from ~/Odoo/src/${ODOO_VERSION}/odoo/ and ~/Odoo/src/${ODOO_VERSION}/enterprise/.
-  The script is for running Odoo locally via AI agents. It assumes the current working directory is an Odoo module.
-  - function: optional, chooses a non-server branch.
+Environment:
+  Odoo version:      ${ODOO_VERSION}
+  Python:            ${ODOO_VENV}/python
+  Odoo source:       ${ODOO_VERSION_DIR}/odoo
+  Enterprise source: ${ODOO_VERSION_DIR}/enterprise
+  Module directory:  ${PWD}
+  Module name:       ${ODOO_MODULE:-not set}
+  Config file:       ${ODOO_CONFIG_FILE}
+  Database:          ${ODOO_DATABASE:-not set}
 
 Supported functions:
   upgrade
@@ -35,7 +40,6 @@ ensure_odoo_env() {
             source $dir/odoorc.env
             export ODOO_VENV="$HOME/.venv/odoo$ODOO_VERSION/bin"
             export ODOO_VERSION_DIR=$HOME"/Odoo/src/${ODOO_VERSION}"
-            echo "Using python: $ODOO_VENV/python"
             return 0
         fi
         dir="$(dirname "$dir")"
@@ -54,7 +58,6 @@ ensure_odoo_config() {
                 export ODOO_MODULE="$(basename "$PWD")"
                 export ODOO_DB_ID="$(tmux display-message -p "#S:#{pane_index}" | sha256sum | cut -c1-12)"
                 export ODOO_DATABASE="$ODOO_VERSION-$ODOO_MODULE-$ODOO_DB_ID"
-                echo "Using Odoo DB: $ODOO_DATABASE"
                 if [[ ! -f "__manifest__.py" ]]; then
                     echo "Error: __manifest__.py does not exist. $ODOO_MODULE is not an odoo module." >&2
                     exit 1
@@ -65,8 +68,6 @@ ensure_odoo_config() {
         done
         echo "Error: odoorc.conf does not exist in any parent dir." >&2
         exit 1
-    else
-        echo "Using custom ODOO_CONFIG_FILE = $ODOO_CONFIG_FILE"
     fi
 }
 
@@ -89,7 +90,6 @@ run_dropdb() {
     dropdb $ODOO_DATABASE 2>/dev/null || :
 }
 run_install() {
-    echo "Install $ODOO_MODULE"
     $ODOO_VENV/python $ODOO_VERSION_DIR/odoo/odoo-bin --conf $ODOO_CONFIG_FILE -d $ODOO_DATABASE --db-filter "^$ODOO_DATABASE$" --load-language=fi_FI,en_US -i $ODOO_MODULE --stop-after-init --http-port=0
 }
 ensure_module_installed() {

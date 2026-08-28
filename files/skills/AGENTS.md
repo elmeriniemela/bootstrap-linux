@@ -12,6 +12,7 @@ This is an **Odoo addon module**. Check the Odoo help/environment information wi
 * Avoid mocks/patches in tests unless it's an API/external call. If it can't be asserted/covered without mocking/patching don't assert it.
 * This is a greenfield project, no need to keep backwards compatibility.
 * Do not define global variables. Use system parameters or static methods linked to a model instead, as these can be accessed more easily with Odoo's inheritance system.
+* Keep business logic inlined instead of adding small helper functions with business code that is not needed elsewhere. It makes code less readable, as we have to keep jumping to definitions. And if the business code changes such that new parameter is needed, all function definitions need to change.
 
 ### Odoo bash tools using the (odoo) helper:
 
