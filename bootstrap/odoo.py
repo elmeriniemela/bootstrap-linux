@@ -76,6 +76,7 @@ def global_odoo_deps(branch):
             'pwgen',
             'libxml2',
             'pkg-config',
+            'chromium', # for browser tour tests
         ])
     if _odoo_version(branch) < 12.0:
         _run([

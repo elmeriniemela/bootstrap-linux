@@ -262,6 +262,7 @@ def laptop():
         'libreoffice-fresh',
         'vlc-plugin-ffmpeg',
         'breeze-gtk', # dark gtk theme
+        '7zip', # archiving tool
     ])
 
     _aur([
