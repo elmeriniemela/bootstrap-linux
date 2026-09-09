@@ -382,10 +382,6 @@ update_dir() {
     fi
 }
 
-
-alias ssh_dis="mv ~/.ssh/* ~/SSH_DISABLED/;ssh-add -D"
-alias ssh_en="mv ~/SSH_DISABLED/* ~/.ssh/;ssh-add -l"
-
 _bootstrap_linux_completions()
 {
     update_dir

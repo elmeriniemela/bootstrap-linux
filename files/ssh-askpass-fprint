@@ -1,0 +1,34 @@
+#!/bin/bash
+# SSH_ASKPASS handler that gates every use of an ssh-agent key behind the
+# fingerprint reader. Deployed to /usr/local/bin by bootstrap-linux laptop().
+#
+# ssh-agent runs this for any key held with the confirm flag, which we get from
+# `AddKeysToAgent confirm` in ~/.ssh/config. Per ssh-add(1), confirmation is
+# signalled by the *exit status* of this program, not by anything it prints:
+# 0 allows the signature, non-zero denies it. ssh-agent passes the prompt it
+# wanted to display (which key, and its fingerprint) as $1.
+#
+# This file MUST be root-owned and not writable by the login user. Anything
+# running as elmeri that can rewrite it just replaces the body with `exit 0`
+# and the whole gate disappears.
+
+set -u
+
+TIMEOUT=15
+PROMPT="${1:-SSH key use requested}"
+
+# Without this the reader lights up with no explanation and a push or a server
+# login just looks like it has hung. Backgrounded and muted so a dead
+# notification daemon can never block or fail the authorisation.
+notify-send -u critical -t "$((TIMEOUT * 1000))" \
+    'Touch fingerprint reader' "$PROMPT" 2>/dev/null &
+
+# Fail closed. fprintd-verify's exit status is not dependable across fprintd
+# versions and drivers, so require the explicit success string in its output
+# and treat literally everything else -- no match, reader busy, timeout,
+# fprintd not running -- as a denial.
+out="$(timeout "$TIMEOUT" fprintd-verify 2>&1)"
+case "$out" in
+    *verify-match*) exit 0 ;;
+esac
+exit 1
