@@ -13,21 +13,11 @@
 # and the whole gate disappears.
 
 set -u
-
-TIMEOUT=15
-PROMPT="${1:-SSH key use requested}"
-
-# Without this the reader lights up with no explanation and a push or a server
-# login just looks like it has hung. Backgrounded and muted so a dead
-# notification daemon can never block or fail the authorisation.
-notify-send -u critical -t "$((TIMEOUT * 1000))" \
-    'Touch fingerprint reader' "$PROMPT" 2>/dev/null &
-
 # Fail closed. fprintd-verify's exit status is not dependable across fprintd
 # versions and drivers, so require the explicit success string in its output
 # and treat literally everything else -- no match, reader busy, timeout,
 # fprintd not running -- as a denial.
-out="$(timeout "$TIMEOUT" fprintd-verify 2>&1)"
+out="$(timeout 600 fprintd-verify 2>&1)"
 case "$out" in
     *verify-match*) exit 0 ;;
 esac
