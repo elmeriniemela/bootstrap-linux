@@ -91,10 +91,6 @@ def laptop():
         ])
 
 
-    _run([
-        'sudo mkdir -p /etc/sddm.conf.d/',
-    ])
-
     _packages([
         'alacritty', # Fast, GPU-accelerated terminal emulator written in Rust.
         'awesome', # Highly configurable, lightweight window manager.
@@ -242,10 +238,6 @@ def laptop():
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
     ])
 
-    _run([
-        'sudo mkdir -p /etc/systemd/user/ssh-agent.service.d',
-    ])
-
     # NOTE: this must run AFTER _packages/_aur above. Several of these paths are
     # package-owned (upower ships /etc/UPower/UPower.conf, i3lock-color ships
     # /etc/pam.d/i3lock), so deploying them before pacman installs those
@@ -277,18 +269,13 @@ def laptop():
         # Fingerprint gate on every ssh-agent key use. Paired with
         # 'AddKeysToAgent confirm' in ~/.ssh/config, which is what makes
         # ssh-agent call the askpass helper before each signature.
-        'ssh-askpass-fprint': '/usr/local/bin/ssh-askpass-fprint',
         'ssh-agent-fprint-askpass.conf': '/etc/systemd/user/ssh-agent.service.d/fprint-askpass.conf',
     })
 
-    # The askpass helper is the whole gate, so pin its ownership explicitly
-    # rather than inheriting whatever mode the repo file happened to have. If
-    # elmeri can write it, anything running as elmeri replaces it with 'exit 0'.
-    _run([
-        'sudo chown root:root /usr/local/bin/ssh-askpass-fprint',
-        'sudo chmod 755 /usr/local/bin/ssh-askpass-fprint',
-        'sudo chmod 644 /etc/systemd/user/ssh-agent.service.d/fprint-askpass.conf',
-    ])
+    # Separate call only because this one has to be executable. root-owned 755
+    # is the whole gate: if elmeri can write it, anything running as elmeri
+    # replaces it with 'exit 0'.
+    _copy({'ssh-askpass-fprint': '/usr/local/bin/ssh-askpass-fprint'}, mode='755')
 
     _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
     try:

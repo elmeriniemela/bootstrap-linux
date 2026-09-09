@@ -154,9 +154,7 @@ def postgresql():
     '''Base postgresql setup to /home/postgres
     '''
     _packages(['postgresql'])
-    _run([
-        'sudo mkdir -p /etc/systemd/system/postgresql.service.d/'
-    ])
+    # _copy passes install -D, which creates postgresql.service.d/ for us.
     _copy({'postgresql.service': '/etc/systemd/system/postgresql.service.d/override.conf'})
     _run([
         "sudo systemctl daemon-reload",

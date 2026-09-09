@@ -126,13 +126,8 @@ def bashrc():
     # and have root execute it.
     # Tradeoff: editing files/global.bashrc now needs `bootstrap-linux bashrc`
     # to redeploy, instead of applying to the next shell straight away.
+    # _copy defaults to root:root 644, which is exactly the boundary we need here.
     _copy({'global.bashrc': '/etc/bash.bashrc.local'})
-    _run([
-        # This copy is the security boundary, so pin ownership and mode rather
-        # than inheriting whatever the repo file happens to carry.
-        'sudo chown root:root /etc/bash.bashrc.local',
-        'sudo chmod 644 /etc/bash.bashrc.local',
-    ])
     _lineinfile({'/etc/bash.bashrc': '[ -r /etc/bash.bashrc.local ] && . /etc/bash.bashrc.local'})
 
 

@@ -156,16 +156,28 @@ def _link(files_dict, allow_sudo=True):
             _run([f'{prepend}rm {dest_path}'])
         _run([f'{prepend}ln -s {os.path.join(FILES_DIR, fname)} {dest_path}'], ignore_errors=True)
 
-def _copy(files_dict):
+def _copy(files_dict, owner='root', group='root', mode='644'):
+    """Deploy files from FILES_DIR to system paths, root-owned 644 by default.
+
+    Uses install(1) rather than cp for three reasons:
+      * ownership and mode are applied as the file is written, so the
+        permissions are never a side effect of the repo file's own mode or of
+        a later chmod that might be forgotten;
+      * -D creates any missing parent directories, so callers do not need to
+        mkdir -p first;
+      * install unlinks the destination before writing, so a symlink left over
+        from _link is replaced with a real file instead of being followed --
+        cp would write straight through it back into FILES_DIR.
+
+    Pass mode='755' for anything that has to be executable.
+    """
     prepend = ''
     if os.geteuid() != 0:
         prepend = 'sudo '
     for fname, dest_path in files_dict.items():
-        # islink too: dest may be a dangling symlink left over from _link, and
-        # cp would follow it and write back into FILES_DIR instead of /etc.
-        if os.path.isfile(dest_path) or os.path.islink(dest_path):
-            _run([f'{prepend}rm -f {dest_path}'])
-        _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
+        _run([
+            f'{prepend}install -D -o {owner} -g {group} -m {mode} {os.path.join(FILES_DIR, fname)} {dest_path}'
+        ])
 
 class _Monitor():
     def __init__(self, name, width=0, height=0, x=0, y=0, off=False):
