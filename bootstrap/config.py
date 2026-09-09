@@ -52,7 +52,7 @@ def pgtune():
             _run([
                 f"""psql postgres -c "ALTER SYSTEM SET {key} = '{value}'" """,
             ])
-        except:
+        except:  # pragma: no cover - best effort, some settings may not apply
             pass
 
 

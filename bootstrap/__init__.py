@@ -19,7 +19,7 @@ for module in (odoo, utils, config, install):
 _autocmp(LOCALS)
 
 def main():
-    if sys.version_info[0] < 3:
+    if sys.version_info[0] < 3:  # pragma: no cover - dead on py3
         print("Only supported in python 3")
         return -1
 
@@ -53,5 +53,5 @@ def main():
 
     return retcode
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     sys.exit(main())

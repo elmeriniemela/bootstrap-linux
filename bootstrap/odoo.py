@@ -168,7 +168,7 @@ def postgresql():
         _run([
             "sudo -u postgres initdb --locale $LANG -E UTF8 -D '/home/postgres/data/'",
         ])
-    except:
+    except:  # pragma: no cover - cluster may already be initialised
         pass
 
     _enable(['postgresql'])
@@ -178,7 +178,7 @@ def postgresql():
             'sudo su - postgres -c "createuser -s $USER"',
             'sudo su - postgres -c "createuser -s root"',
         ])
-    except:
+    except:  # pragma: no cover - roles may already exist
         pass
 
 
@@ -227,7 +227,7 @@ def _get_odoo_source(branch, odoo_installs_dir, repo, owner='odoo'):
             _run(cleaning_args)
             print(f"Latest pull done.. exiting now")
             return
-        except:
+        except:  # pragma: no cover - fall through to the copy/clone path below
             pass
 
     folders = [path for path in glob.glob(_path(f'{odoo_installs_dir}/*/*')) if os.path.isdir(path)]

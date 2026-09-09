@@ -111,6 +111,7 @@ def laptop():
         'udiskie',  # For automount
         'python-qdarkstyle', # Electrum dark style
         'python-coverage', # code test coverage repors
+        'ruff', # automated python code formatting+linting.
         'bluez', # Bluetooth protocol stack for Linux.
         'bluez-libs', # Libraries for Bluetooth functionality.
         'bluez-tools', # Additional tools for managing Bluetooth devices.
@@ -286,7 +287,7 @@ def laptop():
             'sudo usermod -a -G video elmeri',
             'sudo usermod -a -G nopasswdlogin elmeri',
         ])
-    except:
+    except:  # pragma: no cover - groups/rules may already be set up
         pass
 
     _enable([

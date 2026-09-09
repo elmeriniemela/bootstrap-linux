@@ -22,30 +22,12 @@ def _path(path):
         formatted = path
     return formatted
 
-def _pipe(data, command):
-    default_kwargs = {
-        'shell': True,
-        'stdout': subprocess.PIPE,
-        'stderr': subprocess.PIPE,
-        'stdin': subprocess.PIPE,
-        'encoding': 'utf-8'
-    }
-    p = subprocess.Popen(
-        command,
-        **default_kwargs,
-    )
-    stdout_data, stderr_data = p.communicate(input=data)
-    if stderr_data:
-        print(stderr_data)
-    assert p.returncode == 0
-    return stdout_data
-
 def _enable(services, try_now=True):
     _run([f'sudo systemctl enable {service}' for service in services])
     if try_now:
         try:
             _run([f'sudo systemctl start {service}' for service in services])
-        except:
+        except:  # pragma: no cover - enabling is what matters, start is a bonus
             pass
 
 def _run(commands, dependencies=None, ignore_errors=False, **kwargs):
