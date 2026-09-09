@@ -23,6 +23,19 @@ Usage instructions:
   writes mocked out, purely to check the code still runs. No behaviour assertions.
   Add `-v` to print the commands each function *would* have run.
 
+To see which lines the smoke test actually reached, print a coverage table to the
+terminal:
+
+```bash
+sudo pacman -S --needed python-coverage
+python -m coverage run --source=bootstrap tests/smoke.py
+python -m coverage report -m
+```
+
+`report -m` adds the `Missing` column listing the uncovered line numbers. The
+figures only reflect the api entry points the suite calls, so private helpers
+show up covered only where those functions reach them.
+
 
 ```bash
 $ bootstrap-linux

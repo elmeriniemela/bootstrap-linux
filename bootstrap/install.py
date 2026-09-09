@@ -110,6 +110,7 @@ def laptop():
         'gvfs',  # For automount
         'udiskie',  # For automount
         'python-qdarkstyle', # Electrum dark style
+        'python-coverage', # code test coverage repors
         'bluez', # Bluetooth protocol stack for Linux.
         'bluez-libs', # Libraries for Bluetooth functionality.
         'bluez-tools', # Additional tools for managing Bluetooth devices.

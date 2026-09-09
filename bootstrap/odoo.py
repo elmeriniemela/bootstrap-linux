@@ -211,7 +211,7 @@ def odoo(branch, odoo_installs_dir=ODOO_INSTALLS_DEFAULT_DIR, enterprise=True):
 
 def _get_odoo_source(branch, odoo_installs_dir, repo, owner='odoo'):
     import glob
-    from distutils.dir_util import copy_tree
+    import shutil
     odoo_path = _get_odoo_path(branch, odoo_installs_dir, repo)
     odoo_base_path = os.path.dirname(odoo_path)
     os.makedirs(odoo_base_path, exist_ok=True)
@@ -237,7 +237,10 @@ def _get_odoo_source(branch, odoo_installs_dir, repo, owner='odoo'):
         if name == repo:
             print(f"Found existing '{repo}' installation at {full_path}")
             print("Copying the installation is faster than cloning..")
-            copy_tree(full_path, odoo_path)
+            # dirs_exist_ok mirrors distutils copy_tree, which merged into an
+            # existing destination. odoo_path can already be there when the
+            # pull above failed and we fell through.
+            shutil.copytree(full_path, odoo_path, dirs_exist_ok=True)
             _run(cleaning_args)
             _run(['git clean -xfdf'])
             break

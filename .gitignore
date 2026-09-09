@@ -6,6 +6,8 @@ config.json
 cache.json
 *.egg-info
 .pdm-build
+.coverage
+notes
 
 files/server/nginx/ssl/*.key
 files/server/nginx/ssl/*.crt
