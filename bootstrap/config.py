@@ -12,7 +12,6 @@ from .lib import (
     _packages,
     _aur,
     api,
-    FILES_DIR,
 )
 
 
@@ -119,27 +118,43 @@ def bashrc():
         print("Do not run this as root")
         return
 
-    _lineinfile({'/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'})
-
+    # Root sources this too -- /root/.bashrc is deleted below -- so it has to
+    # live in a root-owned location rather than being sourced straight out of
+    # this repo. files/ is writable by elmeri and /etc/bash.bashrc is read by
+    # every interactive root shell (`sudo -i`, `sudo bash`, `su -`), so an
+    # include pointing at FILES_DIR let anything running as elmeri append a line
+    # and have root execute it.
+    # Tradeoff: editing files/global.bashrc now needs `bootstrap-linux bashrc`
+    # to redeploy, instead of applying to the next shell straight away.
+    _copy({'global.bashrc': '/etc/bash.bashrc.local'})
     _run([
-        'rm -f ~/.bashrc',
-        'rm -f ~/.bash_profile',
-        'sudo rm -f /root/.bash_profile',
-        'sudo rm -f /root/.bashrc',
+        # This copy is the security boundary, so pin ownership and mode rather
+        # than inheriting whatever the repo file happens to carry.
+        'sudo chown root:root /etc/bash.bashrc.local',
+        'sudo chmod 644 /etc/bash.bashrc.local',
     ])
+    _lineinfile({'/etc/bash.bashrc': '[ -r /etc/bash.bashrc.local ] && . /etc/bash.bashrc.local'})
+
 
 @api
 def dotfiles():
     ''' This setups basic configuration: 1. Generate global bashrc 2. Clone dotfiles
     '''
-    bashrc()
     if not os.path.exists(_path('~/.dotfiles')):
+        bashrc()
         _run([
             'git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init',
             'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
         ])
+        _run([
+            'rm -f ~/.bashrc',
+            'rm -f ~/.bash_profile',
+            'sudo rm -f /root/.bash_profile',
+            'sudo rm -f /root/.bashrc',
+        ])
+
 
 @api
 def gitconfig():
