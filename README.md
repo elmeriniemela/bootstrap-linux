@@ -196,6 +196,10 @@ What it does and does not protect against:
   a visible re-add.
 * Reading the key out of agent memory needs ptrace. Keep
   `/proc/sys/kernel/yama/ptrace_scope` at `1` or higher.
+* Only the systemd `ssh-agent.service` gets the drop-in, so a *second* agent
+  started by anything else has no `SSH_ASKPASS` and is completely ungated.
+  `pgrep -a ssh-agent` should show exactly one process, `ssh-agent -D`, owned by
+  the user manager.
 
 ##### Making one touch last 5 minutes
 
