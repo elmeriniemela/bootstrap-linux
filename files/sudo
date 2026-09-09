@@ -1,0 +1,11 @@
+#%PAM-1.0
+# Fingerprint first. 'sufficient' means a successful scan authenticates, but a
+# failed/absent scan falls through to the normal password prompt below -- so a
+# broken or unenrolled reader can never lock us out of sudo.
+# This MUST stay above the system-auth include: PAM walks the auth stack in
+# order, and system-auth's pam_unix would otherwise prompt for a password first.
+auth		sufficient	pam_fprintd.so
+auth		include		system-auth
+account		include		system-auth
+session		include		system-auth
+session		optional	pam_systemd.so class=none

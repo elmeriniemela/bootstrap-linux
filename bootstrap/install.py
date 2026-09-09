@@ -108,6 +108,11 @@ def laptop():
     })
 
     _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
+
+    # Fingerprint auth for sudo. Deliberately _copy and not _link: /etc/pam.d/sudo
+    # must be root-owned, since a symlink into this user-writable repo would let
+    # anything running as elmeri rewrite sudo's auth stack.
+    _copy({'sudo': '/etc/pam.d/sudo'})
     try:
         _run([
             'sudo udevadm control --reload-rules',
@@ -158,6 +163,7 @@ def laptop():
         'flameshot',
         'fontconfig', # Library for configuring and managing fonts.
         'font-manager', # GUI for managing and previewing fonts.
+        'fprintd', # Fingerprint reader daemon + pam_fprintd.so (Goodix MOC reader on T14 Gen 5).
         'git-lfs', # Git extension for versioning large files.
         'alsa-card-profiles', # ALSA configuration profiles for sound cards.
         'alsa-firmware', # Firmware files for ALSA-supported sound hardware.
@@ -166,7 +172,7 @@ def laptop():
         'alsa-topology-conf', # Configuration files for ALSA topology data.
         'alsa-ucm-conf', # ALSA Use Case Manager configuration files.
         'alsa-utils', # Utilities for managing ALSA audio devices (e.g., alsamixer).
-        'pipewire-alsa',
+        'sof-firmware', # Sound Open Firmware DSP blobs; required for Intel SOF audio (no sound card without it).
         'pipewire', # Multimedia server for audio and video handling.
         'pipewire-alsa', # ALSA compatibility for PipeWire.
         'pipewire-audio', # Audio processing components for PipeWire.
