@@ -94,41 +94,6 @@ def laptop():
         'sudo mkdir -p /etc/sddm.conf.d/',
     ])
 
-    # _copy, never _link: everything here is root-owned config under /etc, and a
-    # symlink into this repo (writable by elmeri) would let anything running as
-    # elmeri rewrite config that root executes -- udev rules and PAM auth stacks
-    # most of all. Tradeoff: editing files/ no longer takes effect immediately,
-    # so re-run this to redeploy.
-    _copy({
-        # 'elmeri': '/var/lib/AccountsService/users/elmeri',
-        # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
-        # '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
-        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
-        'hosts': '/etc/hosts',
-        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
-        'environment': '/etc/environment',
-        'UPower.conf': '/etc/UPower/UPower.conf',
-        'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
-
-        # Fingerprint auth (pam_fprintd.so). Each of these is the distro default
-        # plus one 'auth sufficient' line, which must sit above the include so
-        # PAM reaches it before pam_unix prompts for a password.
-        'sudo': '/etc/pam.d/sudo',
-        'polkit-1': '/etc/pam.d/polkit-1',
-        'i3lock': '/etc/pam.d/i3lock',
-    })
-
-    _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
-    try:
-        _run([
-            'sudo udevadm control --reload-rules',
-            'sudo groupadd -r nopasswdlogin',
-            'sudo usermod -a -G video elmeri',
-            'sudo usermod -a -G nopasswdlogin elmeri',
-        ])
-    except:
-        pass
-
     _packages([
         'alacritty', # Fast, GPU-accelerated terminal emulator written in Rust.
         'awesome', # Highly configurable, lightweight window manager.
@@ -275,6 +240,46 @@ def laptop():
         'arcolinux-logout',
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
     ])
+
+    # NOTE: this must run AFTER _packages/_aur above. Several of these paths are
+    # package-owned (upower ships /etc/UPower/UPower.conf, i3lock-color ships
+    # /etc/pam.d/i3lock), so deploying them before pacman installs those
+    # packages means pacman silently overwrites our version with its default.
+    # That is exactly how the custom UPower battery thresholds got lost.
+    # _copy, never _link: everything here is root-owned config under /etc, and a
+    # symlink into this repo (writable by elmeri) would let anything running as
+    # elmeri rewrite config that root executes -- udev rules and PAM auth stacks
+    # most of all. Tradeoff: editing files/ no longer takes effect immediately,
+    # so re-run this to redeploy.
+    _copy({
+        # 'elmeri': '/var/lib/AccountsService/users/elmeri',
+        # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
+        # '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
+        'backlight.rules': '/etc/udev/rules.d/backlight.rules',
+        'hosts': '/etc/hosts',
+        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
+        'environment': '/etc/environment',
+        'UPower.conf': '/etc/UPower/UPower.conf',
+        'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
+
+        # Fingerprint auth (pam_fprintd.so). Each of these is the distro default
+        # plus one 'auth sufficient' line, which must sit above the include so
+        # PAM reaches it before pam_unix prompts for a password.
+        'sudo': '/etc/pam.d/sudo',
+        'polkit-1': '/etc/pam.d/polkit-1',
+        'i3lock': '/etc/pam.d/i3lock',
+    })
+
+    _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
+    try:
+        _run([
+            'sudo udevadm control --reload-rules',
+            'sudo groupadd -r nopasswdlogin',
+            'sudo usermod -a -G video elmeri',
+            'sudo usermod -a -G nopasswdlogin elmeri',
+        ])
+    except:
+        pass
 
     _enable([
         'NetworkManager',

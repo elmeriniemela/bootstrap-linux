@@ -2,15 +2,8 @@
 # See hosts(5) for details.
 127.0.0.1       localhost
 127.0.0.1       work-laptop
-127.0.0.1       local14
-127.0.0.1       local15
 ::1             localhost
 127.0.1.1       arch.localdomain      arch
 127.0.1.1       local.eniemela.fi
-192.168.1.250   odoo16.eniemela.fi
-95.217.199.133  odoo13stagemon.tek.fi
-95.217.199.133  odoo13devmon.tek.fi
-95.217.199.133  odoo15dev.tek.fi
-194.100.213.87  pgmonitor.tek.fi
 
 185.102.232.15	sslvpn3.decens.fi ###Cisco Secure Client - AnyConnect VPN modified this file. Please do not modify contents until this comment is removed.
