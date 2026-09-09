@@ -4,7 +4,6 @@ import shutil
 
 from .lib import (
     _path,
-    _link,
     _lineinfile,
     _copy,
     _enable,
@@ -95,7 +94,12 @@ def laptop():
         'sudo mkdir -p /etc/sddm.conf.d/',
     ])
 
-    _link({
+    # _copy, never _link: everything here is root-owned config under /etc, and a
+    # symlink into this repo (writable by elmeri) would let anything running as
+    # elmeri rewrite config that root executes -- udev rules and PAM auth stacks
+    # most of all. Tradeoff: editing files/ no longer takes effect immediately,
+    # so re-run this to redeploy.
+    _copy({
         # 'elmeri': '/var/lib/AccountsService/users/elmeri',
         # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
         # '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
@@ -105,14 +109,16 @@ def laptop():
         'environment': '/etc/environment',
         'UPower.conf': '/etc/UPower/UPower.conf',
         'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
+
+        # Fingerprint auth (pam_fprintd.so). Each of these is the distro default
+        # plus one 'auth sufficient' line, which must sit above the include so
+        # PAM reaches it before pam_unix prompts for a password.
+        'sudo': '/etc/pam.d/sudo',
+        'polkit-1': '/etc/pam.d/polkit-1',
+        'i3lock': '/etc/pam.d/i3lock',
     })
 
     _lineinfile({'/etc/pam.d/sddm': 'auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin'})
-
-    # Fingerprint auth for sudo. Deliberately _copy and not _link: /etc/pam.d/sudo
-    # must be root-owned, since a symlink into this user-writable repo would let
-    # anything running as elmeri rewrite sudo's auth stack.
-    _copy({'sudo': '/etc/pam.d/sudo'})
     try:
         _run([
             'sudo udevadm control --reload-rules',

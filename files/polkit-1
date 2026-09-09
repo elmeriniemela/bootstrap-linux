@@ -1,0 +1,13 @@
+#%PAM-1.0
+# Override of /usr/lib/pam.d/polkit-1 (the polkit package default); files in
+# /etc/pam.d take precedence over /usr/lib/pam.d.
+#
+# Fingerprint first. 'sufficient' means a good scan authenticates, while a
+# failed scan, missing reader or unenrolled finger falls through to the password
+# prompt below -- so this can never lock us out of pkexec.
+# Must stay above the system-auth include: PAM walks the stack in order.
+auth       sufficient   pam_fprintd.so
+auth       include      system-auth
+account    include      system-auth
+password   include      system-auth
+session    include      system-auth

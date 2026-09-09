@@ -1,0 +1,17 @@
+#
+# PAM configuration file for the i3lock-color screen locker. By default, it includes
+# the 'system-local-login' configuration file (see /etc/pam.d/system-local-login)
+# for Arch and Gentoo and 'login' for Debian. Note that upstream uses only 'login',
+# which doesn't work on Arch and Gentoo.
+#
+# Fingerprint added below (reached via betterlockscreen -> i3lock-color).
+# 'sufficient' so a bad scan falls through to the normal password prompt.
+#
+# UX QUIRK, not a misconfiguration: i3lock only starts PAM once you press Enter,
+# and it never renders PAM's prompts. So the flow is: press Enter on an empty
+# field, then touch the reader while it shows "verifying". It cannot scan while
+# sitting idle. Upstream limitation: https://github.com/i3/i3lock/issues/217
+#
+auth sufficient pam_fprintd.so
+auth include system-local-login # For Arch/Gentoo
+#auth include login # For Debian

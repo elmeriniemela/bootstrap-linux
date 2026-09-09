@@ -161,8 +161,10 @@ def _copy(files_dict):
     if os.geteuid() != 0:
         prepend = 'sudo '
     for fname, dest_path in files_dict.items():
-        if os.path.isfile(dest_path):
-            _run([f'{prepend}rm {dest_path}'])
+        # islink too: dest may be a dangling symlink left over from _link, and
+        # cp would follow it and write back into FILES_DIR instead of /etc.
+        if os.path.isfile(dest_path) or os.path.islink(dest_path):
+            _run([f'{prepend}rm -f {dest_path}'])
         _run([f'{prepend}cp {os.path.join(FILES_DIR, fname)} {dest_path}'])
 
 class _Monitor():
