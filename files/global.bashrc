@@ -319,6 +319,44 @@ hard_reset_submodules() {
 }
 
 
+codex() {
+    local SSH_AUTH_SOCK=""
+    local SSH_AGENT_PID=""
+    local GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentityAgent=none -o IdentitiesOnly=yes -o IdentityFile=/dev/null"
+
+    export SSH_AUTH_SOCK SSH_AGENT_PID GIT_SSH_COMMAND
+    command codex "$@"
+}
+
+
+agy() {
+    local SSH_AUTH_SOCK=""
+    local SSH_AGENT_PID=""
+    local GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentityAgent=none -o IdentitiesOnly=yes -o IdentityFile=/dev/null"
+
+    export SSH_AUTH_SOCK SSH_AGENT_PID GIT_SSH_COMMAND
+    command agy "$@"
+}
+
+claude() {
+    local SSH_AUTH_SOCK=""
+    local SSH_AGENT_PID=""
+    local GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentityAgent=none -o IdentitiesOnly=yes -o IdentityFile=/dev/null"
+
+    export SSH_AUTH_SOCK SSH_AGENT_PID GIT_SSH_COMMAND
+    command claude "$@"
+}
+
+
+opencode() {
+    local SSH_AUTH_SOCK=""
+    local SSH_AGENT_PID=""
+    local GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentityAgent=none -o IdentitiesOnly=yes -o IdentityFile=/dev/null"
+
+    export SSH_AUTH_SOCK SSH_AGENT_PID GIT_SSH_COMMAND
+    command opencode "$@"
+}
+
 
 alias cls="tput reset && clear"
 alias gitignore="cp /home/elmeri/Projects/odoo_manager/odoo_manager/module_template/.gitignore ."

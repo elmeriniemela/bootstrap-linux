@@ -106,9 +106,7 @@ def swapfile(gigabytes=False):
             f'sudo mkswap {dst}',
             f'sudo swapon {dst}',
         ])
-        _lineinfile({
-            '/etc/fstab': f'{dst} none swap defaults 0 0',
-        })
+        _lineinfile({'/etc/fstab': f'{dst} none swap defaults 0 0'})
         _run(['sudo findmnt --verify --verbose'])
     else:
         print("Swapfile already exists")
@@ -121,9 +119,7 @@ def bashrc():
         print("Do not run this as root")
         return
 
-    _lineinfile({
-        '/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc',
-    })
+    _lineinfile({'/etc/bash.bashrc': f'[ -r {FILES_DIR}/global.bashrc   ] && . {FILES_DIR}/global.bashrc'})
 
     _run([
         'rm -f ~/.bashrc',

@@ -91,13 +91,7 @@ def update():
     '''Update the system
     '''
     _packages(['archlinux-keyring'])
-    _aur([], flags='-Syyu --noconfirm --overwrite "*" python-pip'.split())
-    if distutils.spawn.find_executable("inxi"):
-        _run([
-            'inxi -Fxxxza --no-host',
-            # FIX: Device-2: NVIDIA GM108M [GeForce 940MX] driver: N/A
-            # 'sudo modprobe nvidia',
-        ])
+    _aur([], flags='-Syyu --noconfirm'.split())
     input("Press enter key to quit.\n")
 
 @api

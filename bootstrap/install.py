@@ -49,6 +49,7 @@ def distro():
         'npm',
         'ripgrep',
         'jq',
+        '7zip', # archiving tool
     ])
     _yay() # enable chaotic-aur
     _enable([
@@ -56,26 +57,19 @@ def distro():
         'systemd-timesyncd',
     ])
     _run([
-        '( sudo crontab -l | grep -v -F "@hourly pacman -Sy" ; echo "@hourly pacman -Sy" ) | sudo crontab -',
         "sudo sed -i '/^#en_US.UTF-8/s/^#//g' /etc/locale.gen",
         "sudo sed -i '/^#fi_FI.UTF-8/s/^#//g' /etc/locale.gen",
         'sudo locale-gen',
     ])
 
-    _lineinfile({
-        '/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1',
-        '/etc/sysctl.d/99-swappiness.conf': 'vm.swappiness=10',
-        '/etc/sudoers.d/wheel_group': '%wheel ALL=(ALL) ALL',
-    })
-
-    # https://archived.forum.manjaro.org/t/entire-system-hangs-when-writing-to-ssd/100585/21
-    # This is a simple tweak to force the Linux kernel using block multi-queue mode, allowing a better usage of the NVME drive
-    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'scsi_mod.use_blk_mq=1'})
+    _lineinfile({'/etc/sudoers.d/wheel_group': '%wheel ALL=(ALL) ALL'})
 
     # https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/
     # Contains the amount of dirty memory at which a process generating disk writes will itself start writeback.
+    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'kernel.sysrq=1'})
     _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'vm.dirty_background_ratio=5'})
     _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'vm.dirty_ratio=10'})
+    _lineinfile({'/etc/sysctl.d/99-sysctl.conf': 'vm.swappiness=10'})
 
 
     _copy({
@@ -196,7 +190,6 @@ def laptop():
         'nm-connection-editor', # GUI for editing NetworkManager connections.
         'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
         'laptop-detect', # Tool to detect if the system is a laptop.
-        # 'inxi', # System information tool for hardware and software details.
         'lxappearance', # GUI for customizing GTK themes and appearance.
         'tlp', # Power management tool for laptops.
         'upower', # Power management and battery monitoring daemon.
@@ -252,17 +245,14 @@ def laptop():
         'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
         'discord',
         'dunst', # A highly configurable and lightweight notification daemon.
-        'qtile',
         'feh',
         'xorg-xkill', # Kill a client by its X resource modKey + Escape
         'xfce4-taskmanager', # CTRL+SHIFT+ESC
         'nomacs', # nomacs is a free, open source image viewer
         'gparted', # graphical partition tool
-        'libsecp256k1', # bitcoin library for odoo development
         'libreoffice-fresh',
         'vlc-plugin-ffmpeg',
         'breeze-gtk', # dark gtk theme
-        '7zip', # archiving tool
     ])
 
     _aur([
@@ -359,7 +349,6 @@ def server():
     ]
     _lineinfile({'/etc/php/conf.d/apcu.ini': 'extension=apcu.so'})
     _lineinfile({'/etc/php/conf.d/apcu.ini': 'apc.enable_cli=1'})
-
     _lineinfile({'/etc/php/conf.d/imagick.ini': 'extension=imagick'})
 
     _run([
