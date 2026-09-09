@@ -19,6 +19,9 @@ Install instructions:
 Usage instructions:
 
 * `bootstrap-linux` <-- this will start the CLI-interface and print available functions
+* `python tests/smoke.py` <-- calls every api function with subprocess and filesystem
+  writes mocked out, purely to check the code still runs. No behaviour assertions.
+  Add `-v` to print the commands each function *would* have run.
 
 
 ```bash
