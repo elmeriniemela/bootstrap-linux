@@ -19,6 +19,14 @@
 # timeout(1) returns 124 when the scan is killed, which denies -- so no finger
 # presented means no signature.
 
+# >&2 is load-bearing, not tidiness. ssh-agent runs this with a pipe on our
+# stdout and READS it: per ask_permission() in OpenSSH readpass.c only an empty
+# line or the word "yes" counts as affirmative, and a non-zero exit is a refusal
+# regardless. fprintd-verify prints "Using device /net/reactivated/..." on
+# stdout, which reads as a refusal even when the scan matched. Sending its
+# output to stderr leaves the pipe empty (affirmative) and puts the chatter in
+# the journal instead, where it is useful.
+
 set -u
 
-exec timeout 60 fprintd-verify -f any
+exec timeout 60 fprintd-verify -f any >&2
