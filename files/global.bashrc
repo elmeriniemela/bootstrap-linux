@@ -368,30 +368,32 @@ fi
 
 PATH="~/.cargo/bin:~/.local/bin:$PATH"
 
-update_dir() {
-    if [ -z "$current_dir" ]
-    then
-        SOURCE="${BASH_SOURCE[0]}"
-        while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-            parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-            SOURCE="$(readlink "$SOURCE")"
-            [[ $SOURCE != /* ]] && SOURCE="$parent_dir/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-        done
-        parent_dir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-        current_dir=$(dirname "${parent_dir}")
-    fi
-}
+# bootstrap-linux rewrites this word list on every run (bootstrap/__init__.py
+# calls _autocmp), so it must be read from the repo rather than from a copy.
+#
+# The path used to be derived by walking back from ${BASH_SOURCE[0]}, which
+# worked while this file was sourced straight out of <repo>/files/. It is now
+# deployed to /etc/bash.bashrc.local so root can source it too, and there
+# dirname gives "/" -- producing "//files/autocomplete: No such file". The
+# install location is fixed by bootstrap_laptop.sh, so name it directly.
+BOOTSTRAP_LINUX_AUTOCOMPLETE="$HOME/.config/bootstrap-linux/files/autocomplete"
 
 _bootstrap_linux_completions()
 {
-    update_dir
-    readarray -t n < $current_dir/files/autocomplete
+    # Missing for root, and on any machine without the repo checked out. Return
+    # quietly instead of erroring on every TAB.
+    [ -r "$BOOTSTRAP_LINUX_AUTOCOMPLETE" ] || return 0
+
+    # local: these used to leak into the interactive shell, and clobbering $i
+    # from a completion function is a nasty surprise.
+    local names name
+    readarray -t names < "$BOOTSTRAP_LINUX_AUTOCOMPLETE"
     COMPREPLY=()
 
-    for i in "${n[@]}"
+    for name in "${names[@]}"
     do
-        if [[ $COMP_CWORD == 1 && $i != "main" && $i == ${COMP_WORDS[COMP_CWORD]}* ]]; then
-            COMPREPLY+=($i)
+        if [[ $COMP_CWORD == 1 && $name != "main" && $name == ${COMP_WORDS[COMP_CWORD]}* ]]; then
+            COMPREPLY+=($name)
         fi
     done
 }
