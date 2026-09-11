@@ -121,6 +121,7 @@ def laptop():
         'thunar-volman', # Volume management plugin for Thunar.
         'pavucontrol', # Volume/audio control
         'openconnect',  # work vpn
+        'mermaid-cli', # diagrams for github repo README's
         'thunderbird',
         'veracrypt',
         'ventoy-bin', # Tool for creating bootable USB drives with multiple ISOs.
