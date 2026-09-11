@@ -11,62 +11,14 @@
 # This file MUST be root-owned and not writable by the login user. Anything
 # running as elmeri that can rewrite it just replaces the body with `exit 0`
 # and the whole gate disappears.
+#
+# -f any identifies against every enrolled print. Without it fprintd-verify
+# checks only the first enrolled finger, so a second enrolled finger could
+# never match.
+#
+# timeout(1) returns 124 when the scan is killed, which denies -- so no finger
+# presented means no signature.
 
 set -u
 
-# One scan used to be one chance, so a single false reject denied the signature
-# and the whole command had to be re-run. Retrying here turns that into "press
-# again". It does not weaken the gate: every attempt still needs a genuine
-# match, and running out of attempts still denies.
-ATTEMPTS=5
-
-# Per attempt, not overall. A bad scan comes back immediately, so this only
-# bounds how long we wait for a finger to actually arrive -- and we stop
-# retrying once that wait expires, so the total stays close to this value.
-SCAN_TIMEOUT=600
-
-attempt=1
-while [ "$attempt" -le "$ATTEMPTS" ]; do
-    # -f any is load-bearing. Without it fprintd-verify quietly verifies only
-    # the FIRST enrolled finger -- with left- and right-index enrolled the bare
-    # command reports "Verifying: left-index-finger" -- so pressing any other
-    # enrolled finger could never match. -f any reports "Verifying: any" and
-    # identifies against every enrolled print, which is what makes enrolling
-    # more than one finger actually help.
-    out="$(timeout "$SCAN_TIMEOUT" fprintd-verify -f any 2>&1)"
-    status=$?
-
-    # Fail closed. fprintd-verify's exit status is not dependable across
-    # fprintd versions and drivers, so require the explicit success string in
-    # its output rather than trusting $?.
-    case "$out" in
-        *verify-match*) exit 0 ;;
-    esac
-
-    # 124 is timeout(1) killing the scan: no finger ever arrived. Another
-    # attempt would just wait the same again, so give up instead of stalling
-    # ssh for ATTEMPTS x SCAN_TIMEOUT.
-    if [ "$status" -eq 124 ]; then
-        break
-    fi
-
-    # Any other verify-* result is a bad read worth re-pressing for:
-    # verify-no-match, verify-retry-scan-too-short, verify-finger-not-centered,
-    # verify-remove-and-retry. Anything that is not a verify result at all --
-    # reader busy, fprintd not running, a D-Bus error -- will not fix itself,
-    # so deny immediately rather than spinning against a broken reader.
-    case "$out" in
-        # A verify that got killed rather than finishing -- Ctrl-C on a hanging
-        # push, or an earlier timeout -- leaves the reader claimed, and fprintd
-        # needs a moment to notice the peer is gone. Until then every attempt
-        # fails with AlreadyInUse, so wait it out instead of denying.
-        *AlreadyInUse*)
-            sleep 2
-            attempt=$((attempt + 1))
-            ;;
-        *verify-*) attempt=$((attempt + 1)) ;;
-        *) break ;;
-    esac
-done
-
-exit 1
+exec timeout 60 fprintd-verify -f any
