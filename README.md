@@ -186,7 +186,7 @@ name, so they are a denylist.
 
 `laptop()` deploys the pieces for a per-use gate instead:
 
-* `/usr/local/bin/ssh-askpass-fprint` <-- root-owned `SSH_ASKPASS` helper; allows three touches over at most 30 seconds and exits 0/1
+* `/usr/local/bin/ssh-askpass-fprint` <-- root-owned `SSH_ASKPASS` helper; allows one touch and force-stops a stale prompt after at most 11 seconds
 * `/etc/systemd/user/ssh-agent.service.d/fprint-askpass.conf` <-- points the agent at it with `SSH_ASKPASS_REQUIRE=force`
 
 The remaining half is **not** in this repo, because `~/.ssh/config` is not
