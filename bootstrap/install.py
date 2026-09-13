@@ -124,6 +124,7 @@ def laptop():
         'mermaid-cli', # diagrams for github repo README's
         'thunderbird',
         'veracrypt',
+        'wireless-regdb', # tells the kernel/driver which channels, transmit-power limits, and DFS rules apply for each country.
         'ventoy-bin', # Tool for creating bootable USB drives with multiple ISOs.
         'gocryptfs',
         'papirus-icon-theme',  # Icon theme
