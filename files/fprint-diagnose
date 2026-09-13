@@ -1,0 +1,196 @@
+#!/bin/bash
+# Measure fingerprint verification reliability without changing enrolled prints.
+#
+# Goodix MOC readers perform matching inside the sensor and do not expose raw
+# fingerprint images to libfprint. The useful diagnostics available to us are
+# therefore repeated match results, response times, and the limited quality /
+# coverage messages that the driver may have written while enrolling.
+
+set -uo pipefail
+
+readonly DEFAULT_ATTEMPTS=10
+readonly MAX_ATTEMPTS=100
+readonly VERIFY_TIMEOUT=15
+readonly JOURNAL_WINDOW='30 days ago'
+
+usage() {
+    cat <<'EOF'
+Usage: fprint-diagnose [ATTEMPTS]
+
+Run repeated, non-destructive fingerprint verifications and summarize recent
+fprintd quality diagnostics. ATTEMPTS defaults to 10 and must be from 1 to 100.
+EOF
+}
+
+die() {
+    printf 'fprint-diagnose: %s\n' "$*" >&2
+    exit 1
+}
+
+case ${1:-} in
+    -h|--help)
+        usage
+        exit 0
+        ;;
+esac
+
+(( $# <= 1 )) || {
+    usage >&2
+    exit 2
+}
+
+attempts=${1:-$DEFAULT_ATTEMPTS}
+[[ $attempts =~ ^[0-9]+$ ]] || die 'ATTEMPTS must be an integer from 1 to 100'
+(( attempts >= 1 && attempts <= MAX_ATTEMPTS )) || \
+    die 'ATTEMPTS must be an integer from 1 to 100'
+
+for command in fprintd-list fprintd-verify timeout; do
+    command -v "$command" >/dev/null 2>&1 || die "required command not found: $command"
+done
+
+user_name=${USER:-}
+[[ -n $user_name ]] || user_name=$(id -un) || die 'could not determine the current user'
+
+printf 'Fingerprint diagnostic for %s\n\n' "$user_name"
+
+if command -v pacman >/dev/null 2>&1; then
+    pacman -Q fprintd libfprint 2>/dev/null || true
+    printf '\n'
+fi
+
+if ! device_info=$(fprintd-list "$user_name" 2>&1); then
+    printf '%s\n' "$device_info" >&2
+    die 'could not query the fingerprint reader or enrolled prints'
+fi
+
+printf '%s\n\n' "$device_info"
+if ! grep -q '^ - #[0-9][0-9]*:' <<<"$device_info"; then
+    die 'no enrolled fingerprints found for the current user'
+fi
+
+if [[ $device_info == *MOC* ]]; then
+    cat <<'EOF'
+This is a match-on-chip (MOC) reader. It does not send raw fingerprint pixels
+to Linux, so libfprint's img-capture example cannot produce a PGM image for it.
+This test measures the information the reader does expose.
+
+EOF
+fi
+
+matches=0
+no_matches=0
+timeouts=0
+errors=0
+total_ms=0
+
+for (( attempt = 1; attempt <= attempts; attempt++ )); do
+    printf '[%d/%d] Lift your finger, press Enter, then touch the reader when prompted: ' \
+        "$attempt" "$attempts"
+    IFS= read -r _ || die 'input ended before the test completed'
+
+    started_ns=$(date +%s%N)
+    if verify_output=$(timeout --foreground "$VERIFY_TIMEOUT" \
+        fprintd-verify -f any "$user_name" 2>&1); then
+        verify_status=0
+    else
+        verify_status=$?
+    fi
+    finished_ns=$(date +%s%N)
+    elapsed_ms=$(( (finished_ns - started_ns) / 1000000 ))
+    total_ms=$(( total_ms + elapsed_ms ))
+
+    case $verify_status in
+        0)
+            result=match
+            matches=$(( matches + 1 ))
+            ;;
+        124)
+            result=timeout
+            timeouts=$(( timeouts + 1 ))
+            ;;
+        *)
+            if grep -q 'verify-no-match' <<<"$verify_output"; then
+                result=no-match
+                no_matches=$(( no_matches + 1 ))
+            else
+                result="error (exit $verify_status)"
+                errors=$(( errors + 1 ))
+            fi
+            ;;
+    esac
+
+    printf '       %-14s %d.%03ds\n' "$result" \
+        "$(( elapsed_ms / 1000 ))" "$(( elapsed_ms % 1000 ))"
+    if [[ $result == error* ]]; then
+        sed 's/^/       | /' <<<"$verify_output" >&2
+    fi
+done
+
+match_percent=$(awk -v matched="$matches" -v total="$attempts" \
+    'BEGIN { printf "%.1f", 100 * matched / total }')
+average_ms=$(( total_ms / attempts ))
+
+cat <<EOF
+
+Verification summary
+  matches:       $matches/$attempts ($match_percent%)
+  no-matches:    $no_matches
+  timeouts:      $timeouts
+  other errors:  $errors
+  average time:  $(( average_ms / 1000 )).$(printf '%03d' "$(( average_ms % 1000 ))")s
+EOF
+
+printf '\nRecent driver diagnostics (%s)\n' "$JOURNAL_WINDOW"
+if ! command -v journalctl >/dev/null 2>&1; then
+    printf '  unavailable: journalctl is not installed\n'
+elif ! journal_output=$(journalctl -u fprintd --since "$JOURNAL_WINDOW" \
+    --no-pager --quiet --output=cat 2>/dev/null); then
+    printf '  unavailable: the fprintd journal could not be read\n'
+else
+    poor_samples=0
+    quality_failures=0
+    coverage_failures=0
+    overlap_failures=0
+    capture_failures=0
+    historic_matches=0
+    historic_no_matches=0
+
+    while IFS= read -r line; do
+        if [[ $line =~ Capture\ sample\ poor\ quality\(([0-9]+)\):\ ([0-9]+)\ or\ coverage\(([0-9]+)\):\ ([0-9]+) ]]; then
+            quality_required=${BASH_REMATCH[1]}
+            quality_actual=${BASH_REMATCH[2]}
+            coverage_required=${BASH_REMATCH[3]}
+            coverage_actual=${BASH_REMATCH[4]}
+            poor_samples=$(( poor_samples + 1 ))
+            (( quality_actual < quality_required )) && \
+                quality_failures=$(( quality_failures + 1 ))
+            (( coverage_actual < coverage_required )) && \
+                coverage_failures=$(( coverage_failures + 1 ))
+        elif [[ $line == *'Sample overlapping ratio is too High'* ]]; then
+            overlap_failures=$(( overlap_failures + 1 ))
+        elif [[ $line == *'Capture sample failed'* ]]; then
+            capture_failures=$(( capture_failures + 1 ))
+        elif [[ $line == *'report_verify_status: result verify-match'* ]]; then
+            historic_matches=$(( historic_matches + 1 ))
+        elif [[ $line == *'report_verify_status: result verify-no-match'* ]]; then
+            historic_no_matches=$(( historic_no_matches + 1 ))
+        fi
+    done <<<"$journal_output"
+
+    if (( poor_samples + overlap_failures + capture_failures + historic_matches + historic_no_matches == 0 )); then
+        printf '  no detailed entries found; fprintd debug logging may not be enabled\n'
+    else
+        printf '  rejected enrollment samples: %d\n' "$poor_samples"
+        printf '    below quality threshold:    %d\n' "$quality_failures"
+        printf '    below coverage threshold:   %d\n' "$coverage_failures"
+        printf '  excessive-overlap samples:    %d\n' "$overlap_failures"
+        printf '  generic capture failures:     %d\n' "$capture_failures"
+        printf '  verification scan results:    %d match, %d no-match\n' \
+            "$historic_matches" "$historic_no_matches"
+    fi
+fi
+
+if (( errors > 0 )); then
+    printf '\nThe test completed with verifier errors; see the output above.\n' >&2
+    exit 1
+fi

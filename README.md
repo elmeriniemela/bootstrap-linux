@@ -142,11 +142,26 @@ Check the reader is supported *before* expecting any of it to work:
 
 Enroll (as your own user, **not** with `sudo` -- enrollment is per-user):
 
-* `fprintd-enroll` <-- touch the reader ~5 times when prompted
+* `fprintd-enroll` <-- touch the reader repeatedly until enrollment completes
 * `fprintd-enroll -f left-index-finger` <-- repeat for any extra fingers
 * `fprintd-verify` <-- confirm a scan matches before relying on it
 * `fprintd-list $USER` <-- show which fingers are enrolled
 * `fprintd-delete $USER` <-- wipe enrollment and start over
+
+Measure reliability without changing the enrolled print:
+
+* `fprint-diagnose` <-- run 10 prompted verification attempts and report the match rate
+* `fprint-diagnose 20` <-- choose a larger sample
+
+The Goodix `27c6:6594` is a match-on-chip (MOC) reader. It performs matching
+inside the sensor and does not expose raw fingerprint pixels to libfprint, so
+the upstream [`examples/img-capture`](https://gitlab.freedesktop.org/libfprint/libfprint/-/blob/master/examples/img-capture.c)
+program cannot produce a `.pgm` image for this device. Advice about inspecting
+images or changing swipe speed applies to image-based swipe readers, not this
+press-type Goodix reader. `fprint-diagnose` instead reports match/no-match
+results, response times, and any quality/coverage failures available in the
+fprintd journal. The journal section can be empty when debug logging was not
+enabled during enrollment.
 
 Notes:
 
