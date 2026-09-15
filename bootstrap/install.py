@@ -102,16 +102,6 @@ def laptop(hyprland_config_dir=None):
     else:
         os.symlink(hyprland_config_dir, config_link)
 
-    local_bin = _path('~/.local/bin')
-    os.makedirs(local_bin, exist_ok=True)
-    native_app_link = os.path.join(local_bin, 'hypr-native-app')
-    native_app = os.path.join(hyprland_config_dir, 'bin', 'native-app')
-    if os.path.lexists(native_app_link):
-        if not os.path.islink(native_app_link) or os.path.realpath(native_app_link) != native_app:
-            raise FileExistsError(f'Refusing to replace existing launcher: {native_app_link}')
-    else:
-        os.symlink(native_app, native_app_link)
-
     applications_dir = _path('~/.local/share/applications')
     os.makedirs(applications_dir, exist_ok=True)
     for filename in os.listdir(os.path.join(hyprland_config_dir, 'applications')):
@@ -125,15 +115,13 @@ def laptop(hyprland_config_dir=None):
             raise FileExistsError(f'Refusing to replace existing desktop entry: {destination}')
         os.symlink(source, destination)
 
-    portal_dir = _path('~/.config/xdg-desktop-portal')
-    os.makedirs(portal_dir, exist_ok=True)
-    portal_link = os.path.join(portal_dir, 'hyprland-portals.conf')
-    portal_config = os.path.join(hyprland_config_dir, 'hyprland-portals.conf')
-    if os.path.lexists(portal_link):
-        if not os.path.islink(portal_link) or os.path.realpath(portal_link) != portal_config:
-            raise FileExistsError(f'Refusing to replace existing portal configuration: {portal_link}')
+    waybar_link = _path('~/.config/waybar')
+    waybar_config = os.path.join(hyprland_config_dir, 'waybar')
+    if os.path.lexists(waybar_link):
+        if os.path.realpath(waybar_link) != waybar_config:
+            raise FileExistsError(f'Refusing to replace existing Waybar configuration: {waybar_link}')
     else:
-        os.symlink(portal_config, portal_link)
+        os.symlink(waybar_config, waybar_link)
 
     _packages([
         'alacritty', # Fast, GPU-accelerated terminal emulator written in Rust.
@@ -142,6 +130,7 @@ def laptop(hyprland_config_dir=None):
         'hyprlock', # Native Hyprland lock screen.
         'hypridle', # Idle and DPMS management.
         'hyprpaper', # Wallpaper service.
+        'hyprshutdown', # Hyprland-native session shutdown helper.
         'hyprpolkitagent', # Native authentication agent.
         'xdg-desktop-portal-hyprland', # Screen sharing and portal integration.
         'xdg-desktop-portal-gtk', # Native GTK file chooser portal.
@@ -350,6 +339,10 @@ def laptop(hyprland_config_dir=None):
     ], try_now=True)
 
     _run([
+        'systemctl --user enable waybar.service',
+        'systemctl --user enable hyprpaper.service',
+        'systemctl --user enable hypridle.service',
+        'systemctl --user enable hyprpolkitagent.service',
         'systemctl --user enable --now ssh-agent.service', # no sudo! https://wiki.archlinux.org/title/SSH_keys#Start_ssh-agent_with_systemd_user
         'systemctl --user daemon-reload', # pick up fprint-askpass.conf drop-in
     ])

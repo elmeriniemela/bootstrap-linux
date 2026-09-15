@@ -1,7 +1,5 @@
 
-import json
 import os
-import subprocess
 from functools import partial
 
 from .lib import (
@@ -12,43 +10,6 @@ from .lib import (
     _aur,
     api,
 )
-
-
-@api
-def monitor():
-    '''Place the largest external monitor above the laptop screen.'''
-    monitors = json.loads(subprocess.check_output(
-        ['hyprctl', 'monitors', '-j'],
-        text=True,
-    ))
-    laptop = next((monitor for monitor in monitors
-                   if monitor['name'].startswith(('eDP-', 'LVDS-'))), None)
-    externals = [monitor for monitor in monitors if monitor is not laptop]
-
-    if laptop is None:
-        raise RuntimeError('Laptop screen not found')
-    if not externals:
-        raise RuntimeError('External monitor not found')
-
-    external = max(externals, key=lambda monitor:
-                   monitor['physicalWidth'] * monitor['physicalHeight'])
-    subprocess.run([
-        'hyprctl', 'eval', f'''
-hl.monitor({{
-    output = "{external['name']}",
-    mode = "preferred",
-    position = "0x0",
-    scale = 1,
-}})
-hl.monitor({{
-    output = "{laptop['name']}",
-    mode = "preferred",
-    position = "auto-center-down",
-    scale = 1,
-}})
-''',
-    ], check=True)
-
 
 @api
 def mirrors():
