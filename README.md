@@ -54,8 +54,8 @@ def odoo(branch, odoo_installs_dir='~/Odoo/src', enterprise=True):
 def odoo_tests(db_name, modules=None):
     Run odoo tests
 
-def monitor(hyprland_config_dir=None):
-    Reload and validate the configured Hyprland monitor layout
+def monitor():
+    Place the largest external monitor above the laptop screen
 
 def mirrors():
     Update mirrors

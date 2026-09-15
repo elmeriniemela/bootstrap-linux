@@ -68,6 +68,10 @@ FAIL_MARKER = 'SMOKE_SHOULD_FAIL'
 CANNED_OUTPUT = (
     ('MemTotal', '32768000\n'),        # config.swapfile() does int() on this
     ('pacman -Qqe', 'coreutils\nbash\n'),  # _installed_packages()
+    ('hyprctl monitors -j', '''[
+        {"name": "eDP-1", "physicalWidth": 310, "physicalHeight": 170},
+        {"name": "DP-1", "physicalWidth": 620, "physicalHeight": 340}
+    ]'''),
 )
 
 # Variables the code reads out of the environment. Normally exported by the
@@ -275,7 +279,7 @@ def main():
                             mock.patch(
                                 'os.path.isfile',
                                 side_effect=lambda path: True if str(path).endswith(
-                                    ('hyprland.lua', 'monitor-layout')
+                                    ('hyprland.lua',)
                                 ) else isfile,
                             ), \
                             mock.patch('os.path.isdir', return_value=isdir), \

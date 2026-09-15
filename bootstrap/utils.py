@@ -1,4 +1,5 @@
 
+import json
 import os
 import subprocess
 from functools import partial
@@ -14,20 +15,40 @@ from .lib import (
 
 
 @api
-def monitor(hyprland_config_dir=None):
-    '''Reload and validate the configured Hyprland monitor layout.'''
-    hyprland_config_dir = hyprland_config_dir or os.environ.get(
-        'HYPRLAND_CONFIG_DIR',
-        _path('~/.config/hypr'),
-    )
-    monitor_script = os.path.join(
-        os.path.realpath(_path(hyprland_config_dir)),
-        'bin',
-        'monitor-layout',
-    )
-    if not os.path.isfile(monitor_script):
-        raise FileNotFoundError(f'Hyprland monitor helper not found: {monitor_script}')
-    subprocess.run([monitor_script], check=True)
+def monitor():
+    '''Place the largest external monitor above the laptop screen.'''
+    monitors = json.loads(subprocess.check_output(
+        ['hyprctl', 'monitors', '-j'],
+        text=True,
+    ))
+    laptop = next((monitor for monitor in monitors
+                   if monitor['name'].startswith(('eDP-', 'LVDS-'))), None)
+    externals = [monitor for monitor in monitors if monitor is not laptop]
+
+    if laptop is None:
+        raise RuntimeError('Laptop screen not found')
+    if not externals:
+        raise RuntimeError('External monitor not found')
+
+    external = max(externals, key=lambda monitor:
+                   monitor['physicalWidth'] * monitor['physicalHeight'])
+    subprocess.run([
+        'hyprctl', 'eval', f'''
+hl.monitor({{
+    output = "{external['name']}",
+    mode = "preferred",
+    position = "0x0",
+    scale = 1,
+}})
+hl.monitor({{
+    output = "{laptop['name']}",
+    mode = "preferred",
+    position = "auto-center-down",
+    scale = 1,
+}})
+''',
+    ], check=True)
+
 
 @api
 def mirrors():
