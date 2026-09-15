@@ -102,8 +102,8 @@ def link_agentmd():
 def distro():
     Base setup. Use laptop() or server() after this.
 
-def laptop(hyprland_config_dir=None):
-    Setup an Arch Linux laptop with the local Hyprland configuration
+def laptop():
+    Setup an Arch Linux laptop using the Hyprland config in ~/.config/hypr
 
 def nvidia_prime():
     Install nvidia prime
@@ -254,5 +254,4 @@ root-owned service holding the timestamp and doing the fprintd verification
 itself, so grants cannot be forged.
 
 The laptop setup expects the Hyprland configuration repository at
-`~/.config/hypr`. Pass another directory to `laptop()` or set
-`HYPRLAND_CONFIG_DIR` when using a different checkout layout.
+`~/.config/hypr`.

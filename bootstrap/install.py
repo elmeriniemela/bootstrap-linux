@@ -78,29 +78,12 @@ def distro():
 
 
 @api
-def laptop(hyprland_config_dir=None):
-    """Setup an Arch Linux laptop with the local Hyprland configuration."""
-    hyprland_config_dir = hyprland_config_dir or os.environ.get(
-        'HYPRLAND_CONFIG_DIR',
-        _path('~/.config/hypr'),
-    )
-    hyprland_config_dir = os.path.realpath(_path(hyprland_config_dir))
+def laptop():
+    """Setup an Arch Linux laptop using the Hyprland config in ~/.config/hypr."""
+    hyprland_config_dir = _path('~/.config/hypr')
     hyprland_config = os.path.join(hyprland_config_dir, 'hyprland.lua')
     if not os.path.isfile(hyprland_config):
-        raise FileNotFoundError(
-            f'Hyprland configuration not found: {hyprland_config}. '
-            'Pass its directory to laptop() or set HYPRLAND_CONFIG_DIR.'
-        )
-
-    config_link = _path('~/.config/hypr')
-    os.makedirs(os.path.dirname(config_link), exist_ok=True)
-    if os.path.lexists(config_link):
-        if os.path.realpath(config_link) != hyprland_config_dir:
-            raise FileExistsError(
-                f'Refusing to replace existing Hyprland configuration: {config_link}'
-            )
-    else:
-        os.symlink(hyprland_config_dir, config_link)
+        raise FileNotFoundError(f'Hyprland configuration not found: {hyprland_config}')
 
     applications_dir = _path('~/.local/share/applications')
     os.makedirs(applications_dir, exist_ok=True)
