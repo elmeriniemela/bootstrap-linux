@@ -54,8 +54,8 @@ def odoo(branch, odoo_installs_dir='~/Odoo/src', enterprise=True):
 def odoo_tests(db_name, modules=None):
     Run odoo tests
 
-def monitor(reverse=0):
-    Autoconfigure dual monitor with xrandr
+def monitor(hyprland_config_dir=None):
+    Reload and validate the configured Hyprland monitor layout
 
 def mirrors():
     Update mirrors
@@ -105,8 +105,8 @@ def link_agentmd():
 def distro():
     Base setup. Use laptop() or server() after this.
 
-def laptop():
-    Setup archinstall laptop
+def laptop(hyprland_config_dir=None):
+    Setup an Arch Linux laptop with the local Hyprland configuration
 
 def nvidia_prime():
     Install nvidia prime
@@ -271,3 +271,6 @@ itself, so grants cannot be forged.
 * Application that better handles screen shutdown
 * Firefox Google Meets share screen select sreen
 * Copyq force center of screen and size
+The laptop setup expects the Hyprland configuration repository at
+`~/.config/hypr`. Pass another directory to `laptop()` or set
+`HYPRLAND_CONFIG_DIR` when using a different checkout layout.

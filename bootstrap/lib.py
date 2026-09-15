@@ -161,45 +161,6 @@ def _copy(files_dict, owner='root', group='root', mode='644'):
             f'{prepend}install -D -o {owner} -g {group} -m {mode} {os.path.join(FILES_DIR, fname)} {dest_path}'
         ])
 
-class _Monitor():
-    def __init__(self, name, width=0, height=0, x=0, y=0, off=False):
-        self.name = name
-        self.width = int(width)
-        self.height = int(height)
-        self.x = int(x)
-        self.y = int(y)
-        self.off = off
-        self.primary = False
-
-    def __eq__(self, other):
-        return self.width == other.width
-
-    def __ne__(self, other):
-        return self.width != other.width
-
-    def __gt__(self, other):
-        return self.width > other.width
-
-    def __ge__(self, other):
-        return self.width >= other.width
-
-    def __lt__(self, other):
-        return self.width < other.width
-
-    def __le__(self, other):
-        return self.width <= other.width
-
-
-    def __str__(self):
-        if self.off:
-            return f'--output {self.name} --off'
-        prim_flag = ' --primary' if self.primary else ''
-        return f'--output {self.name}{prim_flag} --mode {self.width}x{self.height} --pos {self.x}x{self.y}'
-
-    def __repr__(self):
-        return f'_Monitor(name={self.name!r}, width={self.width!r}, height={self.height!r}, x={self.x!r}, y={self.y!r}, off={self.off!r})'
-
-
 def api(func):
     func._api = True
     return func

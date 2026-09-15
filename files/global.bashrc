@@ -109,10 +109,6 @@ alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
 alias np='nano -w PKGBUILD'
 alias more=less
-alias feh="feh --scale-down --auto-zoom"
-
-xhost +local:root > /dev/null 2>&1
-
 complete -cf sudo
 
 # Bash won't get SIGWINCH if another process is in the foreground.
@@ -211,7 +207,7 @@ complete -o nospace -F _venv_completer activate
 
 
 ssh_clipboard(){
-    cat ~/.ssh/$1 | xclip -selection clipboard
+    wl-copy < "$HOME/.ssh/$1"
 }
 
 

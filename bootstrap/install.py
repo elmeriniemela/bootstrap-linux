@@ -1,6 +1,5 @@
 
 import os
-import shutil
 
 from .lib import (
     _path,
@@ -79,33 +78,92 @@ def distro():
 
 
 @api
-def laptop():
-    "Setup archinstall laptop"
-    if not os.path.exists(_path('~/.config/awesome/.git')):
-        awesome_path = _path('~/.config/awesome')
-        shutil.rmtree(awesome_path, ignore_errors=True)
-        os.makedirs(awesome_path)
-        os.chdir(awesome_path)
-        _run([
-            f'git clone --recursive https://github.com/elmeriniemela/awesome-config.git {awesome_path}',
-        ])
+def laptop(hyprland_config_dir=None):
+    """Setup an Arch Linux laptop with the local Hyprland configuration."""
+    hyprland_config_dir = hyprland_config_dir or os.environ.get(
+        'HYPRLAND_CONFIG_DIR',
+        _path('~/.config/hypr'),
+    )
+    hyprland_config_dir = os.path.realpath(_path(hyprland_config_dir))
+    hyprland_config = os.path.join(hyprland_config_dir, 'hyprland.lua')
+    if not os.path.isfile(hyprland_config):
+        raise FileNotFoundError(
+            f'Hyprland configuration not found: {hyprland_config}. '
+            'Pass its directory to laptop() or set HYPRLAND_CONFIG_DIR.'
+        )
 
+    config_link = _path('~/.config/hypr')
+    os.makedirs(os.path.dirname(config_link), exist_ok=True)
+    if os.path.lexists(config_link):
+        if os.path.realpath(config_link) != hyprland_config_dir:
+            raise FileExistsError(
+                f'Refusing to replace existing Hyprland configuration: {config_link}'
+            )
+    else:
+        os.symlink(hyprland_config_dir, config_link)
+
+    local_bin = _path('~/.local/bin')
+    os.makedirs(local_bin, exist_ok=True)
+    native_app_link = os.path.join(local_bin, 'hypr-native-app')
+    native_app = os.path.join(hyprland_config_dir, 'bin', 'native-app')
+    if os.path.lexists(native_app_link):
+        if not os.path.islink(native_app_link) or os.path.realpath(native_app_link) != native_app:
+            raise FileExistsError(f'Refusing to replace existing launcher: {native_app_link}')
+    else:
+        os.symlink(native_app, native_app_link)
+
+    applications_dir = _path('~/.local/share/applications')
+    os.makedirs(applications_dir, exist_ok=True)
+    for filename in os.listdir(os.path.join(hyprland_config_dir, 'applications')):
+        if not filename.endswith('.desktop'):
+            continue
+        source = os.path.join(hyprland_config_dir, 'applications', filename)
+        destination = os.path.join(applications_dir, filename)
+        if os.path.lexists(destination):
+            if os.path.islink(destination) and os.path.realpath(destination) == source:
+                continue
+            raise FileExistsError(f'Refusing to replace existing desktop entry: {destination}')
+        os.symlink(source, destination)
+
+    portal_dir = _path('~/.config/xdg-desktop-portal')
+    os.makedirs(portal_dir, exist_ok=True)
+    portal_link = os.path.join(portal_dir, 'hyprland-portals.conf')
+    portal_config = os.path.join(hyprland_config_dir, 'hyprland-portals.conf')
+    if os.path.lexists(portal_link):
+        if not os.path.islink(portal_link) or os.path.realpath(portal_link) != portal_config:
+            raise FileExistsError(f'Refusing to replace existing portal configuration: {portal_link}')
+    else:
+        os.symlink(portal_config, portal_link)
 
     _packages([
         'alacritty', # Fast, GPU-accelerated terminal emulator written in Rust.
-        'awesome', # Highly configurable, lightweight window manager.
-        'betterlockscreen', # Customizable lock screen for i3 window manager.
+        'hyprland', # Dynamic tiling Wayland compositor.
+        'waybar', # Status and task bars for Wayland.
+        'hyprlock', # Native Hyprland lock screen.
+        'hypridle', # Idle and DPMS management.
+        'hyprpaper', # Wallpaper service.
+        'hyprpolkitagent', # Native authentication agent.
+        'xdg-desktop-portal-hyprland', # Screen sharing and portal integration.
+        'xdg-desktop-portal-gtk', # Native GTK file chooser portal.
+        'qt5-wayland', # Native Wayland support for Qt 5 applications.
+        'qt6-wayland', # Native Qt 6 Wayland platform support.
+        'wl-clipboard', # Native Wayland clipboard commands.
+        'cliphist', # Clipboard history.
+        'brightnessctl', # Backlight control under Wayland.
+        'grim', # Wayland screenshots.
+        'slurp', # Screenshot region selection.
+        'satty', # Screenshot annotation.
+        'blueman', # Bluetooth manager and tray applet.
+        'inter-font', # UI font used by Waybar and Hyprlock.
+        'libnotify', # notify-send for session feedback.
         'brave-bin', # Privacy-focused web browser with built-in ad-blocker.
         'cloc', # Counts lines of code in various programming languages.
-        'default-cursors', # Default cursor set for X11 environments.
-        'xfce4-clipman-plugin',
+        'default-cursors', # Default cursor theme fallback.
         'xdg-utils', # xdg-open command for opening file with default app
         'rofi',
-        'tlp',
         'rofi-calc',
-        'picom',
         'signal-desktop',
-        # 'slack-desktop', # Slack client for team communication.
+        'slack-desktop', # Slack client for team communication.
         'udisks2',
         'gvfs',  # For automount
         'udiskie',  # For automount
@@ -132,7 +190,6 @@ def laptop():
         'tumbler', # thunar image thumbnails
         'firefox', # Mozilla Firefox web browser.
         'ffmpegthumbnailer', # thunar video thumbnails
-        'flameshot',
         'fontconfig', # Library for configuring and managing fonts.
         'font-manager', # GUI for managing and previewing fonts.
         'fprintd', # Fingerprint reader daemon + pam_fprintd.so (Goodix MOC reader on T14 Gen 5).
@@ -153,7 +210,6 @@ def laptop():
         'pipewire-session-manager', # Session manager for PipeWire.
         'pipewire-zeroconf', # Zeroconf (mDNS) support for PipeWire.
         'polkit',  # privilege escalation
-        'lxsession',  # privilege escalation gui 'auth agent' (we run lxpolkit)
         'postgresql', # PostgreSQL database server.
         'postgresql-libs', # Libraries for PostgreSQL client applications.
         'postgresql-old-upgrade', # Tools for upgrading older PostgreSQL databases.
@@ -166,7 +222,6 @@ def laptop():
         # 'networkmanager-qt5', # Qt5 bindings for NetworkManager.
         'networkmanager-vpnc', # VPNC plugin for NetworkManager.
         'nm-connection-editor', # GUI for editing NetworkManager connections.
-        'arandr', # GUI for managing screen resolution and layout (XRandR frontend).
         'laptop-detect', # Tool to detect if the system is a laptop.
         'lxappearance', # GUI for customizing GTK themes and appearance.
         'tlp', # Power management tool for laptops.
@@ -178,7 +233,6 @@ def laptop():
         'sshuttle', # Transparent proxy server for VPN-like SSH tunneling.
         'wireplumber', # Session and policy manager for PipeWire multimedia server.
         'xarchiver', # Lightweight archive manager with GUI.
-        'xclip', # Command-line tool for copying/pasting to X11 clipboard.
         'xdg-user-dirs', # Tool for managing standard user directories (e.g., Desktop, Documents).
         'xmlsec', # Library for XML encryption and digital signatures.
         'yt-dlp', # Tool for downloading videos from YouTube and other sites.
@@ -223,8 +277,6 @@ def laptop():
         'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
         'discord',
         'dunst', # A highly configurable and lightweight notification daemon.
-        'feh',
-        'xorg-xkill', # Kill a client by its X resource modKey + Escape
         'xfce4-taskmanager', # CTRL+SHIFT+ESC
         'nomacs', # nomacs is a free, open source image viewer
         'gparted', # graphical partition tool
@@ -234,17 +286,12 @@ def laptop():
     ])
 
     _aur([
-        'blueberry', # Bluetooth configuration tool with a GUI.
-        'acpilight', # Backlight control for laptops and desktops, replacing xbacklight.
-        'xautolock', # An automatic X screen-locker/screen-saver
-        'archlinux-logout-git', # Custom logout scripts for Arch Linux.
-        'arcolinux-logout',
         'wkhtmltopdf-bin', # Tool for converting HTML to PDF using WebKit (binary).
     ])
 
     # NOTE: this must run AFTER _packages/_aur above. Several of these paths are
-    # package-owned (upower ships /etc/UPower/UPower.conf, i3lock-color ships
-    # /etc/pam.d/i3lock), so deploying them before pacman installs those
+    # package-owned (upower ships /etc/UPower/UPower.conf, hyprlock ships
+    # /etc/pam.d/hyprlock), so deploying them before pacman installs those
     # packages means pacman silently overwrites our version with its default.
     # That is exactly how the custom UPower battery thresholds got lost.
     # _copy, never _link: everything here is root-owned config under /etc, and a
@@ -252,23 +299,26 @@ def laptop():
     # elmeri rewrite config that root executes -- udev rules and PAM auth stacks
     # most of all. Tradeoff: editing files/ no longer takes effect immediately,
     # so re-run this to redeploy.
+    _run([
+        'sudo rm -f /etc/sddm.conf.d/awesome_sddm.conf',
+        'sudo rm -f /etc/X11/xorg.conf.d/30-touchpad.conf',
+        'sudo rm -f /etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
+    ])
     _copy({
         # 'elmeri': '/var/lib/AccountsService/users/elmeri',
         # 'elmeri.png': '/var/lib/AccountsService/icons/elmeri',
-        # '99-disable-sleep.sh': '/etc/X11/xinit/xinitrc.d/99-disable-sleep.sh',
         'backlight.rules': '/etc/udev/rules.d/backlight.rules',
         'hosts': '/etc/hosts',
-        '30-touchpad.conf': '/etc/X11/xorg.conf.d/30-touchpad.conf',
         'environment': '/etc/environment',
         'UPower.conf': '/etc/UPower/UPower.conf',
-        'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
+        'hyprland_sddm.conf': '/etc/sddm.conf.d/hyprland.conf',
 
         # Fingerprint auth (pam_fprintd.so). Each of these is the distro default
         # plus one 'auth sufficient' line, which must sit above the include so
         # PAM reaches it before pam_unix prompts for a password.
         'sudo': '/etc/pam.d/sudo',
         'polkit-1': '/etc/pam.d/polkit-1',
-        'i3lock': '/etc/pam.d/i3lock',
+        'hyprlock': '/etc/pam.d/hyprlock',
 
         # Fingerprint gate on every ssh-agent key use. Paired with
         # 'AddKeysToAgent confirm' in ~/.ssh/config, which is what makes
@@ -291,7 +341,6 @@ def laptop():
         ])
     except:  # pragma: no cover - groups/rules may already be set up
         pass
-
     _enable([
         'NetworkManager',
         'bluetooth',
@@ -387,4 +436,3 @@ def server():
 
 
     _enable(['nginx', 'php-fpm'])
-

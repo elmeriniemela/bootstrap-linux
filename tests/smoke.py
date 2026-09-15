@@ -9,9 +9,7 @@ A function passes if it runs to completion.
 
 Nothing touches the real system. subprocess is stubbed, and so are the handful
 of calls that would otherwise mutate the filesystem directly -- os.makedirs,
-os.chdir, shutil.rmtree and writes through open(). That last group matters:
-laptop() calls shutil.rmtree() on ~/.config/awesome, so running this unmocked
-would delete a real config.
+os.symlink, os.chdir, shutil.rmtree and writes through open().
 
 Every api function runs once per entry in PASSES, which flips the filesystem
 predicates and the euid to reach the "already installed / not yet installed"
@@ -34,7 +32,6 @@ import contextlib
 import importlib
 import inspect
 import io
-import operator
 import os
 import subprocess
 import sys
@@ -66,21 +63,10 @@ PASSES = (
 # how the error handling inside _run() gets exercised.
 FAIL_MARKER = 'SMOKE_SHOULD_FAIL'
 
-# Fake xrandr output: two connected monitors plus one disconnected, so
-# monitor() walks both the len(connected) == 2 branch and the disconnected one.
-FAKE_XRANDR = """Screen 0: minimum 320 x 200, current 3840 x 2160, maximum 16384 x 16384
-eDP-1 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 344mm x 194mm
-   1920x1080     60.05*+  59.93
-DP-1 connected 3840x2160+1920+0 (normal left inverted right x axis y axis) 600mm x 340mm
-   3840x2160     60.00*+  59.97
-HDMI-1 disconnected (normal left inverted right x axis y axis)
-"""
-
 # Only commands whose output actually gets parsed need an entry here; anything
 # else gets ''. Keep this list as short as the code allows.
 CANNED_OUTPUT = (
     ('MemTotal', '32768000\n'),        # config.swapfile() does int() on this
-    ('xrandr', FAKE_XRANDR),           # utils.monitor() parses this
     ('pacman -Qqe', 'coreutils\nbash\n'),  # _installed_packages()
 )
 
@@ -88,6 +74,7 @@ CANNED_OUTPUT = (
 # `oo` helper in global.bashrc, so they are absent in a bare shell.
 FAKE_ENV = {
     'ODOO_VERSION_DIR': '/home/smoke/Odoo/src/17.0',
+    'HYPRLAND_CONFIG_DIR': '~/.config/hypr',
 }
 
 _real_open = builtins.open
@@ -152,6 +139,8 @@ def _mocked_system():
         mock.patch('subprocess.check_call', _fake_run),
         mock.patch('os.chdir'),
         mock.patch('os.makedirs'),
+        mock.patch('os.symlink'),
+        mock.patch('os.listdir', return_value=[]),
         mock.patch('shutil.rmtree'),
         mock.patch('shutil.copytree'),
         mock.patch('builtins.open', _fake_open),
@@ -235,15 +224,6 @@ def _exercise_helpers():
     with mock.patch.dict(sys.modules, {'colorama': None}):
         lib._colors()
 
-    # sort() only needs __lt__, so the other comparisons need calling directly
-    left = lib._Monitor('eDP-1', 1920, 1080)
-    right = lib._Monitor('DP-1', 3840, 2160)
-    for compare in (operator.eq, operator.ne, operator.lt,
-                    operator.le, operator.gt, operator.ge):
-        compare(left, right)
-    repr(left)
-    str(left)
-
     # Version branches only reachable with older odoo releases
     odoo._odoo_version('master')
     odoo._branch_name('master')
@@ -292,8 +272,14 @@ def main():
                 def thunk(func=func, args=_args_for(func), exists=exists,
                           isfile=isfile, isdir=isdir, euid=euid):
                     with mock.patch('os.path.exists', return_value=exists), \
-                            mock.patch('os.path.isfile', return_value=isfile), \
+                            mock.patch(
+                                'os.path.isfile',
+                                side_effect=lambda path: True if str(path).endswith(
+                                    ('hyprland.lua', 'monitor-layout')
+                                ) else isfile,
+                            ), \
                             mock.patch('os.path.isdir', return_value=isdir), \
+                            mock.patch('os.path.lexists', return_value=False), \
                             mock.patch('os.geteuid', return_value=euid):
                         func(*args)
                 _attempt(label, thunk, failures, verbose)

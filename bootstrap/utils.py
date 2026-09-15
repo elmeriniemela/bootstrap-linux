@@ -1,10 +1,9 @@
 
+import os
 import subprocess
-import re
 from functools import partial
 
 from .lib import (
-    _Monitor,
     _path,
     _enable,
     _run,
@@ -15,51 +14,20 @@ from .lib import (
 
 
 @api
-def monitor(reverse=0):
-    '''Autoconfigure dual monitor with xrandr
-    '''
-
-    output = subprocess.check_output("xrandr -q --current", shell=True, encoding='utf-8')
-    connected_monitors = []
-    all_monitors = []
-    lines = output.splitlines()
-    for i, line in enumerate(lines):
-        match = re.findall(r'^([\w-]+) connected', line)
-        if match:
-            name = match[0]
-            # 3 tries
-            for max_res_line in lines[i+1: i+4]:
-                res_match = re.findall(r'[\s]*(\d+)x(\d+)', max_res_line)
-                if res_match:
-                    width, height = res_match[0]
-                    monitor = _Monitor(name, width, height)
-                    connected_monitors.append(monitor)
-                    all_monitors.append(monitor)
-                    break
-
-        disconnected = re.findall(r'^([\w-]+) disconnected', line)
-        for name in disconnected:
-            all_monitors.append(_Monitor(name, off=True))
-
-
-    if len(connected_monitors) == 2:
-        # Sort with ASC
-        connected_monitors.sort(reverse=bool(int(reverse)))
-        below, above = connected_monitors
-        below.primary = True
-
-        _run(['xrandr ' + ' '.join(str(m) for m in connected_monitors)])
-
-        above.x = 0
-        above.y = 0
-
-
-        below.x = above.width // 2 - below.width // 2
-        below.y = above.height
-
-    command = 'xrandr ' + ' '.join(str(m) for m in all_monitors)
-
-    _run([command])
+def monitor(hyprland_config_dir=None):
+    '''Reload and validate the configured Hyprland monitor layout.'''
+    hyprland_config_dir = hyprland_config_dir or os.environ.get(
+        'HYPRLAND_CONFIG_DIR',
+        _path('~/.config/hypr'),
+    )
+    monitor_script = os.path.join(
+        os.path.realpath(_path(hyprland_config_dir)),
+        'bin',
+        'monitor-layout',
+    )
+    if not os.path.isfile(monitor_script):
+        raise FileNotFoundError(f'Hyprland monitor helper not found: {monitor_script}')
+    subprocess.run([monitor_script], check=True)
 
 @api
 def mirrors():
@@ -116,9 +84,9 @@ def add_ssh(filename):
     _run(
         [
             f'ssh-keygen -t ed25519 -f ~/.ssh/{filename} -C {filename}',
-            f"cat {_path(f'~/.ssh/{filename}.pub')} | xclip -selection clipboard"
+            f"wl-copy < {_path(f'~/.ssh/{filename}.pub')}"
         ],
-        dependencies=partial(_packages, ['xclip'])
+        dependencies=partial(_packages, ['wl-clipboard'])
     )
 
 @api
@@ -127,8 +95,7 @@ def password(length=26):
     '''
     _run(
         [
-            f'< /dev/random tr -dc a-z0-9 | head -c{length} | xclip -selection clipboard',
+            f'< /dev/random tr -dc a-z0-9 | head -c{length} | wl-copy',
         ],
-        dependencies=partial(_packages, ['xclip'])
+        dependencies=partial(_packages, ['wl-clipboard'])
     )
-

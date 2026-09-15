@@ -1,0 +1,8 @@
+# PAM configuration for Hyprlock.
+#
+# Fingerprint authentication comes first. A successful scan authenticates;
+# failed or unavailable fingerprint authentication falls through to the normal
+# password prompt through system-local-login.
+
+auth sufficient pam_fprintd.so
+auth include system-local-login
