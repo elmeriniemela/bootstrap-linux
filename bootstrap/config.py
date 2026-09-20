@@ -56,34 +56,25 @@ def pgtune():
 
 
 @api
-def local_ufw():
-    ''' Machine with only local network connections. Use with archinstall d base installation.
-    '''
-    _enable(['ufw'], try_now=True)
-    _run([
-        'sudo ufw default deny incoming',
-        'sudo ufw default deny outgoing',
-        'sudo ufw allow out to 192.168.1.250',
-        'sudo ufw enable',
-    ])
-
-
-@api
 def secure():
     ''' Install and setup ufw and fail2ban.
     '''
     _packages(['ufw', 'fail2ban'], flags=('-S', '--needed'))
     _enable(['fail2ban', 'ufw'])
     _run([
-        # 'sudo ufw allow 22/tcp',
-        # 'sudo ufw allow 80/tcp',
-        # 'sudo ufw allow 443/tcp',
-        # 'sudo ufw allow syncthing',
+        # IPv6 local discovery is link-local multicast, not traffic from the IPv4 LAN:
+        # fe80::/10 matches auto-assigned, same-link-only IPv6 source addresses (the
+        # individual fe80:: address varies per device/network); ff12::8384 is
+        # Syncthing's fixed local-discovery multicast group. Neither is reachable
+        # from the Internet.
+        'sudo ufw allow in from fe80::/10 to ff12::8384 port 21027 proto udp',
+        'sudo ufw allow from 192.168.1.0/24 to any app syncthing',
         'sudo ufw allow from 192.168.1.0/24 to any port 22 proto tcp',
         'sudo ufw default deny incoming',
         'sudo ufw default allow outgoing',
         'sudo ufw enable',
     ])
+
 
 @api
 def swapfile(gigabytes=False):
