@@ -1,9 +1,0 @@
-# Static table lookup for hostnames.
-# See hosts(5) for details.
-127.0.0.1       localhost
-127.0.0.1       work-laptop
-::1             localhost
-127.0.1.1       arch.localdomain      arch
-127.0.1.1       local.eniemela.fi
-
-185.102.232.15	sslvpn3.decens.fi ###Cisco Secure Client - AnyConnect VPN modified this file. Please do not modify contents until this comment is removed.

@@ -18,7 +18,6 @@ sudo pip install --break-system-packages --editable .
 
 bootstrap-linux distro
 bootstrap-linux server
-bootstrap-linux dotfiles
 bootstrap-linux secure
 # bootstrap-linux swapfile 16
 

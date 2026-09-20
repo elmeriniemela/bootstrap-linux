@@ -7,7 +7,6 @@ from .lib import (
     _enable,
     _link,
     _lineinfile,
-    _copy,
     _run,
     _packages,
     _aur,
@@ -111,47 +110,6 @@ def swapfile(gigabytes=False):
         print("Swapfile already exists")
 
 @api
-def bashrc():
-    ''' Generate global bashrc
-    '''
-    if os.geteuid() == 0:
-        print("Do not run this as root")
-        return
-
-    # Root sources this too -- /root/.bashrc is deleted below -- so it has to
-    # live in a root-owned location rather than being sourced straight out of
-    # this repo. files/ is writable by elmeri and /etc/bash.bashrc is read by
-    # every interactive root shell (`sudo -i`, `sudo bash`, `su -`), so an
-    # include pointing at FILES_DIR let anything running as elmeri append a line
-    # and have root execute it.
-    # Tradeoff: editing files/global.bashrc now needs `bootstrap-linux bashrc`
-    # to redeploy, instead of applying to the next shell straight away.
-    # _copy defaults to root:root 644, which is exactly the boundary we need here.
-    _copy({'global.bashrc': '/etc/bash.bashrc.local'})
-    _lineinfile({'/etc/bash.bashrc': '[ -r /etc/bash.bashrc.local ] && . /etc/bash.bashrc.local'})
-
-
-@api
-def dotfiles():
-    ''' This setups basic configuration: 1. Generate global bashrc 2. Clone dotfiles
-    '''
-    if not os.path.exists(_path('~/.dotfiles')):
-        bashrc()
-        _run([
-            'git clone --bare https://github.com/elmeriniemela/dotfiles.git $HOME/.dotfiles',
-            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset --hard',
-            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init',
-            'git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no',
-        ])
-        _run([
-            'rm -f ~/.bashrc',
-            'rm -f ~/.bash_profile',
-            'sudo rm -f /root/.bash_profile',
-            'sudo rm -f /root/.bashrc',
-        ])
-
-
-@api
 def gitconfig():
     "Enable ~/.gitconfig"
     _link({
@@ -166,4 +124,3 @@ def link_agentmd():
     _link({'skills/AGENTS.md': f'{os.getcwd()}/AGENTS.md'}, allow_sudo=False)
     _link({'skills/AGENTS.md': f'{os.getcwd()}/GEMINI.md'}, allow_sudo=False)
     _link({'skills/AGENTS.md': f'{os.getcwd()}/CLAUDE.md'}, allow_sudo=False)
-

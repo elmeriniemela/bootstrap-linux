@@ -90,23 +90,11 @@ def secure():
 def swapfile(gigabytes=False):
     Generate and enable a swapfile
 
-def bashrc():
-    Generate global bashrc
-
-def dotfiles():
-    This setups basic configuration: 1. Generate global bashrc 2. Clone dotfiles
-
 def gitconfig():
     Enable ~/.gitconfig
 
 def link_agentmd():
     Enable AGENTS.md
-
-def distro():
-    Base setup. Use laptop() or server() after this.
-
-def laptop():
-    Setup archinstall laptop
 
 def nvidia_prime():
     Install nvidia prime
