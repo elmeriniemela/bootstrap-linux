@@ -10,12 +10,6 @@ Archinstall
 * Do not copy the network configuration from ISO, instead install NetworkManager. After install, setup network
 * `nmcli device wifi connect "<SSID>" password "<password>"`
 
-Install instructions:
-
-* Laptop: `bash <(curl -sL https://eniemela.fi/api-v1/bsl)`
-* Server: `bash <(curl -sL https://eniemela.fi/api-v1/bsl?server=1)`
-
-
 Usage instructions:
 
 * `bootstrap-linux` <-- this will start the CLI-interface and print available functions
@@ -101,9 +95,6 @@ def nvidia_prime():
 
 def latex():
     Install latex
-
-def server():
-    Setup server.
 
 usage: bootstrap-linux [-h] function [arg ...]
 bootstrap-linux: error: the following arguments are required: function
