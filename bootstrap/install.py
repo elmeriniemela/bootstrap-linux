@@ -223,6 +223,7 @@ def laptop():
         'noto-fonts-emoji',  # emoji support for chromium based browsers, discord, etc
         'discord',
         'dunst', # A highly configurable and lightweight notification daemon.
+        'dconf', # Readable system defaults for GTK and portal preferences.
         'feh',
         'xorg-xkill', # Kill a client by its X resource modKey + Escape
         'xfce4-taskmanager', # CTRL+SHIFT+ESC
@@ -231,6 +232,8 @@ def laptop():
         'libreoffice-fresh',
         'vlc-plugin-ffmpeg',
         'breeze-gtk', # dark gtk theme
+        'xdg-desktop-portal', # Desktop settings portal used by modern apps.
+        'xdg-desktop-portal-gtk', # GTK implementation of the settings portal.
     ])
 
     _aur([
@@ -262,6 +265,9 @@ def laptop():
         'environment': '/etc/environment',
         'UPower.conf': '/etc/UPower/UPower.conf',
         'awesome_sddm.conf': '/etc/sddm.conf.d/awesome_sddm.conf',
+        'awesome-portals.conf': '/etc/xdg-desktop-portal/awesome-portals.conf',
+        'dconf/profile/user': '/etc/dconf/profile/user',
+        'dconf/local.d/00-settings': '/etc/dconf/db/local.d/00-settings',
 
         # Fingerprint auth (pam_fprintd.so). Each of these is the distro default
         # plus one 'auth sufficient' line, which must sit above the include so
@@ -275,6 +281,10 @@ def laptop():
         # ssh-agent call the askpass helper before each signature.
         'ssh-agent-fprint-askpass.conf': '/etc/systemd/user/ssh-agent.service.d/fprint-askpass.conf',
     })
+
+    # Compile the readable defaults after copying both the profile and keyfile.
+    # The profile layers system-db:local below each user's normal dconf database.
+    _run(['sudo dconf update'])
 
     # Separate call only because this one has to be executable. root-owned 755
     # is the whole gate: if elmeri can write it, anything running as elmeri
@@ -387,4 +397,3 @@ def server():
 
 
     _enable(['nginx', 'php-fpm'])
-

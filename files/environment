@@ -4,7 +4,7 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 
-QT_QPA_PLATFORMTHEME=qt5ct
+QT_QPA_PLATFORMTHEME=gtk3
 BROWSER=brave
 EDITOR=vim
 VERACRYPT_MOUNT_PREFIX=/run/media/elmeri
