@@ -1,14 +1,6 @@
 # Linux Enviroment install scripts
 
-Archinstall
-* NOTE: You might need to *temporarily* disable secure boot, otherwise EFI partition is not done correctly.
-* `loadkeys fi`
-* `iwctl station list`
-* `iwctl --passphrase <passphrase> station <interface> connect "<SSID>"`
-* `archinstall`
-* `cp .zsh_history /mnt/home/elmeri`
-* Do not copy the network configuration from ISO, instead install NetworkManager. After install, setup network
-* `nmcli device wifi connect "<SSID>" password "<password>"`
+Part of https://github.com/elmeriniemela/dotfiles
 
 Usage instructions:
 
