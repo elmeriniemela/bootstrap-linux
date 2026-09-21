@@ -1,14 +1,10 @@
 add_ssh
-bashrc
-distro
 fix_t14_ethernet
 gitconfig
 global_odoo_deps
 keymap
-laptop
 latex
 link_agentmd
-local_ufw
 mirrors
 monitor
 nvidia_prime
